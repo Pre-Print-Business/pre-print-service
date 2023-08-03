@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}프린트 설정{% endblock %}
+
+{% block content %}
+<form action="" method="POST" enctype="multipart/form-data">
+  {% csrf_token %}
+  <h2>파일:</h2>
+  <input type="file" name="files" multiple>
+  
+  <h2>색상:</h2>
+  <select name="color">
+    <option value="BW">흑백</option>
+    <option value="C">컬러</option>
+  </select>
+
+  <h2>비밀번호:</h2>
+  <input type="text" name="pw">
+
+  <button type="submit">제출</button>
+</form>
+{% if messages %}
+    <ul class="messages">
+        {% for message in messages %}
+            <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+        {% endfor %}
+    </ul>
+{% endif %}
+
+{% endblock %}
