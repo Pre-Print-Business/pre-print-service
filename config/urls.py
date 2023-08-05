@@ -11,6 +11,7 @@ urlpatterns = [
     path('detail/', print_detail, name="detail"),
     path('payment/', print_payment, name="payment"),
     path('accounts/', include('accounts.urls')),
+    path('preprint/', include('preprint.urls')),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root = settings.MEDIA_ROOT)

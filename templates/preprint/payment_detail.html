@@ -1,0 +1,26 @@
+
+
+{% extends 'base.html' %}
+{% block title %}로그인{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1>결제 내역</h1>
+    {% for order_with_files in orders_with_files %}
+        <div class="order-div">
+            <h3>주문 번호: {{ order_with_files.order.id }}</h3>
+            <p>주문 날짜: {{ order_with_files.order.order_date }}</p>
+            <p>가격: {{ order_with_files.order.order_price }}</p>
+            <p>색상: {{ order_with_files.order.order_color }}</p>
+            <p>PW: {{ order_with_files.order.order_pw }}</p>
+            <h4>파일:</h4>
+            <ul>
+                {% for file in order_with_files.files %}
+                    <li><a href="{{ file.file.url }}">{{ file.file.name }}</a></li>
+                {% endfor %}
+            </ul>
+        </div>
+    {% endfor %}
+</div>
+
+{% endblock %}

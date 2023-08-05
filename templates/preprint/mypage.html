@@ -1,0 +1,14 @@
+
+
+{% extends 'base.html' %}
+{% block title %}로그인{% endblock %}
+
+{% block content %}
+<h1>마이페이지</h1>
+<div>
+    <h3>고객 번호: {{ user.id }}</h3>
+    <h3>이름: {{ user.username }}</h3>
+    <h3>이메일: {{ user.email }}</h3>
+    <h3>전화번호: {{ user.phone }}</h3>
+</div>
+{% endblock %}
