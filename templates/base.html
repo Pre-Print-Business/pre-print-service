@@ -9,6 +9,8 @@
 </head>
 <body>
     <a href="{% url 'main' %}">메인화면</a>
+    <a href="{% url 'preprint:mypage' %}">마이페이지</a>
+    <a href="{% url 'preprint:payment_detail' %}">주문내역</a>
     <div>
         {% block content %}
         {% endblock %}
