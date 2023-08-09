@@ -1,0 +1,79 @@
+
+/* 로그인 페이지 */
+.login_form {
+    max-width: 500px;
+    margin: 0 auto;
+}
+.custom-input {
+    width: 100%;
+    padding: 10px;
+    box-sizing: border-box;
+    border: 1px solid #ccc;
+    background-color: #f0f0f0;
+    border-radius: 4px;
+    max-width: 400px;
+}
+
+.custom-submit {
+    padding: 20px 250px 20px 250px;
+    background-color: #90EE90;
+    border: none; 
+    cursor: pointer;
+    font-size: 40px;
+    border-radius: 40px;
+    color: white;
+}
+
+.custom-submit:hover {
+    background-color: #80DD80; 
+}
+
+.form-group {
+    display: flex;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+.form-group label {
+    margin-right: 10px;
+    font-size: 30px;
+}
+
+/* 회원가입 */
+.login-title {
+    color: #90EE90;
+    font-size: 2em;
+    text-align: center;
+}
+
+.login-container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.login-label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+input[type="text"], input[type="password"], input[type="email"] {
+    width: 100%;
+    padding: 10px;
+    background-color: #EDEDED;
+    border: none;
+    border-radius: 10px;
+    font-size: 1em;
+}
+
+
+.signup-submit-button {
+    background-color: #90EE90;
+    padding: 20px 250px 20px 250px;
+    font-size: 1.5em;
+    border-radius: 40px;
+    cursor: pointer;
+    border: none;
+}
+
+

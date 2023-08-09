@@ -3,18 +3,22 @@
 {% block title %}메인페이지{% endblock %}
 
 {% block content %}
-<h1>메인페이지</h1>
-<form action="/detail/">
-  <button type="submit">제출</button>
-</form>
+<div class="print-main">
+  <h1 class="logo">pre-print</h1>
+  <form action="/detail/">
+    <button type="submit" class="submit-button">print !</button>
+  </form>
 
-{% if request.user.is_authenticated %}
-<span>로그인 상태: {{request.user.username}}</span>
-<a href="{% url 'accounts:logout' %}">로그아웃</a>
-{% else %}
-<span>비로그인 상태</span>
-<a href="{% url 'accounts:login' %}">로그인</a>
-<a href="{% url 'accounts:signup' %}">회원가입</a>
-{% endif %}
+  <div class="authentication">
+    {% if request.user.is_authenticated %}
+    <span>로그인 상태: {{request.user.username}}</span>
+    <a href="{% url 'accounts:logout' %}" class="logout-link">로그아웃</a>
+    {% else %}
+    <span>비로그인 상태</span>
+    <a href="{% url 'accounts:login' %}">로그인</a>
+    <a href="{% url 'accounts:signup' %}">회원가입</a>
+    {% endif %}
+  </div>
+</div>
 
 {% endblock %}

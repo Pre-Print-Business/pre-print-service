@@ -82,6 +82,7 @@ def print_payment_detail(req):
     
     context = {
         'orders_with_files': orders_with_files,
+        'orders_count': orders.count(),
     }
 
     return render(req, 'preprint/payment_detail.html', context)
