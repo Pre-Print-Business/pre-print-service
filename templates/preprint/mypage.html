@@ -1,14 +1,23 @@
 
 
 {% extends 'base.html' %}
-{% block title %}로그인{% endblock %}
+{% load static %}
+{% block title %}마이페이지{% endblock %}
+
+{% block additional_head %}
+<link rel="stylesheet" href="{% static 'css/preprint.css' %}?after">
+{% endblock %}
 
 {% block content %}
-<h1>마이페이지</h1>
-<div>
-    <h3>고객 번호: {{ user.id }}</h3>
-    <h3>이름: {{ user.username }}</h3>
-    <h3>이메일: {{ user.email }}</h3>
-    <h3>전화번호: {{ user.phone }}</h3>
+<div class="mypage">
+
+    <div>
+        <h1 class="logo">My Page</h1>
+        <h3 class="mypage-info-block">고객 번호: <div>{{ user.id }}</div></h3>
+        <h3 class="mypage-info-block">이름: <div>{{ user.username }}</div></h3>
+        <h3 class="mypage-info-block">이메일: <div>{{ user.email }}</div></h3>
+        <h3 class="mypage-info-block">전화번호: <div>{{ user.phone }}</div></h3>
+    </div>
 </div>
 {% endblock %}
+
