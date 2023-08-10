@@ -1,5 +1,4 @@
 
-
 {% extends 'base.html' %}
 {% load static %}
 {% block title %}결제내역{% endblock %}
@@ -9,7 +8,7 @@
 {% endblock %}
 
 {% block content %}
-<div class="container">
+<div class="payment-detail-container">
     <h1 class="logo">Requested Print</h1>
     <div class="payment-detail-page">
     <h3>예약된 주문 : {{orders_count}}</h3>
@@ -24,7 +23,7 @@
                 <p>사물함 PW: {{ order_with_files.order.order_pw }}</p>
             </div>
             <h4>파일:</h4>
-            <ul>
+            <ul class="order-files">
                 {% for file in order_with_files.files %}
                     <li><a href="{{ file.file.url }}">{{ file.file.name }}</a></li>
                 {% endfor %}

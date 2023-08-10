@@ -1,10 +1,10 @@
 
 /* 로그인 페이지 */
-.login_form {
+/* .login_form {
     max-width: 500px;
     margin: 0 auto;
-}
-.custom-input {
+}  */
+.login-info-space {
     width: 100%;
     padding: 10px;
     box-sizing: border-box;
@@ -14,7 +14,8 @@
     max-width: 400px;
 }
 
-.custom-submit {
+
+.login-button {
     padding: 20px 250px 20px 250px;
     background-color: #90EE90;
     border: none; 
@@ -24,41 +25,36 @@
     color: white;
 }
 
-.custom-submit:hover {
+.login-button:hover {
     background-color: #80DD80; 
 }
 
-.form-group {
+.login-form-group {
     display: flex;
     align-items: center;
     margin-bottom: 30px;
 }
 
-.form-group label {
+.login-form-group label {
     margin-right: 10px;
     font-size: 30px;
 }
 
 /* 회원가입 */
-.login-title {
-    color: #90EE90;
-    font-size: 2em;
-    text-align: center;
-}
 
-.login-container {
+.signup-form-group {
     display: flex;
-    flex-direction: column;
-    align-items: flex-start;
+    align-items: center;
+    margin-bottom: 30px;
 }
 
-.login-label {
-    display: block;
-    margin-bottom: 5px;
+.signup-form-group label {
+    margin-right: 10px;
+    font-size: 30px;
 }
 
 input[type="text"], input[type="password"], input[type="email"] {
-    width: 100%;
+    /* width: 100%; */
     padding: 10px;
     background-color: #EDEDED;
     border: none;
@@ -66,14 +62,14 @@ input[type="text"], input[type="password"], input[type="email"] {
     font-size: 1em;
 }
 
-
-.signup-submit-button {
+.signup-button {
     background-color: #90EE90;
     padding: 20px 250px 20px 250px;
-    font-size: 1.5em;
+    font-size: 40px;
     border-radius: 40px;
     cursor: pointer;
     border: none;
+    color: white;
 }
 
 

@@ -1,3 +1,5 @@
+
+/* 마이페이지 */
 .mypage-info-block{
     display: flex;
     margin-bottom: 30px;
@@ -10,8 +12,7 @@
     margin-left: 30px;
 }
 
-
-.mypage{
+.mypage-container{
     display: flex;
     justify-content: center;
     align-items: center;
@@ -19,9 +20,7 @@
 }
 
 /* 결제내역 */
-.container {
-    width: 100%;
-    max-width: 1200px;
+.payment-detail-container {
     margin: 0 auto;
     padding: 20px;
 }
@@ -32,7 +31,7 @@
     align-items: center;
     justify-content: center;
     overflow: auto; 
-}
+} 
 
 .order-div {
     width: 100%;
@@ -47,4 +46,9 @@
 
 .order-div-info{
     display: flex;
+}
+
+.order-files{
+    list-style-type: none;
+    padding-left: 0;
 }
