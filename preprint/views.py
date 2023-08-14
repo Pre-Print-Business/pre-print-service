@@ -5,6 +5,14 @@ from .models import Order, OrderFile
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 
+# 이건 PyMuPDF
+import fitz
+
+# 이건 Poppler-pdfinfo
+import subprocess 
+import tempfile
+import os
+
 import PyPDF2
 from django.core.files.uploadedfile import InMemoryUploadedFile
 
@@ -12,6 +20,17 @@ from django.core.files.uploadedfile import InMemoryUploadedFile
 ### 메인페이지, 프린트 설정 페이지, 결제 페이지
 def print_main(req):
     return render(req, 'print_main.html')
+
+def get_pdf_page_count(pdf_path):
+    cmd = ["C:\\Users\\Owner\\anaconda3\\Library\\bin\\pdfinfo.exe", pdf_path]
+    try:
+        output = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=True)
+        for line in output.stdout.decode('utf-8').splitlines():
+            if "Pages:" in line:
+                return int(line.split(":")[1].strip())
+        return 0
+    except subprocess.CalledProcessError:
+        return 0
 
 def print_detail(req):
     if req.method == "GET":
@@ -28,12 +47,20 @@ def print_detail(req):
             messages.error(req, "비밀번호 4자리를 채워주세요")
             return render(req, "print_detail.html")
         
+        # PyMuPDF의 경우..
+        # total_pages = 0
+        # for file in files:
+        #     if isinstance(file, InMemoryUploadedFile):
+        #         pdf_document = fitz.open("pdf", file.read())
+        #         total_pages += len(pdf_document)
         # 페이지 계산
         total_pages = 0
         for file in files:
-            if isinstance(file, InMemoryUploadedFile):
-                pdf = PyPDF2.PdfReader(file)
-                total_pages += len(pdf.pages)
+            with tempfile.NamedTemporaryFile(delete=False, suffix=".pdf") as tmpfile:
+                for chunk in file.chunks():
+                    tmpfile.write(chunk)
+                
+                total_pages += get_pdf_page_count(tmpfile.name)
         
         order_price = total_pages * 100
 
@@ -86,5 +113,4 @@ def print_payment_detail(req):
     }
 
     return render(req, 'preprint/payment_detail.html', context)
-
-
+        
