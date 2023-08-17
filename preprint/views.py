@@ -43,17 +43,15 @@ def print_detail(req):
         color = req.POST['color']
         pw = req.POST['pw']
 
-        if not files or not pw:
-            messages.error(req, "비밀번호 4자리를 채워주세요")
+        if not files:
+            messages.error(req, "파일을 선택해주세요.")
             return render(req, "print_detail.html")
+
+        if not pw or not pw.isdigit() or len(pw) != 4:
+            messages.error(req, "비밀번호는 숫자 4자리를 입력해야 합니다.")
+            return render(req, "print_detail.html")
+
         
-        # PyMuPDF의 경우..
-        # total_pages = 0
-        # for file in files:
-        #     if isinstance(file, InMemoryUploadedFile):
-        #         pdf_document = fitz.open("pdf", file.read())
-        #         total_pages += len(pdf_document)
-        # 페이지 계산
         total_pages = 0
         for file in files:
             with tempfile.NamedTemporaryFile(delete=False, suffix=".pdf") as tmpfile:

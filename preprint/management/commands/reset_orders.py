@@ -80,9 +80,12 @@ class Command(BaseCommand):
                 backup_path = os.path.join("today_orders", filename)
                 shutil.copy(original_path, backup_path)
 
+    def clear_today_orders_folder(self):
+        shutil.rmtree("today_orders", ignore_errors=True)
+        os.makedirs("today_orders")
+
     def handle(self, *args, **options):
-        if not os.path.exists("today_orders"):
-            os.makedirs("today_orders")
+        self.clear_today_orders_folder()
 
         orders = Order.objects.all()
         order_num = 1
