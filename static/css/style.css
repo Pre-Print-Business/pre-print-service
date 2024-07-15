@@ -2,7 +2,11 @@
 body {
     font-family: Arial, sans-serif;
 }
-  
+
+.preprint-logo{
+    width: 130px;
+}
+
 .navbar {
     display: flex;
     justify-content: space-between;
