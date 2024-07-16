@@ -1,6 +1,7 @@
 
 {% extends 'base.html' %}
 {% load static %}
+{% load socialaccount %}
 {% block title %}로그인{% endblock %}
  
 {% block additional_head %}
@@ -22,6 +23,14 @@
         </div>
         <input type="submit" value="login" class="login-button">
     </form>
+        <!-- 구글 로그인 버튼 추가 -->
+        <div class="social-login">
+            <h2>또는</h2>
+            <a href="{% provider_login_url 'google' %}">Login with Google button</a>
+        </div>
+        <a href="{% provider_login_url 'kakao' method='oauth2' %}">
+            카카오톡 회원가입
+        </a>
 </div>
 <p>회원이 아니신가요? <a href="{% url 'accounts:signup' %}">회원가입</a></p>
 {% endblock %}

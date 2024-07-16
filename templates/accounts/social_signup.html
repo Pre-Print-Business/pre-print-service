@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% load socialaccount %}
+{% load static %}
+{% block title %}소셜 회원가입{% endblock %}
+ 
+{% block content %}
+<div class="centered-form-container">
+    <form action="" method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        <h1 class="logo">소셜 회원가입</h1>
+        <div class="login-form-group">
+            <label for="id_username">이름:</label>
+            <input id="id_username" type="text" name="username" class="login-info-space">
+        </div>
+        <div class="login-form-group">
+            <label for="id_phone">전화번호:</label>
+            <input id="id_phone" type="text" name="phone" class="login-info-space">
+        </div>
+        <input type="submit" value="가입하기" class="login-button">
+    </form>
+</div>
+{% endblock %}

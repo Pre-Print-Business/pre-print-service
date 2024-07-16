@@ -11,6 +11,7 @@ urlpatterns = [
     path('detail/', print_detail, name="detail"),
     path('payment/', print_payment, name="payment"),
     path('accounts/', include('accounts.urls')),
+    path('accounts/', include('allauth.urls')),
     path('preprint/', include('preprint.urls')),
 ]
 
