@@ -8,18 +8,6 @@ from users.models import User
 from allauth.socialaccount.models import SocialLogin
 from allauth.account.utils import complete_signup
 from .forms import SocialSignUpForm
-from django.urls import reverse
-
-# accounts/views.py
-from allauth.socialaccount.models import SocialLogin
-from allauth.account.utils import complete_signup
-from .forms import SocialSignUpForm
-from django.shortcuts import render, redirect
-
-# accounts/views.py
-from allauth.socialaccount.models import SocialLogin
-from allauth.account.utils import complete_signup
-from .forms import SocialSignUpForm
 from django.shortcuts import render, redirect
 
 def social_signup(request):
@@ -73,7 +61,7 @@ def print_signup(req):
             instance = form.save()
             return redirect('main')
         else:
-            return redirect('accounts:signup')
+            return redirect('signup')
         
 def print_login(req):
     if req.method == 'GET':
@@ -82,7 +70,7 @@ def print_login(req):
         form = AuthenticationForm(req, req.POST)
         if form.is_valid():
             login(req, form.user_cache) 
-            return redirect('main')
+            return redirect('root')
         else:
             return render(req, 'accounts/print_login.html', {'form': form})
 
@@ -90,5 +78,5 @@ def print_login(req):
 def print_logout(req):
     if req.user.is_authenticated:
         logout(req)
-    return redirect('main')
+    return redirect('root')
     

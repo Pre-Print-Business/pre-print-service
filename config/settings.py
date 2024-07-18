@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/4.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
-from .local_settings import SECRET, DATABASES
+from .local_settings import SECRET, DATABASES, PORTONE_SHOP_ID, PORTONE_API_KEY, PORTONE_API_SECRET, PORTONE_WEBHOOK_IPS
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -114,12 +114,10 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'config.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
 DATABASES = DATABASES
-
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
@@ -138,7 +136,6 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
-
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
@@ -169,3 +166,10 @@ MEDIA_ROOT = BASE_DIR / 'media'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'users.User'
+
+
+# 포트원
+PORTONE_SHOP_ID = PORTONE_SHOP_ID
+PORTONE_API_KEY = PORTONE_API_KEY
+PORTONE_API_SECRET = PORTONE_API_SECRET
+PORTONE_WEBHOOK_IPS = PORTONE_WEBHOOK_IPS
