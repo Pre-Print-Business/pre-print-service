@@ -1,42 +1,46 @@
-
 from django.shortcuts import render, redirect
 from .models import Order, OrderFile
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-
 # 이건 PyMuPDF
 import fitz
-
 # 이건 Poppler-pdfinfo
 import subprocess 
 import tempfile
 import os
-
 import PyPDF2
 from django.core.files.uploadedfile import InMemoryUploadedFile
-
 
 ### 메인페이지, 프린트 설정 페이지, 결제 페이지
 def print_main(req):
     return render(req, 'print_main.html')
 
+### 윈도우 용
+# def get_pdf_page_count(pdf_path):
+#     cmd = ["C:\\Users\\Owner\\anaconda3\\Library\\bin\\pdfinfo.exe", pdf_path]
+#     try:
+#         output = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=True)
+#         for line in output.stdout.decode('utf-8').splitlines():
+#             if "Pages:" in line:
+#                 return int(line.split(":")[1].strip())
+#         return 0
+#     except subprocess.CalledProcessError:
+#         return 0
+
+### 맥 용
 def get_pdf_page_count(pdf_path):
-    cmd = ["C:\\Users\\Owner\\anaconda3\\Library\\bin\\pdfinfo.exe", pdf_path]
     try:
-        output = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=True)
-        for line in output.stdout.decode('utf-8').splitlines():
-            if "Pages:" in line:
-                return int(line.split(":")[1].strip())
-        return 0
-    except subprocess.CalledProcessError:
+        with fitz.open(pdf_path) as doc:
+            return doc.page_count
+    except Exception as e:
         return 0
 
 def print_detail(req):
     if req.method == "GET":
         if not req.user.is_authenticated:
-            return redirect('accounts:login')
+            return redirect('login')
         else:
-            return render(req, "print_detail.html")
+            return render(req, "preprint/print_detail.html")
     elif req.method == "POST":
         files = req.FILES.getlist('files')
         color = req.POST['color']
@@ -44,11 +48,11 @@ def print_detail(req):
 
         if not files:
             messages.error(req, "파일을 선택해주세요.")
-            return render(req, "print_detail.html")
+            return render(req, "preprint/print_detail.html")
 
         if not pw or not pw.isdigit() or len(pw) != 4:
             messages.error(req, "비밀번호는 숫자 4자리를 입력해야 합니다.")
-            return render(req, "print_detail.html")
+            return render(req, "preprint/print_detail.html")
 
         
         total_pages = 0
@@ -66,7 +70,7 @@ def print_detail(req):
         for file in files:
             OrderFile.objects.create(order=order, file=file)
         
-        return redirect('payment')
+        return redirect('print_payment')
 
 def print_payment(req):
     latest_order = Order.objects.filter(order_user=req.user).order_by('-order_date').first()
@@ -78,13 +82,13 @@ def print_payment(req):
     context = {
         'files': files,
     }
-    return render(req, 'print_payment.html', context)
+    return render(req, 'preprint/print_payment.html', context)
 
 
 ### 마이페이지 & 결제내역
 def print_mypage(req):
     if not req.user.is_authenticated:
-        return redirect('accounts:login')
+        return redirect('login')
     context = {
         'user': req.user
     }
@@ -92,7 +96,7 @@ def print_mypage(req):
 
 def print_payment_detail(req):
     if not req.user.is_authenticated:
-        return redirect('accounts:login')
+        return redirect('login')
 
     orders = Order.objects.filter(order_user=req.user).order_by('-order_date')
     orders_with_files = []

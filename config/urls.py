@@ -4,12 +4,11 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.urls import path, include
 from preprint.views import *
+from django.views.generic import TemplateView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', print_main, name="main"),
-    path('detail/', print_detail, name="detail"),
-    path('payment/', print_payment, name="payment"),
+    path('',  TemplateView.as_view(template_name="print_main.html"), name="root"),
     path('accounts/', include('accounts.urls')),
     path('accounts/', include('allauth.urls')),
     path('preprint/', include('preprint.urls')),
