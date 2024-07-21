@@ -31,6 +31,13 @@ class Order(models.Model):
         default=Status.REQUESTED,
         db_index=True,
     )
+    @property
+    def name(self) -> str:
+        return f"Order {self.pk}"
+
+    def can_pay(self) -> bool:
+        return self.status in (self.Status.REQUESTED, self.Status.FAILED_PAYMENT)
+
 
 class OrderFile(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE)

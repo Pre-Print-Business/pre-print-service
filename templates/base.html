@@ -24,7 +24,7 @@
         </div>
         <div class="navbar-right">
             <a href="{% url 'mypage' %}">마이페이지</a>
-            <a href="{% url 'payment_detail' %}">주문내역</a>
+            <a href="{% url 'print_payment_list' %}">주문내역</a>
         </div>
     </div>
     <div class="content">
@@ -35,5 +35,7 @@
         <p>전화번호: 123-456-7890</p>
         <p>preprint 사업</p>
     </div>
+    <script>window.csrf_token = "{{ csrf_token }}";</script>
+    {% block extra-script %}{% endblock %}
 </body>
 </html>

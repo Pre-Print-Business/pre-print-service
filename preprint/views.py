@@ -1,15 +1,21 @@
-from django.shortcuts import render, redirect
-from .models import Order, OrderFile
+import json
+from django.shortcuts import render, redirect, get_object_or_404
+from .models import Order, OrderFile, OrderPayment
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.http import require_POST
 from django.contrib import messages
 # 이건 PyMuPDF
 import fitz
 # 이건 Poppler-pdfinfo
-import subprocess 
+import subprocess
 import tempfile
 import os
 import PyPDF2
 from django.core.files.uploadedfile import InMemoryUploadedFile
+from django.urls import reverse
+from django.views.decorators.csrf import csrf_exempt
+from django.http import HttpResponse
+from django.conf import settings
 
 ### 메인페이지, 프린트 설정 페이지, 결제 페이지
 def print_main(req):
@@ -74,15 +80,54 @@ def print_detail(req):
 
 def print_payment(req):
     latest_order = Order.objects.filter(order_user=req.user).order_by('-order_date').first()
-    files = []
-    if latest_order:
-        order_files = OrderFile.objects.filter(order=latest_order)
-        for order_file in order_files:
-            files.append(order_file)
-    context = {
-        'files': files,
+    if not latest_order:
+        messages.error(req, "주문이 존재하지 않습니다.")
+        return redirect('print_detail')
+
+    if not latest_order.can_pay():
+        messages.error(req, "결제를 할 수 없는 주문입니다.")
+        return redirect('print_mypage')
+
+    payment = OrderPayment.create_by_order(latest_order)
+
+    check_url = reverse("print_payment_check", args=[latest_order.pk, payment.pk])
+
+    payment_props = {
+        "merchant_uid": payment.merchant_uid,
+        "name": payment.name,
+        "amount": payment.desired_amount,
+        "buyer_name": payment.buyer_name,
+        "buyer_email": payment.buyer_email,
+        "m_redirect_url": req.build_absolute_uri(check_url),
     }
-    return render(req, 'preprint/print_payment.html', context)
+    print("Payment properties:", payment_props)
+
+    return render(
+        req,
+        "preprint/print_payment.html",
+        {
+            "portone_shop_id": settings.PORTONE_SHOP_ID,
+            "payment_props": payment_props,
+            "next_url": check_url,
+        },
+    )
+@login_required
+def print_payment_check(req, order_pk, payment_pk):
+    payment = get_object_or_404(OrderPayment, pk=payment_pk, order__pk=order_pk)
+    payment.update()
+    return redirect("print_payment_detail", order_pk=order_pk)
+
+@login_required
+def print_payment_detail(req, order_pk):
+    order = get_object_or_404(Order, pk=order_pk, order_user=req.user)
+    order_files = OrderFile.objects.filter(order=order)
+    payment = OrderPayment.objects.filter(order=order).first()
+    context = {
+        'order': order,
+        'files': order_files,
+        'payment': payment,
+    }
+    return render(req, 'preprint/print_payment_detail.html', context)
 
 
 ### 마이페이지 & 결제내역
@@ -94,7 +139,8 @@ def print_mypage(req):
     }
     return render(req, 'preprint/mypage.html', context)
 
-def print_payment_detail(req):
+@login_required
+def print_payment_list(req):
     if not req.user.is_authenticated:
         return redirect('login')
 
@@ -103,9 +149,11 @@ def print_payment_detail(req):
     
     for order in orders:
         order_files = OrderFile.objects.filter(order=order)
+        payment = OrderPayment.objects.filter(order=order).first()
         orders_with_files.append({
             'order': order,
             'files': order_files,
+            'payment': payment,
         })
     
     context = {
@@ -113,5 +161,25 @@ def print_payment_detail(req):
         'orders_count': orders.count(),
     }
 
-    return render(req, 'preprint/payment_detail.html', context)
+    return render(req, 'preprint/payment_list.html', context)
+
         
+
+@require_POST
+@csrf_exempt
+def portone_webhook(request):
+    if request.META["CONTENT_TYPE"] == "application/json":
+        payload = json.loads(request.body)
+        merchant_uid = payload.get("merchant_uid")
+    else:
+        merchant_uid = request.POST.get("merchant_uid")
+
+    if not merchant_uid:
+        return HttpResponse("merchant_uid 인자가 누락되었습니다.", status=400)
+    elif merchant_uid == "merchant_1234567890":
+        return HttpResponse("test ok")
+
+    payment = get_object_or_404(OrderPayment, uid=merchant_uid)
+    payment.update()
+
+    return HttpResponse("ok")
