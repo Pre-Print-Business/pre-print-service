@@ -9,7 +9,6 @@ https://docs.djangoproject.com/en/4.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
-from .local_settings import SECRET, DATABASES, PORTONE_SHOP_ID, PORTONE_API_KEY, PORTONE_API_SECRET, PORTONE_WEBHOOK_IPS
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -20,20 +19,33 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = SECRET
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
+from pathlib import Path
+from django.core.exceptions import ImproperlyConfigured
+import json
 
-# Application definition
+secret_file = BASE_DIR / "secrets.json"
+with open(secret_file) as file:
+    secrets = json.loads(file.read())
 
-AUTHENTICATION_BACKENDS = (
-    'django.contrib.auth.backends.ModelBackend',
-    'allauth.account.auth_backends.AuthenticationBackend',
-)
+def get_secrets(setting, secrets_dict=secrets):
+    try:
+        return secrets_dict[setting]
+    except KeyError:
+        error_msg = f'set the {setting} environment variable'
+        raise ImproperlyConfigured(error_msg)
+    
+
+SECRET_KEY = get_secrets('SECRET')
+
+SOCIAL_AUTH_GOOGLE_CLIENT_ID = get_secrets("SOCIAL_AUTH_GOOGLE_CLIENT_ID")
+SOCIAL_AUTH_GOOGLE_SECRET = get_secrets("SOCIAL_AUTH_GOOGLE_SECRET")
+STATE = get_secrets("STATE")
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -45,6 +57,12 @@ INSTALLED_APPS = [
     'preprint',
     'users',
     'accounts',
+    # 추가
+    'rest_framework',
+    'rest_framework.authtoken',
+    'rest_framework_simplejwt',
+    'dj_rest_auth',
+    'dj_rest_auth.registration',
     # 소셜로그인
     'django.contrib.sites',
     'allauth',
@@ -56,35 +74,21 @@ INSTALLED_APPS = [
 
 SITE_ID = 1
 
-LOGIN_REDIRECT_URL = '/'
-LOGOUT_REDIRECT_URL = '/'
-SOCIALACCOUNT_AUTO_SIGNUP = True
+REST_USE_JWT = True
 
-SOCIALACCOUNT_ADAPTER = 'accounts.adapter.MySocialAccountAdapter'
+ACCOUNT_USER_MODEL_USERNAME_FIELD = None
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_USERNAME_REQUIRED = False
+ACCOUNT_AUTHENTICATION_METHOD = 'email'
 
-SOCIALACCOUNT_PROVIDERS = {
-    'google': {
-        'SCOPE': [
-            'profile',
-            'email',
-        ],
-        'AUTH_PARAMS': {
-            'access_type': 'online',
-        },
-        'OAUTH_PKCE_ENABLED': True,
-    },
-        'kakao': {
-        'SCOPE': [
-            'account_email',
-        ],
-        'AUTH_PARAMS': {
-            'access_type': 'online',
-        },
-    }
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    )
 }
 
 MIDDLEWARE = [
-    'django.middleware.security.SecurityMiddleware',
+    # 'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -117,7 +121,16 @@ WSGI_APPLICATION = 'config.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-DATABASES = DATABASES
+DATABASES = {
+    'default': {
+        'ENGINE': get_secrets('ENGINE'),
+        'NAME': get_secrets('NAME'),
+        'USER': get_secrets('USER'),
+        'PASSWORD': get_secrets('PASSWORD'),
+        'HOST': get_secrets('HOST'),
+        'PORT': get_secrets('PORT'),
+    }
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
@@ -170,7 +183,7 @@ AUTH_USER_MODEL = 'users.User'
 # 포트원
 INTERNAL_IPS = ["127.0.0.1"]
 
-PORTONE_SHOP_ID = PORTONE_SHOP_ID
-PORTONE_API_KEY = PORTONE_API_KEY
-PORTONE_API_SECRET = PORTONE_API_SECRET
-PORTONE_WEBHOOK_IPS = PORTONE_WEBHOOK_IPS
+PORTONE_SHOP_ID = get_secrets('PORTONE_SHOP_ID')
+PORTONE_API_KEY = get_secrets('PORTONE_API_KEY')
+PORTONE_API_SECRET = get_secrets('PORTONE_API_SECRET')
+PORTONE_WEBHOOK_IPS = get_secrets('PORTONE_WEBHOOK_IPS')
