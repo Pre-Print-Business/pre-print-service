@@ -1,4 +1,13 @@
 
+.delete-button {
+    background-color: #1855b1;
+    color: rgb(255, 255, 255);
+    border: none;
+    cursor: pointer;
+    border-radius: 40px;
+    padding: 5px 10px 5px 10px;
+}
+
 /* 마이페이지 */
 .mypage-info-block{
     display: flex;
@@ -16,13 +25,12 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    height: calc(100vh - (200px));
+    height: calc(100vh - (300px));
 }
 
 /* 결제내역 */
 .payment-detail-container {
     margin: 0 auto;
-    padding: 20px;
 }
 
 .payment-detail-page {
@@ -51,4 +59,20 @@
 .order-files{
     list-style-type: none;
     padding-left: 0;
+}
+
+@media only screen and (max-width: 600px) {
+    .mypage-info-block div{
+        background-color: #EDEDED;
+        padding: 10px 30px 10px 30px;
+        border-radius: 40px;
+        margin-left: 30px;
+    }
+    
+    .mypage-container{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: calc(100vh - (300px));
+    }
 }

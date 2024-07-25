@@ -6,6 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}{% endblock %} | pre-print</title>
     <link rel="stylesheet" href="{% static 'css/style.css' %}?after">
+    <link rel="shortcut icon" type="image/x-icon" href="{% static 'img/logo.png' %}" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css">
     {% block additional_head %}
     {% endblock %}
 </head>
@@ -13,18 +15,19 @@
     <div class="navbar">
         <div class="navbar-left">
             <a href="{% url 'root' %}">
-                <!-- <img class="preprint-logo" src="{% static 'img/preprint-logo.png' %}" alt="Description"> -->
-                로고
+                <img class="logo-image" src="{% static 'img/logo2.png' %}" alt="로고">
             </a>
         </div>
-        <div class="navbar-center">
-            <a href="#">프린트소개</a>
-            <a href="#">이용약관</a>
-            <a href="#">Q&A</a>
-        </div>
         <div class="navbar-right">
-            <a href="{% url 'mypage' %}">마이페이지</a>
-            <a href="{% url 'print_payment_list' %}">주문내역</a>
+            <div class="navbar-center">
+                <a class="introduce" href="{% url 'guide' %}">이용방법</a>
+            </div>
+            <a href="{% url 'mypage' %}">
+                <img class="mypage-image" src="{% static 'img/mypage2.png' %}" alt="마이페이지">
+            </a>
+            <a href="{% url 'print_payment_list' %}">
+                <img class="cloud-image" src="{% static 'img/history.png' %}" alt="결제내역">
+            </a>
         </div>
     </div>
     <div class="content">
@@ -32,7 +35,7 @@
         {% endblock %}
     </div>
     <div class="footer">
-        <p>전화번호: 123-456-7890</p>
+        <p>위치: 서울 서대문구 거북골로 34  명지대학교 학생회관 1층 preprint</p>
         <p>preprint 사업</p>
     </div>
     <script>window.csrf_token = "{{ csrf_token }}";</script>

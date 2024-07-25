@@ -2,6 +2,7 @@ from django.urls import path
 from preprint.views import *
 
 urlpatterns = [
+    path('guide/', guide, name="guide"),
     path('mypage/', print_mypage, name='mypage'),
     path('print_payment_list/', print_payment_list, name='print_payment_list'),
     path('print_detail/', print_detail, name="print_detail"),

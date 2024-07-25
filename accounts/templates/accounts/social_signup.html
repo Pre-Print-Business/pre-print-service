@@ -2,21 +2,33 @@
 {% load socialaccount %}
 {% load static %}
 {% block title %}소셜 회원가입{% endblock %}
+
+{% block additional_head %}
+<link rel="stylesheet" href="{% static 'css/account.css' %}?after">
+{% endblock %}
  
 {% block content %}
 <div class="centered-form-container">
     <form action="" method="POST" enctype="multipart/form-data">
         {% csrf_token %}
-        <h1 class="logo">소셜 회원가입</h1>
-        <div class="login-form-group">
-            <label for="id_username">이름:</label>
-            <input id="id_username" type="text" name="username" class="login-info-space">
+        <h1 class="logo">social signup</h1>
+        <div class="login-container">
+            <div class="signup-form-group">
+                <label for="{{ form.username.id_for_label }}">name:</label>
+                {{ form.username }}
+            </div>
+            <div class="signup-form-group">
+                <label for="{{ form.phone.id_for_label }}">phone:</label>
+                {{ form.phone }}
+            </div>
+            <div class="signup-form-group">
+                <label for="{{ form.email_opt_in.id_for_label }}">Subscribe to Emails:</label>
+                {{ form.email_opt_in }}
+            </div>
         </div>
-        <div class="login-form-group">
-            <label for="id_phone">전화번호:</label>
-            <input id="id_phone" type="text" name="phone" class="login-info-space">
+        <div>
+            <input type="submit" value="sign up" class="signup-button">
         </div>
-        <input type="submit" value="가입하기" class="login-button">
     </form>
 </div>
 {% endblock %}

@@ -10,4 +10,4 @@ class SignUpForm(UserCreationForm):
 class SocialSignUpForm(forms.ModelForm):
     class Meta:
         model = get_user_model()
-        fields = ['username', 'phone']
+        fields = ['username', 'phone', 'email_opt_in']
