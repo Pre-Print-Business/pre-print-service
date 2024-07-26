@@ -21,6 +21,10 @@ from django.conf import settings
 def print_main(req):
     return render(req, 'print_main.html')
 
+def guide(req):
+    return render(req, 'preprintcloud_guide.html')
+
+
 ### 윈도우 용
 # def get_pdf_page_count(pdf_path):
 #     cmd = ["C:\\Users\\Owner\\anaconda3\\Library\\bin\\pdfinfo.exe", pdf_path]

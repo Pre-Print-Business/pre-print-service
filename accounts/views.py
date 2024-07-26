@@ -1,145 +1,129 @@
-from django.shortcuts import render, redirect
-from django.contrib.auth import login, logout
 from django.contrib.auth.forms import AuthenticationForm
 from .forms import SignUpForm
-from django.conf import settings
-from users.models import User
-
-# accounts/views.py
-from allauth.socialaccount.models import SocialLogin
-from allauth.account.utils import complete_signup
-from .forms import SocialSignUpForm
-from django.shortcuts import render, redirect
-
-# test2
-from pathlib import Path
-from django.core.exceptions import ImproperlyConfigured
-import json
-import os
-from dj_rest_auth.registration.views import SocialLoginView
-from django.http import JsonResponse
 import requests
+from django.shortcuts import render, redirect
+from django.contrib.auth import login, logout
+from django.conf import settings
+from django.utils.translation import gettext_lazy as _
+from django.http import JsonResponse
+from json.decoder import JSONDecodeError
+from rest_framework import status
+from rest_framework.response import Response
+from dj_rest_auth.registration.views import SocialLoginView
+from .forms import SocialSignUpForm
+from allauth.socialaccount.providers.google import views as google_view
+from allauth.socialaccount.providers.kakao import views as kakao_view
+from allauth.socialaccount.providers.oauth2.client import OAuth2Client
+from allauth.socialaccount.models import SocialAccount
+from users.models import User
+from django.views.decorators.csrf import csrf_exempt
 
-BASE_DIR = Path(__file__).resolve().parent.parent
-
-secret_file = BASE_DIR / "secrets.json"
-with open(secret_file) as file:
-    secrets = json.loads(file.read())
-
-def get_secrets(setting, secrets_dict=secrets):
-    try:
-        return secrets_dict[setting]
-    except KeyError:
-        error_msg = f'set the {setting} environment variable'
-        raise ImproperlyConfigured(error_msg)
-
-state = get_secrets('STATE')
+state = 'stsegsdfsdfsfd'
 BASE_URL = 'http://127.0.0.1:8000/'
 GOOGLE_CALLBACK_URI = BASE_URL + 'accounts/google/callback/'
-
-def test(request):
-    return render(request, 'accounts/print_login.html')
+KAKAO_CALLBACK_URI = BASE_URL + 'accounts/kakao/callback/'
 
 def google_login(request):
     scope = "https://www.googleapis.com/auth/userinfo.email"
-    client_id = settings.SOCIAL_AUTH_GOOGLE_CLIENT_ID
-    return redirect(f"https://accounts.google.com/o/oauth2/v2/auth?client_id={client_id}&response_type=code&redirect_uri={GOOGLE_CALLBACK_URI}&scope={scope}")
+    client_id = getattr(settings, "SOCIAL_AUTH_GOOGLE_CLIENT_ID")
+    return redirect(f"https://accounts.google.com/o/oauth2/v2/auth?client_id={client_id}&response_type=code&redirect_uri={GOOGLE_CALLBACK_URI}&scope={scope}&prompt=select_account")
 
-from rest_framework import status
-from allauth.socialaccount.models import SocialAccount
 
+@csrf_exempt
 def google_callback(request):
-    code = request.GET.get('code')
     client_id = settings.SOCIAL_AUTH_GOOGLE_CLIENT_ID
     client_secret = settings.SOCIAL_AUTH_GOOGLE_SECRET
+    code = request.GET.get('code')
 
-    # 1. 받은 코드로 구글에 access token 요청
-    token_uri = "https://oauth2.googleapis.com/token"
-    data = {
-        'code': code,
-        'client_id': client_id,
-        'client_secret': client_secret,
-        'redirect_uri': GOOGLE_CALLBACK_URI,
-        'grant_type': 'authorization_code'
-    }
-    
-    token_req = requests.post(token_uri, data=data)
-    
-    # 1-1. json으로 변환 & 에러 부분 파싱
+    # Access Token Request
+    token_req = requests.post(
+        f"https://oauth2.googleapis.com/token",
+        data={
+            'client_id': client_id,
+            'client_secret': client_secret,
+            'code': code,
+            'grant_type': 'authorization_code',
+            'redirect_uri': GOOGLE_CALLBACK_URI,
+        }
+    )
     token_req_json = token_req.json()
-    error = token_req_json.get("error")
-
-    # 1-2. 에러 발생 시 종료
-    if error is not None:
-        return JsonResponse({'error': error}, status=status.HTTP_400_BAD_REQUEST)
-
-    # 1-3. 성공 시 access_token 가져오기
     access_token = token_req_json.get('access_token')
-    if not access_token:
-        return JsonResponse({'error': 'Failed to retrieve access token'}, status=status.HTTP_400_BAD_REQUEST)
+    id_token = token_req_json.get('id_token')
 
-    # 2. 가져온 access_token으로 이메일값을 구글에 요청
-    email_req = requests.get(f"https://www.googleapis.com/oauth2/v1/tokeninfo?access_token={access_token}")
-    email_req_status = email_req.status_code
+    if not access_token or not id_token:
+        return JsonResponse({'err_msg': 'Failed to obtain access token or id token'}, status=status.HTTP_400_BAD_REQUEST)
 
-    # 2-1. 에러 발생 시 400 에러 반환
-    if email_req_status != 200:
-        return JsonResponse({'err_msg': 'failed to get email'}, status=status.HTTP_400_BAD_REQUEST)
-    
-    # 2-2. 성공 시 이메일 가져오기
+    # Use the access token to get the email
+    email_req = requests.get(
+        f"https://www.googleapis.com/oauth2/v1/tokeninfo?access_token={access_token}")
     email_req_json = email_req.json()
     email = email_req_json.get('email')
 
-    # 3. 전달받은 이메일, access_token, code를 바탕으로 회원가입/로그인
+    if not email:
+        return JsonResponse({'err_msg': 'Failed to retrieve email from token'}, status=status.HTTP_400_BAD_REQUEST)
+
     try:
-        # 전달받은 이메일로 등록된 유저가 있는지 탐색
         user = User.objects.get(email=email)
-
-        # FK로 연결되어 있는 socialaccount 테이블에서 해당 이메일의 유저가 있는지 확인
-        social_user = SocialAccount.objects.get(user=user)
-
-        # 있는데 구글계정이 아니어도 에러
-        if social_user.provider != 'google':
-            return JsonResponse({'err_msg': 'no matching social type'}, status=status.HTTP_400_BAD_REQUEST)
-
-        # 이미 Google로 제대로 가입된 유저 => 로그인 & 해당 유저의 jwt 발급
-        data = {'access_token': access_token, 'code': code}
-        accept = requests.post(f"{BASE_URL}dj-rest-auth/google/login/finish/", data=data)
-        accept_status = accept.status_code
-
-        # 뭔가 중간에 문제가 생기면 에러
-        if accept_status != 200:
-            return JsonResponse({'err_msg': 'failed to signin'}, status=accept_status)
-
-        accept_json = accept.json()
-        accept_json.pop('user', None)
-        return JsonResponse(accept_json)
-
+        login(request, user)
+        return redirect('root')
     except User.DoesNotExist:
-        # 전달받은 이메일로 기존에 가입된 유저가 아예 없으면 => 새로 회원가입 & 해당 유저의 jwt 발급
-        data = {'access_token': access_token, 'code': code}
-        accept = requests.post(f"{BASE_URL}dj-rest-auth/google/login/finish/", data=data)
-        accept_status = accept.status_code
+        request.session['email'] = email
+        return redirect('social_signup')
 
-        # 뭔가 중간에 문제가 생기면 에러
-        if accept_status != 200:
-            return JsonResponse({'err_msg': 'failed to signup'}, status=accept_status)
+# Kakao
+def kakao_login(request):
+    rest_api_key = settings.KAKAO_REST_API_KEY
+    return redirect(
+        f"https://kauth.kakao.com/oauth/authorize?client_id={rest_api_key}&redirect_uri={KAKAO_CALLBACK_URI}&response_type=code&prompt=login"
+    )
 
-        accept_json = accept.json()
-        accept_json.pop('user', None)
-        return JsonResponse(accept_json)
-        
-    except SocialAccount.DoesNotExist:
-        # User는 있는데 SocialAccount가 없을 때 (=일반회원으로 가입된 이메일일때)
-        return JsonResponse({'err_msg': 'email exists but not social user'}, status=status.HTTP_400_BAD_REQUEST)
+@csrf_exempt
+def kakao_callback(request):
+    rest_api_key = settings.KAKAO_REST_API_KEY
+    redirect_uri = KAKAO_CALLBACK_URI
+    code = request.GET.get("code")
 
-from allauth.socialaccount.providers.oauth2.client import OAuth2Client
-from allauth.socialaccount.providers.google import views as google_view
+    # Access Token Request
+    token_req = requests.get(
+        f"https://kauth.kakao.com/oauth/token?grant_type=authorization_code&client_id={rest_api_key}&redirect_uri={redirect_uri}&code={code}")
+    token_req_json = token_req.json()
+    access_token = token_req_json.get("access_token")
 
-class GoogleLogin(SocialLoginView):
-    adapter_class = google_view.GoogleOAuth2Adapter
-    callback_url = GOOGLE_CALLBACK_URI
-    client_class = OAuth2Client
+    if not access_token:
+        return JsonResponse({'err_msg': 'Failed to obtain access token'}, status=status.HTTP_400_BAD_REQUEST)
+
+    # Use the access token to get the user's email
+    profile_request = requests.get(
+        "https://kapi.kakao.com/v2/user/me", headers={"Authorization": f"Bearer {access_token}"})
+    profile_json = profile_request.json()
+    kakao_account = profile_json.get('kakao_account')
+    email = kakao_account.get('email')
+
+    if not email:
+        return JsonResponse({'err_msg': 'Failed to retrieve email from Kakao account'}, status=status.HTTP_400_BAD_REQUEST)
+
+    try:
+        user = User.objects.get(email=email)
+        login(request, user)
+        return redirect('root')
+    except User.DoesNotExist:
+        request.session['email'] = email
+        return redirect('social_signup')
+    
+def social_signup(request):
+    if request.method == 'POST':
+        form = SocialSignUpForm(request.POST)
+        if form.is_valid():
+            email = request.session.get('email')
+            user = form.save(commit=False)
+            user.email = email
+            user.set_password(None)
+            user.save()
+            login(request, user)
+            return redirect('root')
+    else:
+        form = SocialSignUpForm()
+    return render(request, 'accounts/social_signup.html', {'form': form})
 
 # Create your views here.
 def print_signup(req):
@@ -166,7 +150,6 @@ def print_login(req):
         else:
             return render(req, 'accounts/print_login.html', {'form': form})
 
-        
 def print_logout(req):
     if req.user.is_authenticated:
         logout(req)

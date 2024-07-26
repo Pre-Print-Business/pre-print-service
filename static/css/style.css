@@ -1,16 +1,38 @@
 /* 메인페이지 css */
 body {
     font-family: Arial, sans-serif;
+    min-height: 100vh;
+    margin: 0;
+    padding-bottom: 60px;
+    position: relative;
+}
+
+.content {
+    text-align: center;
 }
 
 .preprint-logo{
     width: 130px;
 }
 
+.logo-image{
+    width: 130px;
+}
+
+.mypage-image{
+    width: 50px;
+}
+
+.cloud-image{
+    width: 50px;
+}
+
 .navbar {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    max-width: 1200px;
+    margin: 0 auto;
 }
 
 .navbar-left, .navbar-center, .navbar-right {
@@ -18,22 +40,28 @@ body {
     align-items: center;
 }
 
+
+.navbar-right a{
+    margin-right: 20px;
+}
+
 .navbar-center a {
     margin: 0 10px;
 }
 
 .content {
-text-align: center;
+    text-align: center;
+    padding-bottom: 60px;
 }
 
 .logo {
-    color: #90EE90;
+    color: #1855b1;
     margin-top: 50px;
     font-size: 80px;
 }
 
 .print-start-button {
-    background-color: #90EE90;
+    background-color: #1855b1;
     padding: 20px 250px 20px 250px;
     border-radius: 40px;
     border: none;
@@ -53,19 +81,62 @@ margin-top: 5px;
 }
 
 .footer {
-background-color: #dfdfdf;
-padding: 10px;
-text-align: center;
-position: fixed;
-bottom: 0;
-width: 100%;
-left: 0;
-box-sizing: border-box;
+    background-color: #dfdfdf;
+    padding: 10px;
+    text-align: center;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    left: 0;
+    box-sizing: border-box;
+    height: calc(100vh / 8);
 }
+
 
 .print-main{
     position: relative;
-    top: 150px;
+    top: 80px;
+}
+
+.search-form-group {
+    margin-bottom: 20px;
+}
+.search-space{
+    background-color: #EDEDED;
+    padding: 10px 20px 10px 20px;
+    border-radius: 40px 20px 20px 40px;
+    border: none;
+    cursor: pointer;
+    font-size: 40px;
+    width: 500px;
+    height: 50px;
+}
+
+.search-submit-button {
+    background-color: #1855b1;
+    padding: 5px 20px 5px 20px;
+    border-radius: 20px 40px 40px 20px;
+    border: none;
+    cursor: pointer;
+    font-size: 40px;
+    color: white;
+    width: 100px;
+    height: 70px;
+}
+
+.navbar-center{
+    background-color: #1855b1;
+    border-radius: 40px;
+    cursor: pointer;
+    width: 95px;
+    height: 35px;
+    margin-right: 20px;
+    
+}
+.introduce{
+    color: white;
+    text-decoration: none;
+    font-size: 18px;
 }
 
 /* 프린트디테일 페이지 */
@@ -83,7 +154,7 @@ box-sizing: border-box;
     display: flex;
     justify-content: center;
     align-items: center;
-    height: calc(100vh - (200px));
+    height: calc(100vh - (300px));
 }
 
 .color-space{
@@ -105,7 +176,7 @@ box-sizing: border-box;
 }
 
 .pw-submit-button {
-    background-color: #90EE90;
+    background-color: #1855b1;
     padding: 5px 20px 5px 20px;
     border-radius: 20px;
     border: none;
@@ -134,3 +205,100 @@ box-sizing: border-box;
     margin-left: auto; 
     margin-right: auto; 
 }
+
+@media only screen and (max-width: 600px) {
+    .search-form-group {
+        margin-bottom: 20px;
+    }
+    .search-space{
+        background-color: #EDEDED;
+        padding: 10px 20px 10px 20px;
+        border-radius: 40px 20px 20px 40px;
+        border: none;
+        cursor: pointer;
+        font-size: 20px;
+        width: 200px;
+        height: 50px;
+    }
+    
+    .search-submit-button {
+        background-color: #1855b1;
+        padding: 5px 20px 5px 20px;
+        border-radius: 20px 40px 40px 20px;
+        border: none;
+        cursor: pointer;
+        font-size: 20px;
+        color: white;
+        width: 100px;
+        height: 70px;
+    }
+
+    .print-start-button {
+        background-color: #1855b1;
+        padding: 20px 140px 20px 140px;
+        border-radius: 40px;
+        border: none;
+        cursor: pointer;
+        font-size: 20px;
+        color: white;
+    }
+
+    .logo {
+        color: #1855b1;
+        margin-top: 50px;
+        font-size: 50px;
+    }
+
+    .logo-image{
+        width: 100px;
+    }
+
+    /* 디테일 */
+    .detail-form-group {
+        display: flex;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+     
+    .detail-form-group h2 {
+        margin-right: 20px; 
+    }
+    
+    .centered-form-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: calc(100vh - (300px));
+    }
+    
+    .color-space{
+        background-color: #EDEDED;
+        padding: 17px 40px 17px 40px;
+        border-radius: 20px;
+        border: none;
+        cursor: pointer;
+        font-size: 20px;
+    }
+    
+    .pw-space{
+        background-color: #EDEDED;
+        padding: 10px 20px 10px 20px;
+        border-radius: 20px;
+        border: none;
+        cursor: pointer;
+        font-size: 20px;
+    }
+    
+    .pw-submit-button {
+        background-color: #1855b1;
+        padding: 5px 20px 5px 20px;
+        border-radius: 20px;
+        border: none;
+        cursor: pointer;
+        font-size: 20px;
+        color: white;
+    }
+}
+
+
+

@@ -1,9 +1,4 @@
 
-/* 로그인 페이지 */
-/* .login_form {
-    max-width: 500px;
-    margin: 0 auto;
-}  */
 .login-info-space {
     width: 100%;
     padding: 10px;
@@ -17,7 +12,7 @@
 
 .login-button {
     padding: 20px 250px 20px 250px;
-    background-color: #90EE90;
+    background-color: #1855b1;
     border: none; 
     cursor: pointer;
     font-size: 40px;
@@ -26,7 +21,7 @@
 }
 
 .login-button:hover {
-    background-color: #80DD80; 
+    background-color: #1855b1;
 }
 
 .login-form-group {
@@ -63,7 +58,7 @@ input[type="text"], input[type="password"], input[type="email"] {
 }
 
 .signup-button {
-    background-color: #90EE90;
+    background-color: #1855b1;
     padding: 20px 250px 20px 250px;
     font-size: 40px;
     border-radius: 40px;
@@ -72,4 +67,40 @@ input[type="text"], input[type="password"], input[type="email"] {
     color: white;
 }
 
+@media only screen and (max-width: 600px) {
+    .login-info-space {
+        width: 100%;
+        padding: 10px;
+        box-sizing: border-box;
+        border: 1px solid #ccc;
+        background-color: #f0f0f0;
+        border-radius: 4px;
+        max-width: 400px;
+    }
+    
+    
+    .login-button {
+        padding: 20px 140px 20px 140px;
+        background-color: #1855b1;
+        border: none; 
+        cursor: pointer;
+        font-size: 20px;
+        border-radius: 40px;
+        color: white;
+    }
 
+    .signup-form-group label {
+        margin-left: 20px;
+        font-size: 20px;
+    }
+
+    .signup-button {
+        background-color: #1855b1;
+        padding: 20px 140px 20px 140px;
+        font-size: 20px;
+        border-radius: 40px;
+        cursor: pointer;
+        border: none;
+        color: white;
+    }
+}
