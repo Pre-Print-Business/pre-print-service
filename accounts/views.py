@@ -19,7 +19,7 @@ from users.models import User
 from django.views.decorators.csrf import csrf_exempt
 
 state = 'stsegsdfsdfsfd'
-BASE_URL = 'http://3.37.25.83:8000/'
+BASE_URL = 'http://13.125.43.166:8000/'
 GOOGLE_CALLBACK_URI = BASE_URL + 'accounts/google/callback/'
 KAKAO_CALLBACK_URI = BASE_URL + 'accounts/kakao/callback/'
 
