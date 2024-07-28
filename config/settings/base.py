@@ -1,20 +1,7 @@
 from pathlib import Path
 
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve().parent.parent
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
-
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
-
-# SECURITY WARNING: keep the secret key used in production secret!
-
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-
-ALLOWED_HOSTS = ['*']
-
-from pathlib import Path
 from django.core.exceptions import ImproperlyConfigured
 import json
 
@@ -38,16 +25,20 @@ STATE = get_secrets("STATE")
 
 KAKAO_REST_API_KEY = get_secrets("KAKAO_REST_API_KEY")
 
-INSTALLED_APPS = [
+DJANGO_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+]
+PROJECT_APPS = [
     'preprint',
     'users',
     'accounts',
+]
+THIRD_PARTY_APPS = [
     # django-rest-framework
     'rest_framework',
     'rest_framework.authtoken',
@@ -154,9 +145,6 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
 STATIC_URL = 'static/'
-STATICFILES_DIRS = [
-    BASE_DIR / 'static'
-]
 
 MEDIA_URL = 'media/'
 MEDIA_ROOT = BASE_DIR / 'media'
@@ -170,7 +158,6 @@ AUTH_USER_MODEL = 'users.User'
 
 # 포트원
 INTERNAL_IPS = ["127.0.0.1"]
-
 PORTONE_SHOP_ID = get_secrets('PORTONE_SHOP_ID')
 PORTONE_API_KEY = get_secrets('PORTONE_API_KEY')
 PORTONE_API_SECRET = get_secrets('PORTONE_API_SECRET')

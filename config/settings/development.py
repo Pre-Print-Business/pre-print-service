@@ -1,0 +1,11 @@
+from .base import *
+
+DEBUG = True
+
+ALLOWED_HOSTS = []
+
+INSTALLED_APPS = DJANGO_APPS + PROJECT_APPS + THIRD_PARTY_APPS
+
+STATICFILES_DIRS = [
+    BASE_DIR / 'static'
+]
