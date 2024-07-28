@@ -164,10 +164,8 @@ def print_payment_list(req):
         'orders_with_files': orders_with_files,
         'orders_count': orders.count(),
     }
-
     return render(req, 'preprint/payment_list.html', context)
 
-        
 
 @require_POST
 @csrf_exempt
