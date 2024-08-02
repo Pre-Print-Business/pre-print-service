@@ -19,7 +19,7 @@ from users.models import User
 from django.views.decorators.csrf import csrf_exempt
 
 state = 'stsegsdfsdfsfd'
-BASE_URL = 'http://13.125.43.166:8000/'
+BASE_URL = "http://127.0.0.1:8000/" if settings.DEBUG else "https://preprintreserve.com/"
 GOOGLE_CALLBACK_URI = BASE_URL + 'accounts/google/callback/'
 KAKAO_CALLBACK_URI = BASE_URL + 'accounts/kakao/callback/'
 
@@ -27,7 +27,6 @@ def google_login(request):
     scope = "https://www.googleapis.com/auth/userinfo.email"
     client_id = getattr(settings, "SOCIAL_AUTH_GOOGLE_CLIENT_ID")
     return redirect(f"https://accounts.google.com/o/oauth2/v2/auth?client_id={client_id}&response_type=code&redirect_uri={GOOGLE_CALLBACK_URI}&scope={scope}&prompt=select_account")
-
 
 @csrf_exempt
 def google_callback(request):

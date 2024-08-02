@@ -64,7 +64,6 @@ def print_detail(req):
             messages.error(req, "비밀번호는 숫자 4자리를 입력해야 합니다.")
             return render(req, "preprint/print_detail.html")
 
-        
         total_pages = 0
         for file in files:
             with tempfile.NamedTemporaryFile(delete=False, suffix=".pdf") as tmpfile:
@@ -80,7 +79,18 @@ def print_detail(req):
         for file in files:
             OrderFile.objects.create(order=order, file=file)
         
-        return redirect('print_payment')
+        return redirect('print_payment_ready', order_id=order.id)
+
+    
+def print_payment_ready(req, order_id):
+    order = get_object_or_404(Order, id=order_id, order_user=req.user)
+    order_files = OrderFile.objects.filter(order=order)
+    context = {
+        'order': order,
+        'files': order_files,
+    }
+    return render(req, 'preprint/print_payment_ready.html', context)
+
 
 def print_payment(req):
     latest_order = Order.objects.filter(order_user=req.user).order_by('-order_date').first()
@@ -115,6 +125,7 @@ def print_payment(req):
             "next_url": check_url,
         },
     )
+
 @login_required
 def print_payment_check(req, order_pk, payment_pk):
     payment = get_object_or_404(OrderPayment, pk=payment_pk, order__pk=order_pk)
@@ -132,6 +143,30 @@ def print_payment_detail(req, order_pk):
         'payment': payment,
     }
     return render(req, 'preprint/print_payment_detail.html', context)
+
+@login_required
+@require_POST
+def cancel_order(request, order_id):
+    order = get_object_or_404(Order, id=order_id, order_user=request.user)
+    
+    if order.status == Order.Status.CANCELLED:
+        messages.error(request, "이 주문은 이미 취소되었습니다.")
+        return redirect('print_payment_list')
+
+    if order.status in [Order.Status.PAID, Order.Status.PREPARED_PRODUCT, Order.Status.SHIPPED, Order.Status.DELIVERED]:
+        # Cancel the payment if it exists
+        payment = OrderPayment.objects.filter(order=order).first()
+        if payment and payment.pay_status == OrderPayment.PayStatus.PAID:
+            try:
+                payment.cancel(reason="User requested cancellation")
+            except Exception as e:
+                messages.error(request, f"결제 취소 중 오류가 발생했습니다: {str(e)}")
+                return redirect('print_payment_list')
+
+    order.status = Order.Status.CANCELLED
+    order.save()
+    messages.success(request, "주문이 취소되었습니다.")
+    return redirect('print_payment_list')
 
 
 ### 마이페이지 & 결제내역

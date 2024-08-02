@@ -34,6 +34,17 @@
                     <p>결제 수단: {{ order_with_files.payment.get_pay_method_display }}</p>
                 </div>
                 {% endif %}
+                <form method="post" action="{% url 'print_payment' %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="order_id" value="{{ order_with_files.order.id }}">
+                    <button type="submit" class="btn btn-primary">결제하기</button>
+                </form>
+                {% if order_with_files.order.status != 'cancelled' %}
+                <form method="post" action="{% url 'cancel_order' order_with_files.order.id %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">주문취소</button>
+                </form>
+                {% endif %}
             </div>
         {% endfor %}
     </div>

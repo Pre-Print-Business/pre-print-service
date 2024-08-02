@@ -4,7 +4,6 @@ DEBUG = False
 
 ALLOWED_HOSTS = ['13.125.43.166', 'preprintreserve.com', 'www.preprintreserve.com']
 
-
 CSRF_TRUSTED_ORIGINS = ['http://13.125.43.166', 'https://13.125.43.166', 'https://preprintreserve.com', 'https://www.preprintreserve.com']
 
 INSTALLED_APPS = DJANGO_APPS + PROJECT_APPS + THIRD_PARTY_APPS
