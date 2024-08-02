@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block title %}결제 준비{% endblock %}
+
+{% block content %}
+<div class="payment-ready-container">
+    <h2>결제 준비</h2>
+    <div class="order-details">
+        <p>주문 번호: {{ order.id }}</p>
+        <p>가격: {{ order.order_price }}</p>
+        <p>색상: {{ order.order_color }}</p>
+        <p>사물함 PW: {{ order.order_pw }}</p>
+        <h4>파일 목록:</h4>
+        <ul>
+            {% for file in files %}
+                <li>{{ file.file.name }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+    <form method="post" action="{% url 'print_payment' %}">
+        {% csrf_token %}
+        <input type="hidden" name="order_id" value="{{ order.id }}">
+        <button type="submit" class="btn btn-primary">결제하기</button>
+    </form>
+</div>
+{% endblock %}
