@@ -9,6 +9,15 @@
 {% block content %}
 <div class="payment-detail-container">
     <h1 class="logo">Requested Print</h1>
+    {% if messages %}
+    <div class="container mt-3">
+        {% for message in messages %}
+            <div class="alert {% if message.tags %}alert-{{ message.tags }}{% else %}alert-info{% endif %}" role="alert">
+                {{ message }}
+            </div>
+        {% endfor %}
+    </div>
+    {% endif %}
     <div class="payment-detail-page">
         <h3>예약된 주문 : {{ orders_count }}</h3>
         {% for order_with_files in orders_with_files %}
@@ -26,24 +35,32 @@
                         <li><a href="{{ file.file.url }}">{{ file.file.name }}</a></li>
                     {% endfor %}
                 </ul>
-                {% if order_with_files.payment %}
-                <div class="payment-info">
-                    <h4>결제 정보</h4>
-                    <p>결제 금액: {{ order_with_files.payment.desired_amount }}</p>
-                    <p>결제 상태: {{ order_with_files.payment.get_pay_status_display }}</p>
-                    <p>결제 수단: {{ order_with_files.payment.get_pay_method_display }}</p>
-                </div>
-                {% endif %}
-                <form method="post" action="{% url 'print_payment' %}">
-                    {% csrf_token %}
-                    <input type="hidden" name="order_id" value="{{ order_with_files.order.id }}">
-                    <button type="submit" class="btn btn-primary">결제하기</button>
-                </form>
-                {% if order_with_files.order.status != 'cancelled' %}
-                <form method="post" action="{% url 'cancel_order' order_with_files.order.id %}">
-                    {% csrf_token %}
-                    <button type="submit" class="btn btn-danger">주문취소</button>
-                </form>
+                
+                {% if order_with_files.order.status == 'cancelled' %}
+                    <p class="text-danger">주문이 취소된 상태입니다.</p>
+                
+                {% elif order_with_files.payment and order_with_files.payment.is_paid_ok %}
+                    <div class="payment-info">
+                        <h4>결제 정보</h4>
+                        <p>결제 금액: {{ order_with_files.payment.desired_amount }}</p>
+                        <p>결제 상태: {{ order_with_files.payment.get_pay_status_display }}</p>
+                        <p>결제 수단: {{ order_with_files.payment.get_pay_method_display }}</p>
+                    </div>
+                    <p class="text-success">결제가 완료되었습니다.</p>
+
+                    <p class="text-warning">* 주문 취소는 01시 이전에만 가능합니다.</p>
+                    <form method="post" action="{% url 'cancel_order' order_with_files.order.id %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger">주문취소</button>
+                    </form>
+                
+                {% else %}
+                    <p>결제가 진행되지 않았습니다.</p>
+                    <form method="post" action="{% url 'print_payment' %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="order_id" value="{{ order_with_files.order.id }}">
+                        <button type="submit" class="btn btn-primary">결제하기</button>
+                    </form>
                 {% endif %}
             </div>
         {% endfor %}
