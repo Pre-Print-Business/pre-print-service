@@ -71,8 +71,13 @@ def print_detail(req):
                     tmpfile.write(chunk)
                 
                 total_pages += get_pdf_page_count(tmpfile.name)
-        
-        order_price = total_pages * 100
+
+        if color == "C":
+            page_price = 200
+        else:
+            page_price = 50
+
+        order_price = total_pages * page_price
 
         order = Order.objects.create(order_user=req.user, order_price=order_price, order_pw=pw, order_color=color)
 
@@ -80,6 +85,7 @@ def print_detail(req):
             OrderFile.objects.create(order=order, file=file)
         
         return redirect('print_payment_ready', order_id=order.id)
+
 
     
 def print_payment_ready(req, order_id):
@@ -100,7 +106,7 @@ def print_payment(req):
 
     if not latest_order.can_pay():
         messages.error(req, "결제를 할 수 없는 주문입니다.")
-        return redirect('print_mypage')
+        return redirect('mypage')
 
     payment = OrderPayment.create_by_order(latest_order)
 
@@ -144,17 +150,33 @@ def print_payment_detail(req, order_pk):
     }
     return render(req, 'preprint/print_payment_detail.html', context)
 
+from django.utils.timezone import now
+from django.utils.timezone import localtime
+from datetime import time
+
 @login_required
 @require_POST
 def cancel_order(request, order_id):
     order = get_object_or_404(Order, id=order_id, order_user=request.user)
     
+    current_time = localtime().time()
+    
+    # 취소 불가능 시간대 설정 (01:00 ~ 09:00)
+    cancel_start_time = time(1, 0)
+    cancel_end_time = time(9, 0)
+
+    # 현재 시간이 취소 불가능 시간대에 해당하면
+    if cancel_start_time <= current_time < cancel_end_time:
+        messages.error(request, "현재 시간에는 주문 취소가 불가능합니다. 주문 취소는 01시부터 09시 사이에는 불가능합니다.")
+        return redirect('print_payment_list')
+
+    # 주문이 이미 취소된 상태인지 확인
     if order.status == Order.Status.CANCELLED:
         messages.error(request, "이 주문은 이미 취소되었습니다.")
         return redirect('print_payment_list')
 
+    # 주문이 취소 가능한 상태인지 확인
     if order.status in [Order.Status.PAID, Order.Status.PREPARED_PRODUCT, Order.Status.SHIPPED, Order.Status.DELIVERED]:
-        # Cancel the payment if it exists
         payment = OrderPayment.objects.filter(order=order).first()
         if payment and payment.pay_status == OrderPayment.PayStatus.PAID:
             try:
@@ -163,6 +185,7 @@ def cancel_order(request, order_id):
                 messages.error(request, f"결제 취소 중 오류가 발생했습니다: {str(e)}")
                 return redirect('print_payment_list')
 
+    # 주문 상태를 취소로 업데이트
     order.status = Order.Status.CANCELLED
     order.save()
     messages.success(request, "주문이 취소되었습니다.")

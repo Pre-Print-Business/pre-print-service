@@ -34,7 +34,6 @@ def google_callback(request):
     client_secret = settings.SOCIAL_AUTH_GOOGLE_SECRET
     code = request.GET.get('code')
 
-    # Access Token Request
     token_req = requests.post(
         f"https://oauth2.googleapis.com/token",
         data={
@@ -52,7 +51,6 @@ def google_callback(request):
     if not access_token or not id_token:
         return JsonResponse({'err_msg': 'Failed to obtain access token or id token'}, status=status.HTTP_400_BAD_REQUEST)
 
-    # Use the access token to get the email
     email_req = requests.get(
         f"https://www.googleapis.com/oauth2/v1/tokeninfo?access_token={access_token}")
     email_req_json = email_req.json()
@@ -82,7 +80,6 @@ def kakao_callback(request):
     redirect_uri = KAKAO_CALLBACK_URI
     code = request.GET.get("code")
 
-    # Access Token Request
     token_req = requests.get(
         f"https://kauth.kakao.com/oauth/token?grant_type=authorization_code&client_id={rest_api_key}&redirect_uri={redirect_uri}&code={code}")
     token_req_json = token_req.json()
@@ -91,7 +88,6 @@ def kakao_callback(request):
     if not access_token:
         return JsonResponse({'err_msg': 'Failed to obtain access token'}, status=status.HTTP_400_BAD_REQUEST)
 
-    # Use the access token to get the user's email
     profile_request = requests.get(
         "https://kapi.kakao.com/v2/user/me", headers={"Authorization": f"Bearer {access_token}"})
     profile_json = profile_request.json()
