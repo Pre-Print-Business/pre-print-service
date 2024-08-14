@@ -10,31 +10,30 @@
 <div class="payment-detail-container">
     <h1 class="logo">Complete payment</h1>
     <div class="payment-detail-page">
-        <h3>사물함 번호: {{ order.id }}</h3>
-        <p>주문 날짜: {{ order.order_date }}</p>
-        <div>
-            <p>가격: {{ order.order_price }}</p>
-            <p>색상: {{ order.order_color }}</p>
-            <p>사물함 PW: {{ order.order_pw }}</p>
+        <div class="order-div">
+            <h3>사물함 번호: {{ order.id }}</h3>
+            <p>주문 날짜: {{ order.order_date }}</p>
+            <div>
+                <p>가격: {{ order.order_price }}</p>
+                <p>색상: {{ order.order_color }}</p>
+                <p>사물함 PW: {{ order.order_pw }}</p>
+            </div>
+            <h4>파일:</h4>
+            <ul class="order-files">
+                {% for file in files %}
+                    <li><a href="{{ file.file.url }}">{{ file.file.name }}</a></li>
+                {% endfor %}
+            </ul>
+            {% if payment %}
+            <div class="payment-info">
+                <h4>결제 정보</h4>
+                <p>결제 금액: {{ payment.desired_amount }}</p>
+                <p>결제 상태: {{ payment.get_pay_status_display }}</p>
+                <p>결제 수단: {{ payment.get_pay_method_display }}</p>
+            </div>
+            {% endif %}
+            <br>
         </div>
-        <h4>파일:</h4>
-        <ul class="order-files">
-            {% for file in files %}
-                <li><a href="{{ file.file.url }}">{{ file.file.name }}</a></li>
-            {% endfor %}
-        </ul>
-        {% if payment %}
-        <div class="payment-info">
-            <h4>결제 정보</h4>
-            <p>결제 금액: {{ payment.desired_amount }}</p>
-            <p>결제 상태: {{ payment.get_pay_status_display }}</p>
-            <p>결제 수단: {{ payment.get_pay_method_display }}</p>
-        </div>
-        {% endif %}
-        <br>
-        <br>
-        <br>
-        <br>
     </div>
 </div>
 {% endblock %}

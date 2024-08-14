@@ -1,11 +1,15 @@
 {% extends "base.html" %}
-
+{% load static %}
 {% block title %}결제 준비{% endblock %}
 
+{% block additional_head %}
+<link rel="stylesheet" href="{% static 'css/preprint.css' %}?after">
+{% endblock %}
+
 {% block content %}
-<div class="payment-ready-container">
+<div class="payment-detail-page">
     <h2>결제 준비</h2>
-    <div class="order-details">
+    <div class="order-div">
         <p>주문 번호: {{ order.id }}</p>
         <p>가격: {{ order.order_price }}</p>
         <p>색상: {{ order.order_color }}</p>
