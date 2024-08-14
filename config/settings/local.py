@@ -1,5 +1,8 @@
 from .base import *
 
+import pymysql  
+pymysql.install_as_MySQLdb()
+
 DEBUG = True
 
 ALLOWED_HOSTS = []

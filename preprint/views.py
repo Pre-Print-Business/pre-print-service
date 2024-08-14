@@ -4,6 +4,9 @@ from .models import Order, OrderFile, OrderPayment
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_POST
 from django.contrib import messages
+from django.utils.timezone import now
+from django.utils.timezone import localtime
+from datetime import time
 # 이건 PyMuPDF
 import fitz
 # 이건 Poppler-pdfinfo
@@ -23,7 +26,6 @@ def print_main(req):
 
 def guide(req):
     return render(req, 'preprintcloud_guide.html')
-
 
 ### 윈도우 용
 # def get_pdf_page_count(pdf_path):
@@ -51,13 +53,22 @@ def print_detail(req):
             return redirect('login')
         else:
             return render(req, "preprint/print_detail.html")
+    
     elif req.method == "POST":
         files = req.FILES.getlist('files')
         color = req.POST['color']
         pw = req.POST['pw']
-
         if not files:
             messages.error(req, "파일을 선택해주세요.")
+            return render(req, "preprint/print_detail.html")
+        for file in files:
+            if not file.name.endswith('.pdf'):
+                messages.error(req, "PDF 파일만 업로드 가능합니다.")
+                return render(req, "preprint/print_detail.html")
+
+        total_size = sum(file.size for file in files)
+        if total_size > 100 * 1024 * 1024:  # 100MB 초과 여부 확인
+            messages.error(req, "모든 파일의 크기 합이 100MB를 초과할 수 없습니다.")
             return render(req, "preprint/print_detail.html")
 
         if not pw or not pw.isdigit() or len(pw) != 4:
@@ -69,7 +80,6 @@ def print_detail(req):
             with tempfile.NamedTemporaryFile(delete=False, suffix=".pdf") as tmpfile:
                 for chunk in file.chunks():
                     tmpfile.write(chunk)
-                
                 total_pages += get_pdf_page_count(tmpfile.name)
 
         if color == "C":
@@ -78,14 +88,10 @@ def print_detail(req):
             page_price = 50
 
         order_price = total_pages * page_price
-
         order = Order.objects.create(order_user=req.user, order_price=order_price, order_pw=pw, order_color=color)
-
         for file in files:
             OrderFile.objects.create(order=order, file=file)
-        
         return redirect('print_payment_ready', order_id=order.id)
-
 
     
 def print_payment_ready(req, order_id):
@@ -149,10 +155,6 @@ def print_payment_detail(req, order_pk):
         'payment': payment,
     }
     return render(req, 'preprint/print_payment_detail.html', context)
-
-from django.utils.timezone import now
-from django.utils.timezone import localtime
-from datetime import time
 
 @login_required
 @require_POST
