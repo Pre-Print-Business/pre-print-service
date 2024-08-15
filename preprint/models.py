@@ -24,6 +24,7 @@ class Order(models.Model):
     order_pw = models.CharField(verbose_name='비밀번호', max_length=4)
     order_color = models.CharField(verbose_name='색상', max_length=2)
     order_date = models.DateTimeField(verbose_name='주문날짜', auto_now_add=True)
+    locker_number = models.IntegerField(verbose_name="사물함 번호", null=True, blank=True, help_text="1~100 사이의 숫자")
     status = models.CharField(
         "진행상태",
         max_length=20,

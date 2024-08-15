@@ -22,7 +22,7 @@
         <h3>예약된 주문 : {{ orders_count }}</h3>
         {% for order_with_files in orders_with_files %}
             <div class="order-div">
-                <h3>사물함 번호: {{ order_with_files.order.id }}</h3>
+                <h3>사물함 번호: {{ order_with_files.order.locker_number }}</h3>
                 <p>주문 날짜: {{ order_with_files.order.order_date }}</p>
                 <div>
                     <p>가격: {{ order_with_files.order.order_price }}</p>
@@ -56,9 +56,10 @@
                 
                 {% else %}
                     <p>결제가 진행되지 않았습니다.</p>
-                    <form method="post" action="{% url 'print_payment' %}">
+                    <form method="post" action="{% url 'retry_payment' %}">
                         {% csrf_token %}
                         <input type="hidden" name="order_id" value="{{ order_with_files.order.id }}">
+                        <input type="hidden" name="payment_id" value="{{ order_with_files.payment.id }}">
                         <button type="submit" class="btn btn-primary">결제하기</button>
                     </form>
                 {% endif %}
