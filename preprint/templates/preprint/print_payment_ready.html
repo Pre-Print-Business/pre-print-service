@@ -21,6 +21,9 @@
             {% endfor %}
         </ul>
     </div>
+    <p>결제가 진행된 이후 자동 출력이 진행되는 시간은 익일 01시 입니다.</p>
+    <p>따라서 원활한 서비스 운영을 위하여 01시 1시간 전인 12시부터는 결제 취소가 불가능하다는 점을 알려드립니다. </p>
+    <p>금일 12시 전까지 결제취소가 가능하나 12~01시 사이의 결제취소는 불가능합니다. 이용에 참고부탁드립니다.</p>
     <form method="post" action="{% url 'print_payment' %}">
         {% csrf_token %}
         <input type="hidden" name="order_id" value="{{ order.id }}">
