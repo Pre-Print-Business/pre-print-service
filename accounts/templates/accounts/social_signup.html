@@ -25,6 +25,22 @@
                 <label for="{{ form.email_opt_in.id_for_label }}">Subscribe to Emails:</label>
                 {{ form.email_opt_in }}
             </div>
+            <div class="signup-form-group">
+                <label for="{{ form.birth_year.id_for_label }}">Birth Year:</label>
+                {{ form.birth_year }}
+            </div>
+            <div class="signup-form-group">
+                <label for="{{ form.birth_month.id_for_label }}">Birth Month:</label>
+                {{ form.birth_month }}
+            </div>
+            <div class="signup-form-group">
+                <label for="{{ form.birth_day.id_for_label }}">Birth Day:</label>
+                {{ form.birth_day }}
+            </div>
+            <div class="signup-form-group">
+                <label for="{{ form.gender.id_for_label }}">Gender:</label>
+                {{ form.gender }}
+            </div>
         </div>
         <div>
             <input type="submit" value="sign up" class="signup-button">

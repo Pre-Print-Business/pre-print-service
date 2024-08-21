@@ -24,4 +24,14 @@ class UserManager(DJangoUserManager):
 class User(AbstractUser):
     phone = models.CharField(verbose_name='전화번호', max_length=11)
     email_opt_in = models.BooleanField(default=False, verbose_name='이메일 수신 동의')
+    birth_year = models.PositiveIntegerField(verbose_name='출생년도', null=True, blank=True)
+    birth_month = models.PositiveIntegerField(verbose_name='출생월', null=True, blank=True)
+    birth_day = models.PositiveIntegerField(verbose_name='출생일', null=True, blank=True)
+    
+    GENDER_CHOICES = [
+        ('M', '남자'),
+        ('F', '여자'),
+    ]
+    gender = models.CharField(verbose_name='성별', max_length=1, choices=GENDER_CHOICES, null=True, blank=True)
+
     objects = UserManager()

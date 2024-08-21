@@ -4,8 +4,6 @@
 *.pot
 *.pyc
 __pycache__/
-local_settings.py
-today_orders
 db.sqlite3
 db.sqlite3-journal
 media

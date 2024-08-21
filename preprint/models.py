@@ -32,6 +32,8 @@ class Order(models.Model):
         default=Status.REQUESTED,
         db_index=True,
     )
+    total_pages = models.IntegerField(verbose_name="총 페이지 수", default=0)
+
     @property
     def name(self) -> str:
         return f"Order {self.pk}"

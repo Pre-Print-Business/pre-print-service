@@ -7,6 +7,8 @@ from django.contrib import messages
 from django.utils.timezone import now
 from django.utils.timezone import localtime
 from datetime import time
+from datetime import timedelta
+from django.utils import timezone
 # 이건 PyMuPDF
 import fitz
 # 이건 Poppler-pdfinfo
@@ -80,8 +82,8 @@ def print_detail(req):
                 return render(req, "preprint/print_detail.html")
 
         total_size = sum(file.size for file in files)
-        if total_size > 100 * 1024 * 1024:  # 100MB 초과 여부 확인
-            messages.error(req, "모든 파일의 크기 합이 100MB를 초과할 수 없습니다.")
+        if total_size > 200 * 1024 * 1024:
+            messages.error(req, "모든 파일의 크기 합이 200MB를 초과할 수 없습니다.")
             return render(req, "preprint/print_detail.html")
 
         if not pw or not pw.isdigit() or len(pw) != 4:
@@ -101,7 +103,15 @@ def print_detail(req):
             page_price = 50
 
         order_price = total_pages * page_price
-        order = Order.objects.create(order_user=req.user, order_price=order_price, order_pw=pw, order_color=color)
+
+        order = Order.objects.create(
+            order_user=req.user, 
+            order_price=order_price, 
+            order_pw=pw, 
+            order_color=color,
+            total_pages=total_pages
+        )
+
         for file in files:
             OrderFile.objects.create(order=order, file=file)
         return redirect('print_payment_ready', order_id=order.id)
@@ -162,8 +172,16 @@ def retry_payment(req):
     order_id = req.POST.get('order_id')
     payment_id = req.POST.get('payment_id')
 
+    print(order_id)
+    print(payment_id)
+
     order = get_object_or_404(Order, id=order_id, order_user=req.user)
-    payment = get_object_or_404(OrderPayment, id=payment_id, order=order)
+    # payment = get_object_or_404(OrderPayment, id=payment_id, order=order)
+
+    if not payment_id or payment_id == '':
+        payment = OrderPayment.create_by_order(order)
+    else:
+        payment = get_object_or_404(OrderPayment, id=payment_id, order=order)
 
     if payment.is_paid_ok:
         messages.error(req, "이미 결제된 주문입니다.")
@@ -198,8 +216,6 @@ def retry_payment(req):
             "next_url": check_url,
         },
     )
-
-
 
 @login_required
 def print_payment_check(req, order_pk, payment_pk):
@@ -277,10 +293,22 @@ def print_payment_list(req):
     if not req.user.is_authenticated:
         return redirect('login')
 
+    now = timezone.now()
+
+    # 주문을 필터링하여 가져옵니다.
     orders = Order.objects.filter(order_user=req.user).order_by('-order_date')
     orders_with_files = []
-    
+
     for order in orders:
+        # 결제완료가 아닌 상태에서 주문 시간이 3시간이 지난 경우 삭제
+        if order.status != Order.Status.PAID and now - order.order_date > timedelta(hours=3):
+            order.delete()
+            continue
+
+        # 결제완료 상태에서 주문 시간이 2일이 지난 경우 스킵
+        if order.status == Order.Status.PAID and now - order.order_date > timedelta(days=2):
+            continue
+
         order_files = OrderFile.objects.filter(order=order)
         payment = OrderPayment.objects.filter(order=order).first()
         orders_with_files.append({
@@ -288,12 +316,13 @@ def print_payment_list(req):
             'files': order_files,
             'payment': payment,
         })
-    
+
     context = {
         'orders_with_files': orders_with_files,
-        'orders_count': orders.count(),
+        'orders_count': len(orders_with_files),
     }
     return render(req, 'preprint/payment_list.html', context)
+
 
 
 @require_POST
