@@ -9,6 +9,7 @@
 {% block content %}
 <div class="payment-detail-page">
     <h2>결제 준비</h2>
+    <p>! 결제가 가능한 최소 금액은 100원입니다. 100원 미만의 금액은 100원으로 자동 조정됩니다. !</p>
     <div class="order-div">
         <p>주문 번호: {{ order.id }}</p>
         <p>가격: {{ order.order_price }}</p>

@@ -164,3 +164,56 @@ class OrderPayment(AbstractPortonePayment):
             buyer_name=order.order_user.get_full_name() or order.order_user.username,
             buyer_email=order.order_user.email,
         )
+
+class ArchivedOrder(models.Model):
+    class Status(models.TextChoices):
+        REQUESTED = "requested", "주문요청"
+        FAILED_PAYMENT = "failed_payment", "결제실패"
+        PAID = "paid", "결제완료"
+        PREPARED_PRODUCT = "prepared_product", "상품준비중"
+        SHIPPED = "shipped", "배송중"
+        DELIVERED = "delivered", "배송완료"
+        CANCELLED = "cancelled", "주문취소"
+
+    order_user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
+    order_price = models.DecimalField(max_digits=10, decimal_places=2)
+    order_pw = models.CharField(max_length=4)
+    order_color = models.CharField(max_length=2)
+    order_date = models.DateTimeField()
+    locker_number = models.IntegerField(null=True, blank=True)
+    status = models.CharField(max_length=20, choices=Status.choices, default=Status.REQUESTED)
+    total_pages = models.IntegerField(default=0)
+    archived_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        db_table = 'archived_order'
+        verbose_name = 'Archived Order'
+        verbose_name_plural = 'Archived Orders'
+
+
+class ArchivedOrderFile(models.Model):
+    order = models.ForeignKey(ArchivedOrder, on_delete=models.CASCADE)
+    file = models.FileField(upload_to='archived_files/')
+
+    class Meta:
+        db_table = 'archived_order_file'
+        verbose_name = 'Archived Order File'
+        verbose_name_plural = 'Archived Order Files'
+
+class ArchivedOrderPayment(models.Model):
+    order = models.ForeignKey(ArchivedOrder, on_delete=models.CASCADE, db_constraint=False)
+    meta = models.JSONField("포트원 결제내역", default=dict, editable=False)
+    uid = models.UUIDField("쇼핑몰 결제식별자", default=uuid4, editable=False)
+    name = models.CharField("결제명", max_length=200)
+    desired_amount = models.PositiveIntegerField("결제금액", editable=False)
+    buyer_name = models.CharField("구매자 이름", max_length=100, editable=False)
+    buyer_email = models.EmailField("구매자 이메일", editable=False)
+    pay_method = models.CharField("결제수단", max_length=20, choices=OrderPayment.PayMethod.choices, default=OrderPayment.PayMethod.CARD)
+    pay_status = models.CharField("결제상태", max_length=20, choices=OrderPayment.PayStatus.choices, default=OrderPayment.PayStatus.READY)
+    is_paid_ok = models.BooleanField("결제성공 여부", default=False, db_index=True, editable=False)
+    archived_at = models.DateTimeField("아카이빙 날짜", auto_now_add=True)
+
+    class Meta:
+        db_table = 'archived_order_payment'
+        verbose_name = 'Archived Order Payment'
+        verbose_name_plural = 'Archived Order Payments'

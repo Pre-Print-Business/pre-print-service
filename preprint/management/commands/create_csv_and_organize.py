@@ -1,26 +1,22 @@
 import os
 import csv
-from datetime import datetime, timedelta
-
+from datetime import timedelta
 from django.core.management.base import BaseCommand
 from django.conf import settings
 from django.utils import timezone
-from preprint.models import Order, OrderFile
+from preprint.models import Order, OrderFile, OrderPayment, ArchivedOrder, ArchivedOrderFile, ArchivedOrderPayment
 
 class Command(BaseCommand):
-    help = 'Create CSV file of today\'s orders and organize files'
+    help = 'Create CSV file of today\'s orders, organize files, and archive the data'
 
     def handle(self, *args, **kwargs):
-        # 현재 시간과 하루 전 시간을 가져옵니다.
         now = timezone.now()
         start_time = now - timedelta(days=1)
         start_time = start_time.replace(hour=1, minute=0, second=0, microsecond=0)
         end_time = now.replace(hour=1, minute=0, second=0, microsecond=0)
 
-        # 조건에 맞는 주문을 가져옵니다.
         orders = Order.objects.filter(order_date__gte=start_time, order_date__lte=end_time, locker_number__isnull=False)
 
-        # CSV 파일을 저장할 경로를 지정합니다.
         output_dir = os.path.join(settings.MEDIA_ROOT, 'today_orders')
         os.makedirs(output_dir, exist_ok=True)
 
@@ -28,28 +24,27 @@ class Command(BaseCommand):
         print(f"End time: {end_time}")
         print(f"Orders: {orders}")
 
-
-        # today_orders 폴더 안에 있는 모든 파일을 삭제합니다.
         for file_name in os.listdir(output_dir):
             file_path = os.path.join(output_dir, file_name)
             os.remove(file_path)
 
-        # CSV 파일 경로를 지정합니다.
         csv_file_path = os.path.join(output_dir, f'{now.strftime("%Y-%m-%d")}_orders.csv')
 
         with open(csv_file_path, 'w', newline='', encoding='utf-8') as csvfile:
             writer = csv.writer(csvfile)
-            # 헤더 작성
-            writer.writerow(['User ID', 'Username', 'Locker Number', 'Locker PW', 'Files'])
+            writer.writerow(['User ID', 'Username', 'Locker Number', 'Locker PW', 'Color', 'Files'])
 
             for order in orders:
-                # 관련된 파일 이름을 콤마로 구분하여 가져옵니다.
                 related_files = OrderFile.objects.filter(order=order)
                 file_names = ', '.join([os.path.basename(file.file.name) for file in related_files])
-
-                writer.writerow([order.order_user.id, order.order_user.username, order.locker_number, order.order_pw, file_names])
-
-        # media/files에 있는 모든 파일을 today_orders로 이동하고 media/files를 비웁니다.
+                writer.writerow([
+                    order.order_user.id, 
+                    order.order_user.username, 
+                    order.locker_number, 
+                    order.order_pw, 
+                    order.order_color,  
+                    file_names
+                ])
         files_dir = os.path.join(settings.MEDIA_ROOT, 'files')
         if os.path.exists(files_dir):
             for file_name in os.listdir(files_dir):
@@ -60,3 +55,40 @@ class Command(BaseCommand):
                     os.remove(file_path)
 
         self.stdout.write(self.style.SUCCESS('CSV creation and file organization complete.'))
+        all_orders = Order.objects.all()
+        self.archive_orders(all_orders)
+
+    def archive_orders(self, orders):
+        for order in orders:
+            archived_order = ArchivedOrder.objects.create(
+                order_user=order.order_user,
+                order_price=order.order_price,
+                order_pw=order.order_pw,
+                order_color=order.order_color,
+                order_date=order.order_date,
+                locker_number=order.locker_number,
+                status=order.status,
+                total_pages=order.total_pages,
+            )
+            related_files = OrderFile.objects.filter(order=order)
+            for file in related_files:
+                ArchivedOrderFile.objects.create(
+                    order=archived_order,
+                    file=file.file,
+                )
+            related_payments = OrderPayment.objects.filter(order=order)
+            for payment in related_payments:
+                ArchivedOrderPayment.objects.create(
+                    order=archived_order,
+                    meta=payment.meta,
+                    uid=payment.uid,
+                    name=payment.name,
+                    desired_amount=payment.desired_amount,
+                    buyer_name=payment.buyer_name,
+                    buyer_email=payment.buyer_email,
+                    pay_method=payment.pay_method,
+                    pay_status=payment.pay_status,
+                    is_paid_ok=payment.is_paid_ok,
+                )
+            order.delete()
+        self.stdout.write(self.style.SUCCESS('Orders, related files, and payments have been archived.'))
