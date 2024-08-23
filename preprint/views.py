@@ -323,11 +323,12 @@ def print_payment_list(req):
     if not req.user.is_authenticated:
         return redirect('login')
     now = timezone.now()
-    # 현재 Order를 필터링하여 가져옵니다.
+
     active_orders = Order.objects.filter(order_user=req.user).order_by('-order_date')
     archived_orders = ArchivedOrder.objects.filter(order_user=req.user).order_by('-order_date')
     orders_with_files = []
-    # 현재 Order 처리
+
+    # Order 처리
     for order in active_orders:
         # 결제완료가 아닌 상태에서 주문 시간이 3시간이 지난 경우 삭제
         if order.status != Order.Status.PAID and now - order.order_date > timedelta(hours=3):
@@ -361,7 +362,7 @@ def print_payment_list(req):
                 'order': archived_order,
                 'files': order_files,
                 'payment': payment,
-                'is_archived': True,  # 아카이브된 Order인지 여부 플래그임
+                'is_archived': True,
             })
     context = {
         'orders_with_files': orders_with_files,
