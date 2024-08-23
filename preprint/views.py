@@ -1,6 +1,6 @@
 import json
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import Order, OrderFile, OrderPayment
+from .models import Order, OrderFile, OrderPayment, ArchivedOrder, ArchivedOrderFile, ArchivedOrderPayment
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_POST
 from django.contrib import messages
@@ -103,6 +103,9 @@ def print_detail(req):
             page_price = 50
 
         order_price = total_pages * page_price
+
+        if order_price < 100:
+            order_price = 100
 
         order = Order.objects.create(
             order_user=req.user, 
@@ -222,11 +225,38 @@ def print_payment_check(req, order_pk, payment_pk):
     payment = get_object_or_404(OrderPayment, pk=payment_pk, order__pk=order_pk)
     payment.update()
 
+    # 현재 시간을 가져옵니다.
+    current_time = localtime().time()
+
+    # 취소 불가능 시간대 설정 (01:00 ~ 09:00)
+    cancel_start_time = time(1, 0)
+    cancel_end_time = time(9, 0)
+
+    # 현재 시간이 취소 불가능 시간대에 해당하면
+    if cancel_start_time <= current_time < cancel_end_time:
+        # 이미 결제가 완료된 상태라면 결제를 취소
+        if payment.is_paid_ok:
+            try:
+                payment.cancel(reason="결제 금지 시간대에 결제가 발생했습니다.")
+                payment.order.status = Order.Status.CANCELLED
+                payment.order.locker_number = None
+                payment.order.save()
+                messages.error(req, "결제 금지 시간대에 결제가 발생하여 결제가 취소되었습니다.")
+            except Exception as e:
+                messages.error(req, f"결제 취소 중 오류가 발생했습니다: {str(e)}")
+        else:
+            payment.order.locker_number = None
+            payment.order.save()
+            messages.error(req, "결제 금지 시간대에 결제가 시도되어 결제가 취소되었습니다.")
+        
+        return redirect('print_payment_list')
+
     if not payment.is_paid_ok:
         payment.order.locker_number = None
         payment.order.save()
 
     return redirect("print_payment_detail", order_pk=order_pk)
+
 
 @login_required
 def print_payment_detail(req, order_pk):
@@ -292,38 +322,52 @@ def print_mypage(req):
 def print_payment_list(req):
     if not req.user.is_authenticated:
         return redirect('login')
-
     now = timezone.now()
-
-    # 주문을 필터링하여 가져옵니다.
-    orders = Order.objects.filter(order_user=req.user).order_by('-order_date')
+    # 현재 Order를 필터링하여 가져옵니다.
+    active_orders = Order.objects.filter(order_user=req.user).order_by('-order_date')
+    archived_orders = ArchivedOrder.objects.filter(order_user=req.user).order_by('-order_date')
     orders_with_files = []
-
-    for order in orders:
+    # 현재 Order 처리
+    for order in active_orders:
         # 결제완료가 아닌 상태에서 주문 시간이 3시간이 지난 경우 삭제
         if order.status != Order.Status.PAID and now - order.order_date > timedelta(hours=3):
             order.delete()
             continue
-
         # 결제완료 상태에서 주문 시간이 2일이 지난 경우 스킵
         if order.status == Order.Status.PAID and now - order.order_date > timedelta(days=2):
             continue
-
         order_files = OrderFile.objects.filter(order=order)
         payment = OrderPayment.objects.filter(order=order).first()
         orders_with_files.append({
             'order': order,
             'files': order_files,
             'payment': payment,
+            'is_archived': False,  # 현재 Order는 아카이브되지 않음 -> 않으면 false 아카이브 된거면 true
         })
-
+    # ArchivedOrder 처리
+    for archived_order in archived_orders:
+        # 결제완료가 아닌 상태에서 주문 시간이 3시간이 지난 경우 삭제
+        if archived_order.status != ArchivedOrder.Status.PAID and now - archived_order.order_date > timedelta(hours=3):
+            archived_order.delete()
+            continue
+        # 결제완료 상태에서 주문 시간이 2일이 지난 경우 스킵
+        if archived_order.status == ArchivedOrder.Status.PAID and now - archived_order.order_date > timedelta(days=2):
+            continue
+        # 결제완료 상태만 표시
+        if archived_order.status == ArchivedOrder.Status.PAID:
+            order_files = ArchivedOrderFile.objects.filter(order=archived_order)
+            payment = ArchivedOrderPayment.objects.filter(order=archived_order).first()
+            orders_with_files.append({
+                'order': archived_order,
+                'files': order_files,
+                'payment': payment,
+                'is_archived': True,  # 아카이브된 Order인지 여부 플래그임
+            })
     context = {
         'orders_with_files': orders_with_files,
         'orders_count': len(orders_with_files),
     }
     return render(req, 'preprint/payment_list.html', context)
-
-
 
 @require_POST
 @csrf_exempt

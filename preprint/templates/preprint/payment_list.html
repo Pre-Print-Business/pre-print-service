@@ -48,20 +48,24 @@
                     </div>
                     <p class="text-success">결제가 완료되었습니다.</p>
 
+                    {% if not order_with_files.is_archived %}
                     <p class="text-warning">* 주문 취소는 01시 이전에만 가능합니다.</p>
                     <form method="post" action="{% url 'cancel_order' order_with_files.order.id %}">
                         {% csrf_token %}
                         <button type="submit" class="btn btn-danger">주문취소</button>
                     </form>
+                    {% endif %}
                 
                 {% else %}
                     <p>결제가 진행되지 않았습니다.</p>
+                    {% if not order_with_files.is_archived %}
                     <form method="post" action="{% url 'retry_payment' %}">
                         {% csrf_token %}
                         <input type="hidden" name="order_id" value="{{ order_with_files.order.id }}">
                         <input type="hidden" name="payment_id" value="{{ order_with_files.payment.id }}">
                         <button type="submit" class="btn btn-primary">결제하기</button>
                     </form>
+                    {% endif %}
                 {% endif %}
             </div>
         {% endfor %}
