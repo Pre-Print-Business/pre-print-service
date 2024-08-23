@@ -28,7 +28,7 @@ class Command(BaseCommand):
             file_path = os.path.join(output_dir, file_name)
             os.remove(file_path)
 
-        csv_file_path = os.path.join(output_dir, f'{now.strftime("%Y-%m-%d")}_orders.csv')
+        csv_file_path = os.path.join(output_dir, f'{now.strftime("%Y-%m-%d")}.csv')
 
         with open(csv_file_path, 'w', newline='', encoding='utf-8') as csvfile:
             writer = csv.writer(csvfile)
