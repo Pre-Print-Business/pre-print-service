@@ -104,10 +104,25 @@ def kakao_callback(request):
     except User.DoesNotExist:
         request.session['email'] = email
         return redirect('social_signup')
-    
+
 def social_signup(request):
     if request.method == 'POST':
-        form = SocialSignUpForm(request.POST)
+        phone1 = request.POST.get('phone1')
+        phone2 = request.POST.get('phone2')
+
+        # phone1 또는 phone2 필드가 비어 있거나 4자리가 아닌 경우
+        if not phone1 or not phone2 or len(phone1) != 4 or len(phone2) != 4:
+            return render(request, 'accounts/social_signup.html', {
+                'form': SocialSignUpForm(request.POST),
+                'form_errors': {'phone': ["전화번호를 올바르게 입력해 주세요. (각각 4자리 숫자)"]},
+            })
+
+        full_phone = f"010-{phone1}-{phone2}"
+        post_data = request.POST.copy()
+        post_data['phone'] = full_phone
+        
+        form = SocialSignUpForm(post_data)
+
         if form.is_valid():
             email = request.session.get('email')
             user = form.save(commit=False)
@@ -116,11 +131,13 @@ def social_signup(request):
             user.save()
             login(request, user)
             return redirect('root')
+        else:
+            print("Form errors:", form.errors)
+            return render(request, 'accounts/social_signup.html', {'form': form, 'form_errors': form.errors})
     else:
         form = SocialSignUpForm()
     return render(request, 'accounts/social_signup.html', {'form': form})
 
-# Create your views here.
 def print_signup(req):
     if req.method == 'GET':
         form = SignUpForm()

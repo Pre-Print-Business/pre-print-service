@@ -9,33 +9,46 @@
  
 {% block content %}
 <div class="centered-form-container">
+    <h1 class="logo">Social Signup</h1>
+
+    {% if form_errors %}
+        <div class="form-errors">
+            <ul>
+                {% for field, errors in form_errors.items %}
+                    {% for error in errors %}
+                        <li>{{ field }}: {{ error }}</li>
+                    {% endfor %}
+                {% endfor %}
+            </ul>
+        </div>
+    {% endif %}
+    
     <form action="" method="POST" enctype="multipart/form-data">
         {% csrf_token %}
-        <h1 class="logo">social signup</h1>
         <div class="login-container">
             <div class="signup-form-group">
-                <label for="{{ form.username.id_for_label }}">name:</label>
+                <label for="{{ form.username.id_for_label }}">Name:</label>
                 {{ form.username }}
             </div>
             <div class="signup-form-group">
-                <label for="{{ form.phone.id_for_label }}">phone:</label>
-                {{ form.phone }}
+                <label for="{{ form.phone.id_for_label }}">Phone:</label>
+                <div class="phone-number-fields">
+                    <input type="text" value="010" readonly class="phone-area-code">
+                    <input type="text" name="phone1" maxlength="4" placeholder="1234" class="phone-number-input">
+                    <input type="text" name="phone2" maxlength="4" placeholder="5678" class="phone-number-input">
+                </div>
             </div>
             <div class="signup-form-group">
                 <label for="{{ form.email_opt_in.id_for_label }}">Subscribe to Emails:</label>
                 {{ form.email_opt_in }}
             </div>
             <div class="signup-form-group">
-                <label for="{{ form.birth_year.id_for_label }}">Birth Year:</label>
-                {{ form.birth_year }}
-            </div>
-            <div class="signup-form-group">
-                <label for="{{ form.birth_month.id_for_label }}">Birth Month:</label>
-                {{ form.birth_month }}
-            </div>
-            <div class="signup-form-group">
-                <label for="{{ form.birth_day.id_for_label }}">Birth Day:</label>
-                {{ form.birth_day }}
+                <label>Birth Date:</label>
+                <div class="birthdate-fields">
+                    {{ form.birth_year }} -
+                    {{ form.birth_month }} -
+                    {{ form.birth_day }}
+                </div>
             </div>
             <div class="signup-form-group">
                 <label for="{{ form.gender.id_for_label }}">Gender:</label>
@@ -43,7 +56,7 @@
             </div>
         </div>
         <div>
-            <input type="submit" value="sign up" class="signup-button">
+            <input type="submit" value="Sign Up" class="signup-button">
         </div>
     </form>
 </div>

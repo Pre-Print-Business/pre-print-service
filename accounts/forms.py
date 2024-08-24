@@ -25,6 +25,12 @@ class SocialSignUpForm(forms.ModelForm):
         label="Gender"
     )
 
+    email_opt_in = forms.BooleanField(
+        label="Subscribe to Emails",
+        required=False,
+        initial=True  # 기본 체크 상태로 설정
+    )
+
     class Meta:
         model = get_user_model()
         fields = ['username', 'phone', 'email_opt_in', 'birth_year', 'birth_month', 'birth_day', 'gender']

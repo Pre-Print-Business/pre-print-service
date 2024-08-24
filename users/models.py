@@ -22,7 +22,7 @@ class UserManager(DJangoUserManager):
         return self._create_user(username, email, password, **extra_fields)
 
 class User(AbstractUser):
-    phone = models.CharField(verbose_name='전화번호', max_length=11)
+    phone = models.CharField(verbose_name='전화번호', max_length=13)
     email_opt_in = models.BooleanField(default=False, verbose_name='이메일 수신 동의')
     birth_year = models.PositiveIntegerField(verbose_name='출생년도', null=True, blank=True)
     birth_month = models.PositiveIntegerField(verbose_name='출생월', null=True, blank=True)
