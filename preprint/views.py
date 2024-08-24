@@ -96,6 +96,10 @@ def print_detail(req):
                 for chunk in file.chunks():
                     tmpfile.write(chunk)
                 total_pages += get_pdf_page_count(tmpfile.name)
+        
+        if total_pages == 0:
+            messages.error(req, "업로드된 PDF 파일의 페이지 수를 확인할 수 없습니다. 파일이 손상되었거나 잘못된 파일일 수 있습니다. 다시 시도해 주세요.")
+            return render(req, "preprint/print_detail.html")
 
         if color == "C":
             page_price = 200
