@@ -22,6 +22,11 @@ from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse
 from django.conf import settings
 from django.db import transaction
+from django.db.models import Sum
+
+# 상수 정의
+MAX_SERVICE_PAGES = 500
+MAX_PAGES_PER_REQUEST = 300
 
 ### 메인페이지, 프린트 설정 페이지, 결제 페이지
 def print_main(req):
@@ -66,8 +71,16 @@ def print_detail(req):
     if req.method == "GET":
         if not req.user.is_authenticated:
             return redirect('login')
-        else:
-            return render(req, "preprint/print_detail.html")
+
+        # 모든 주문의 total_pages 합산
+        total_pages_today = Order.objects.filter(status=Order.Status.PAID).aggregate(total_pages_sum=Sum('total_pages'))['total_pages_sum'] or 0
+        print(total_pages_today)
+        
+        if total_pages_today >= MAX_SERVICE_PAGES:
+            messages.error(req, "서비스 신청량이 초과되였습니다. 오늘 서비스가 종료되었습니다.")
+            return render(req, "preprint/print_main.html")
+
+        return render(req, "preprint/print_detail.html")
     
     elif req.method == "POST":
         files = req.FILES.getlist('files')
@@ -99,6 +112,10 @@ def print_detail(req):
         
         if total_pages == 0:
             messages.error(req, "업로드된 PDF 파일의 페이지 수를 확인할 수 없습니다. 파일이 손상되었거나 잘못된 파일일 수 있습니다. 다시 시도해 주세요.")
+            return render(req, "preprint/print_detail.html")
+
+        if total_pages > MAX_PAGES_PER_REQUEST:
+            messages.error(req, f"총합 {MAX_PAGES_PER_REQUEST}장 이상의 파일은 신청이 불가합니다.")
             return render(req, "preprint/print_detail.html")
 
         if color == "C":
@@ -134,6 +151,11 @@ def print_payment_ready(req, order_id):
 
 
 def print_payment(req):
+    total_pages_paid = Order.objects.filter(status=Order.Status.PAID).aggregate(total_pages_sum=Sum('total_pages'))['total_pages_sum'] or 0
+    if total_pages_paid >= MAX_SERVICE_PAGES:
+        messages.error(req, "서비스 신청량이 초과되였습니다. 오늘 서비스가 종료되었습니다.")
+        return redirect('print_main')
+
     orders_to_pay = Order.objects.filter(order_user=req.user, status__in=[Order.Status.REQUESTED, Order.Status.FAILED_PAYMENT]).order_by('-order_date')
     
     if not orders_to_pay.exists():
@@ -179,8 +201,10 @@ def retry_payment(req):
     order_id = req.POST.get('order_id')
     payment_id = req.POST.get('payment_id')
 
-    print(order_id)
-    print(payment_id)
+    total_pages_paid = Order.objects.filter(status=Order.Status.PAID).aggregate(total_pages_sum=Sum('total_pages'))['total_pages_sum'] or 0
+    if total_pages_paid >= MAX_SERVICE_PAGES:
+        messages.error(req, "서비스 신청량이 초과되였습니다. 오늘 서비스가 종료되었습니다.")
+        return redirect('print_main')
 
     order = get_object_or_404(Order, id=order_id, order_user=req.user)
     # payment = get_object_or_404(OrderPayment, id=payment_id, order=order)
