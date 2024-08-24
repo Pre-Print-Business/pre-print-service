@@ -198,7 +198,7 @@ margin-top: 5px;
 .payment-file-container {
     background-color: #EDEDED; 
     padding: 10px;       
-    margin-top: 20px;     
+    margin-top: 20px;
     border-radius: 5px;   
     border-radius: 30px;
     max-width: 900px; 
@@ -207,98 +207,79 @@ margin-top: 5px;
 }
 
 @media only screen and (max-width: 600px) {
-    .search-form-group {
-        margin-bottom: 20px;
+    .centered-form-container{
+        position: relative;
+        top: 50px;
     }
-    .search-space{
-        background-color: #EDEDED;
-        padding: 10px 20px 10px 20px;
-        border-radius: 40px 20px 20px 40px;
-        border: none;
-        cursor: pointer;
+    .search-space {
         font-size: 20px;
         width: 200px;
-        height: 50px;
+        height: 40px;
+        padding: 10px;
     }
     
     .search-submit-button {
-        background-color: #1855b1;
-        padding: 5px 20px 5px 20px;
-        border-radius: 20px 40px 40px 20px;
-        border: none;
-        cursor: pointer;
         font-size: 20px;
-        color: white;
-        width: 100px;
-        height: 70px;
+        width: 80px;
+        height: 50px;
     }
 
     .print-start-button {
-        background-color: #1855b1;
-        padding: 20px 140px 20px 140px;
-        border-radius: 40px;
-        border: none;
-        cursor: pointer;
+        padding: 10px 60px;
         font-size: 20px;
-        color: white;
+        border-radius: 20px;
     }
 
     .logo {
-        color: #1855b1;
-        margin-top: 50px;
         font-size: 50px;
     }
 
-    .logo-image{
-        width: 100px;
+    .logo-image, .preprint-logo {
+        width: 80px;
     }
 
     /* 디테일 */
     .detail-form-group {
-        display: flex;
-        align-items: center;
-        margin-bottom: 20px;
+        flex-direction: column;
+        align-items: flex-start;
+        margin-bottom: 10px;
     }
      
     .detail-form-group h2 {
-        margin-right: 20px; 
+        margin-right: 10px;
+        font-size: 16px;
     }
     
-    .centered-form-container {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: calc(100vh - (300px));
+    .color-space, .pw-space {
+        font-size: 16px;
+        padding: 10px 15px;
     }
-    
-    .color-space{
-        background-color: #EDEDED;
-        padding: 17px 40px 17px 40px;
-        border-radius: 20px;
-        border: none;
-        cursor: pointer;
-        font-size: 20px;
-    }
-    
-    .pw-space{
-        background-color: #EDEDED;
-        padding: 10px 20px 10px 20px;
-        border-radius: 20px;
-        border: none;
-        cursor: pointer;
-        font-size: 20px;
-    }
-    
+
     .pw-submit-button {
-        background-color: #1855b1;
-        padding: 5px 20px 5px 20px;
-        border-radius: 20px;
-        border: none;
-        cursor: pointer;
         font-size: 20px;
-        color: white;
+        padding: 10px 20px;
+        border-radius: 10px;
+    }
+    .payment-detail-page {
+        padding: 15px;
+    }
+
+    .payment-detail-page h2 {
+        font-size: 24px;
+        margin-bottom: 15px;
+    }
+
+    .payment-detail-page p {
+        font-size: 14px;
+        margin-bottom: 8px;
+    }
+
+    .order-div ul li {
+        font-size: 14px;
+    }
+
+    .btn-primary {
+        font-size: 16px;
+        padding: 8px 15px;
     }
 }
-
-
-

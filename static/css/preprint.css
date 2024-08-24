@@ -72,6 +72,10 @@
 }
 
 @media only screen and (max-width: 600px) {
+    .mypage-container{
+        position: relative;
+        top: 50px;
+    }
     .mypage-info-block div{
         background-color: #EDEDED;
         padding: 10px 30px 10px 30px;
