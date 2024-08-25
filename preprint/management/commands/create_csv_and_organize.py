@@ -10,7 +10,7 @@ class Command(BaseCommand):
     help = 'Create CSV file of today\'s orders, organize files, rename PDF files, and archive the data'
 
     def handle(self, *args, **kwargs):
-        now = timezone.localtime() + timedelta(days=1)
+        now = timezone.localtime()
         start_time = now - timedelta(days=1)
         start_time = start_time.replace(hour=1, minute=0, second=0, microsecond=0)
         end_time = now.replace(hour=1, minute=0, second=0, microsecond=0)
