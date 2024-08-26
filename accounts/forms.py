@@ -1,11 +1,18 @@
 from django import forms
 from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import UserCreationForm
+import re
 
 class SignUpForm(UserCreationForm):
     class Meta(UserCreationForm.Meta):
         model = get_user_model()
         fields = ['username', 'email', 'phone']
+
+    def clean_username(self):
+        username = self.cleaned_data.get('username')
+        if not re.match(r'^[a-zA-Z]+$', username):
+            raise forms.ValidationError("사용자 이름은 영어로만 작성 가능합니다.")
+        return username
 
 class SocialSignUpForm(forms.ModelForm):
     birth_year = forms.ChoiceField(
@@ -34,3 +41,9 @@ class SocialSignUpForm(forms.ModelForm):
     class Meta:
         model = get_user_model()
         fields = ['username', 'phone', 'email_opt_in', 'birth_year', 'birth_month', 'birth_day', 'gender']
+
+    def clean_username(self):
+        username = self.cleaned_data.get('username')
+        if not re.match(r'^[a-zA-Z]+$', username):
+            raise forms.ValidationError("Username must contain only English letters.")
+        return username

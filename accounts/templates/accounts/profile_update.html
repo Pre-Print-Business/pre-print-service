@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+{% load socialaccount %}
+{% load static %}
+{% block title %}프로필 수정{% endblock %}
+
+{% block additional_head %}
+<link rel="stylesheet" href="{% static 'css/account.css' %}?after">
+{% endblock %}
+ 
+{% block content %}
+<div class="centered-form-container">
+    <h1 class="logo">Profile_Update</h1>
+
+    {% if form_errors %}
+        <div class="form-errors">
+            <ul>
+                {% for field, errors in form_errors.items %}
+                    {% for error in errors %}
+                        <li>{{ field }}: {{ error }}</li>
+                    {% endfor %}
+                {% endfor %}
+            </ul>
+        </div>
+    {% endif %}
+    
+    <form action="" method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="login-container">
+            <div class="signup-form-group">
+                <label for="{{ form.username.id_for_label }}">Name:</label>
+                {{ form.username }}
+            </div>
+            <div class="signup-form-group">
+                <label for="{{ form.phone.id_for_label }}">Phone:</label>
+                <div class="phone-number-fields">
+                    <input type="text" value="010" readonly class="phone-area-code">
+                    <input type="text" name="phone1" maxlength="4" placeholder="1234" class="phone-number-input">
+                    <input type="text" name="phone2" maxlength="4" placeholder="5678" class="phone-number-input">
+                </div>
+            </div>
+            <div class="signup-form-group">
+                <label for="{{ form.email_opt_in.id_for_label }}">Subscribe to Emails:</label>
+                {{ form.email_opt_in }}
+            </div>
+            <div class="signup-form-group">
+                <label>Birth Date:</label>
+                <div class="birthdate-fields">
+                    {{ form.birth_year }} -
+                    {{ form.birth_month }} -
+                    {{ form.birth_day }}
+                </div>
+            </div>
+            <div class="signup-form-group">
+                <label for="{{ form.gender.id_for_label }}">Gender:</label>
+                {{ form.gender }}
+            </div>
+        </div>
+        <div>
+            <input type="submit" value="Profile Updat" class="signup-button">
+        </div>
+    </form>
+</div>
+{% endblock %}

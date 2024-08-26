@@ -9,6 +9,8 @@ urlpatterns = [
     path('login/', print_login, name='login'),
     path('logout/', print_logout, name='logout'),
     path('social_signup/', social_signup, name='social_signup'),
+    path('profile_update/', profile_update, name='profile_update'),
+    path('account_deletion_confirm', account_deletion_confirm, name='account_deletion_confirm'),
     # google
     path('google/login/', google_login, name='google_login'),
     path('google/callback/', google_callback, name='google_callback'),
