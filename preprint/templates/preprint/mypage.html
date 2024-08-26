@@ -12,10 +12,25 @@
 <div class="mypage-container">
     <div>
         <h1 class="logo">My Page</h1>
+        {% if messages %}
+        <div class="messages">
+            {% for message in messages %}
+            <div class="alert {{ message.tags }}">{{ message }}</div>
+            {% endfor %}
+        </div>
+        {% endif %}
         <h3 class="mypage-info-block">고객 번호: <div>{{ user.id }}</div></h3>
         <h3 class="mypage-info-block">이름: <div>{{ user.username }}</div></h3>
         <h3 class="mypage-info-block">이메일: <div>{{ user.email }}</div></h3>
         <h3 class="mypage-info-block">전화번호: <div>{{ user.phone }}</div></h3>
+        <div class="button-container">
+            <form action="{% url 'profile_update' %}" method="get">
+                <button type="submit" class="edit-button">수정하기</button>
+            </form>
+            <form action="{% url 'account_deletion_confirm' %}" method="get">
+                <button type="submit" class="delete-button">탈퇴하기</button>
+            </form>
+        </div>
     </div>
 </div>
 {% endblock %}

@@ -14,9 +14,13 @@ from .forms import SocialSignUpForm
 from allauth.socialaccount.providers.google import views as google_view
 from allauth.socialaccount.providers.kakao import views as kakao_view
 from allauth.socialaccount.providers.oauth2.client import OAuth2Client
-from allauth.socialaccount.models import SocialAccount
+from django.contrib import messages
 from users.models import User
 from django.views.decorators.csrf import csrf_exempt
+from django.contrib.auth.decorators import login_required
+from django.utils import timezone
+from datetime import timedelta
+from preprint.models import Order, ArchivedOrder
 
 state = 'stsegsdfsdfsfd'
 BASE_URL = "http://127.0.0.1:8000/" if settings.DEBUG else "https://preprintreserve.com/"
@@ -138,6 +142,74 @@ def social_signup(request):
         form = SocialSignUpForm()
     return render(request, 'accounts/social_signup.html', {'form': form})
 
+@login_required
+def profile_update(request):
+    if request.method == 'POST':
+        phone1 = request.POST.get('phone1')
+        phone2 = request.POST.get('phone2')
+        if not phone1 or not phone2 or len(phone1) != 4 or len(phone2) != 4:
+            return render(request, 'accounts/profile_update.html', {
+                'form': SocialSignUpForm(request.POST, instance=request.user),
+                'form_errors': {'phone': ["전화번호를 올바르게 입력해 주세요. (각각 4자리 숫자)"]},
+            })
+        full_phone = f"010-{phone1}-{phone2}"
+        post_data = request.POST.copy()
+        post_data['phone'] = full_phone
+        form = SocialSignUpForm(post_data, instance=request.user)
+        if form.is_valid():
+            user = form.save()
+            messages.success(request, 'Your profile has been updated successfully.')
+            return redirect('mypage')
+        else:
+            return render(request, 'accounts/profile_update.html', {'form': form, 'form_errors': form.errors})
+    else:
+        initial_data = {
+            'phone1': request.user.phone.split('-')[1] if request.user.phone else '',
+            'phone2': request.user.phone.split('-')[2] if request.user.phone else '',
+        }
+        form = SocialSignUpForm(instance=request.user, initial=initial_data)
+    return render(request, 'accounts/profile_update.html', {'form': form})
+
+@login_required
+def account_deletion_confirm(request):
+    threshold_date = timezone.localtime() - timedelta(days=2)
+    print(timezone.localtime())
+    recent_order = Order.objects.filter(
+        order_user=request.user, 
+        status=Order.Status.PAID, 
+        order_date__gte=threshold_date
+    ).exists()
+    recent_archived_order = ArchivedOrder.objects.filter(
+        order_user=request.user, 
+        status=ArchivedOrder.Status.PAID, 
+        order_date__gte=threshold_date
+    ).exists()
+    if recent_order or recent_archived_order:
+        latest_order = (
+            Order.objects.filter(order_user=request.user, status=Order.Status.PAID)
+            .order_by('-order_date')
+            .first()
+        )
+        latest_archived_order = (
+            ArchivedOrder.objects.filter(order_user=request.user, status=ArchivedOrder.Status.PAID)
+            .order_by('-order_date')
+            .first()
+        )
+        latest_date = max(latest_order.order_date if latest_order else threshold_date,
+                          latest_archived_order.order_date if latest_archived_order else threshold_date)
+        time_remaining = latest_date + timedelta(days=2) - timezone.now()
+        hours_remaining = time_remaining.total_seconds() // 3600
+        messages.error(request, f"최근 주문내역이 남아있습니다. {int(hours_remaining)}시간 뒤 회원탈퇴가 가능합니다.")
+        return redirect('mypage')
+    if request.method == 'POST':
+        user = request.user
+        user.delete()
+        logout(request)
+        messages.success(request, 'Your account has been deleted successfully.')
+        return redirect('root')
+    return render(request, 'accounts/account_deletion_confirm.html')
+
+# 이전 코드
 def print_signup(req):
     if req.method == 'GET':
         form = SignUpForm()

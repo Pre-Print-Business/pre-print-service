@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}회원 탈퇴 확인{% endblock %}
+
+{% block additional_head %}
+<link rel="stylesheet" href="{% static 'css/account.css' %}?after">
+{% endblock %}
+
+{% block content %}
+<div class="centered-form-container">
+    <h1 class="logo">Account Deletion</h1>
+    <div class="social-login-form">
+        <p>정말로 회원 탈퇴를 원하시나요? 이 작업은 되돌릴 수 없습니다.</p>
+        <a href="{% url 'mypage' %}" class="cancel-button">마이페이지로 돌아가기</a>
+        <form action="{% url 'account_deletion_confirm' %}" method="post">
+            {% csrf_token %}
+            <button type="submit" class="delete-button">탈퇴하기</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

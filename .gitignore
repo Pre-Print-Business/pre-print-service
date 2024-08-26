@@ -8,6 +8,7 @@ db.sqlite3
 db.sqlite3-journal
 media
 secrets.json
+.DS_Store
 
 ### Django.Python Stack ###
 # Byte-compiled / optimized / DLL files
