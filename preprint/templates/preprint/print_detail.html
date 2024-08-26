@@ -3,12 +3,18 @@
 {% block title %}프린트 설정{% endblock %}
 
 {% block content %}
-
 <div class="centered-form-container">
   <form action="" method="POST" enctype="multipart/form-data">
     {% csrf_token %}
     
     <h1 class="logo">print-detail</h1>
+    {% if messages %}
+    <div class="info-box-red">
+        {% for message in messages %}
+            <p {% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</p>
+        {% endfor %}
+    </div>
+    {% endif %}
     <div class="detail-form-group">
       <h2>파일:</h2>
       <input class="file-submit-button" type="file" name="files" multiple>
@@ -26,17 +32,11 @@
       <h2>비밀번호:</h2>
       <input class="pw-space" type="text" name="pw">
     </div>
+    <div class="info-box-grey">
+      <p>비밀번호는 4자리 숫자의 조합으로 작성해주세요.<br>shift, control키를 통해 여러 파일을 선택할 수 있습니다.</p>
+    </div>
+    <br>
     <button class="pw-submit-button" type="submit">print!</button>
   </form>
 </div>
-
-{% if messages %}
-    <ul class="messages">
-        {% for message in messages %}
-            <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-        {% endfor %}
-    </ul>
-{% endif %}
-
 {% endblock %}
-

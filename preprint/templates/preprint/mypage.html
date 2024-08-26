@@ -13,9 +13,9 @@
     <div>
         <h1 class="logo">My Page</h1>
         {% if messages %}
-        <div class="messages">
+        <div class="info-box-green">
             {% for message in messages %}
-            <div class="alert {{ message.tags }}">{{ message }}</div>
+            <p class="alert {{ message.tags }}">{{ message }}</p>
             {% endfor %}
         </div>
         {% endif %}

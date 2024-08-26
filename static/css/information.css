@@ -1,0 +1,20 @@
+.info-box-green {
+    background-color: #e6ffe6; /* 연한 초록색 배경 */
+    padding: 1px 20px 1px 20px;
+    border-radius: 10px;        /* 모서리를 약간 둥글게 */
+    margin: 5px;       /* 박스들 사이의 간격 */
+}
+
+.info-box-red {
+    background-color: #ffd3d3; /* 연한 초록색 배경 */
+    padding: 1px 20px 1px 20px;
+    border-radius: 10px;        /* 모서리를 약간 둥글게 */
+    margin: 5px;       /* 박스들 사이의 간격 */
+}
+
+.info-box-grey {
+    background-color: #e7e7e7; /* 연한 초록색 배경 */
+    padding: 1px 20px 1px 20px;
+    border-radius: 10px;        /* 모서리를 약간 둥글게 */
+    margin: 5px;       /* 박스들 사이의 간격 */
+}

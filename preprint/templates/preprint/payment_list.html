@@ -9,17 +9,17 @@
 {% block content %}
 <div class="payment-detail-container">
     <h1 class="logo">Requested Print</h1>
-    {% if messages %}
-    <div class="container mt-3">
-        {% for message in messages %}
-            <div class="alert {% if message.tags %}alert-{{ message.tags }}{% else %}alert-info{% endif %}" role="alert">
-                {{ message }}
-            </div>
-        {% endfor %}
-    </div>
-    {% endif %}
     <div class="payment-detail-page">
         <h3>예약된 주문 : {{ orders_count }}</h3>
+        {% if messages %}
+        <div class="info-box-green">
+            {% for message in messages %}
+                <p class="alert {% if message.tags %}alert-{{ message.tags }}{% else %}alert-info{% endif %}" role="alert">
+                    {{ message }}
+                </p>
+            {% endfor %}
+        </div>
+        {% endif %}
         {% for order_with_files in orders_with_files %}
             <div class="order-div">
                 <h3>사물함 번호: {{ order_with_files.order.locker_number }}</h3>
