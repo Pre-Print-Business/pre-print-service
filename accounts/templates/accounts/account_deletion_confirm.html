@@ -10,8 +10,12 @@
 <div class="centered-form-container">
     <h1 class="logo">Account Deletion</h1>
     <div class="social-login-form">
-        <p>정말로 회원 탈퇴를 원하시나요? 이 작업은 되돌릴 수 없습니다.</p>
-        <a href="{% url 'mypage' %}" class="cancel-button">마이페이지로 돌아가기</a>
+        <div class="info-box-red">
+            <p>정말로 회원 탈퇴를 원하시나요?</p>
+        </div>
+        <div class="info-box-grey">
+            <a href="{% url 'mypage' %}" class="cancel-button">마이페이지로 돌아가기</a>
+        </div>
         <form action="{% url 'account_deletion_confirm' %}" method="post">
             {% csrf_token %}
             <button type="submit" class="delete-button">탈퇴하기</button>

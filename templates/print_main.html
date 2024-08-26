@@ -4,6 +4,13 @@
 
 {% block content %}
 <div class="print-main">
+  {% if messages %}
+  <div class="info-box-green">
+      {% for message in messages %}
+      <p class="alert {{ message.tags }}">{{ message }}</p>
+      {% endfor %}
+  </div>
+  {% endif %}
   <h1 class="logo">pre-print</h1>
   <form action="{% url 'print_detail' %}">
     <button type="submit" class="print-start-button">print !</button>
