@@ -82,14 +82,45 @@ margin-top: 5px;
 
 .footer {
     background-color: #dfdfdf;
-    padding: 10px;
-    text-align: center;
+    padding: 20px;
+    display: flex;
+    justify-content: space-between;
     position: fixed;
     bottom: 0;
     width: 100%;
     left: 0;
     box-sizing: border-box;
-    height: calc(100vh / 8);
+    height: calc(100vh / 7.5);
+    align-items: flex-start;
+    overflow-y: auto; /* 푸터에 스크롤 기능 추가 */
+}
+
+.footer-section.large {
+    flex: 3; /* 첫 번째 섹션의 너비를 3배로 설정 */
+    text-align: left;
+    padding-right: 10px;
+}
+
+.footer-section.small {
+    flex: 2; /* 두 번째와 세 번째 섹션의 너비를 동일하게 설정 */
+    text-align: left;
+    padding-right: 10px;
+}
+
+.footer-section p {
+    margin: 1px;
+    padding: 0;
+}
+
+.footer-links {
+    display: flex;
+    justify-content: flex-start;
+    gap: 20px; /* a 태그 사이의 간격을 20px로 설정 */
+}
+
+.footer-links a {
+    text-decoration: none; /* 링크의 밑줄 제거 */
+    color: #1500ff; /* 링크 색상 설정 */
 }
 
 
