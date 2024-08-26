@@ -18,3 +18,30 @@
     border-radius: 10px;        /* 모서리를 약간 둥글게 */
     margin: 5px;       /* 박스들 사이의 간격 */
 }
+
+.container {
+    display: flex;
+    width: 100%; /* 전체 너비를 100%로 설정 */
+    box-sizing: border-box; /* 패딩과 테두리를 포함한 박스 크기 설정 */
+}
+
+.sidebar {
+    flex: 1; /* 왼쪽과 오른쪽 사이드바는 1 비율 */
+}
+
+.main-content {
+    flex: 2; /* 가운데 콘텐츠는 2 비율 */
+    padding: 0 20px; /* 양쪽 사이드바와의 간격 */
+    box-sizing: border-box; /* 패딩과 테두리를 포함한 박스 크기 설정 */
+}
+
+.main-document {
+    text-align: left; /* 왼쪽 정렬 */
+    margin: 0; /* 기본 마진 제거 */
+    padding: 0; /* 기본 패딩 제거 */
+    width: 100%; /* main-content 내부에서 100% 너비로 설정 */
+    max-width: 100%; /* 중앙 영역 내에서만 표시되도록 최대 너비를 설정 */
+    word-wrap: break-word; /* 긴 단어가 영역을 넘지 않도록 설정 */
+    box-sizing: border-box; /* 패딩과 테두리를 포함한 박스 크기를 설정 */
+}
+

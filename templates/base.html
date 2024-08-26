@@ -20,9 +20,9 @@
             </a>
         </div>
         <div class="navbar-right">
-            <div class="navbar-center">
+            <!-- <div class="navbar-center">
                 <a class="introduce" href="{% url 'guide' %}">이용방법</a>
-            </div>
+            </div> -->
             <a href="{% url 'mypage' %}">
                 <img class="mypage-image" src="{% static 'img/mypage2.png' %}" alt="마이페이지">
             </a>
@@ -36,9 +36,36 @@
         {% endblock %}
     </div>
     <div class="footer">
-        <p>위치: 서울 서대문구 거북골로 34  명지대학교 학생회관 1층 preprint</p>
-        <p>preprint 사업</p>
+        <section class="footer-section large">
+            <p>법인명: Knocker (주)&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;법인 등록 번호: 453-86-02773</p>
+            <p>법인 소재지: 경기도 용인시 처인구 명지로116, 18111호(남동, 명지대학교 용인캠퍼스)</p>
+            <p>preprint 사업장 위치: 서울 서대문구 거북골로 34 명지대학교 학생회관 1층 preprint</p>
+            <p>대표이사: 이윤서&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|
+                &nbsp;&nbsp;&nbsp;사내이사: 김의향, 정윤서, 최은택</p>
+        </section>
+        <section class="footer-section small">
+            <div class="footer-links">
+                <a href="{% url 'document_privacy_policy' %}">개인정보처리방침</a>
+                <a href="{% url 'document_terms_of_service' %}">이용약관 (Terms of Service)</a>
+            </div>
+            <div class="footer-links">
+                <a href="{% url 'document_payment_refund_policy' %}">결제 및 환불 절차</a>
+                <a href="{% url 'document_customer_support_policy' %}">고객 지원 정책</a>
+            </div>
+            <div class="footer-links">
+                <a href="{% url 'document_business_information' %}">사업자 정보&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</a>
+                <a href="{% url 'document_ecommerce_compliance' %}">전자상거래 관련 법률 준수</a>
+            </div>
+            <p>Copyright ⓒ (주) Knocker .all Rights Reserved</p>
+        </section>
+        <section class="footer-section small">
+            <p>[연락망]</p>
+            <p>instargram: @preprint_mju</p>
+            <p>대표자 문의: judy8710@naver.com</p>
+            <p>웹 사이트 관련문의 및 오류 문의 : choiet4187@naver.com</p>
+        </section>
     </div>
+
     <script>window.csrf_token = "{{ csrf_token }}";</script>
     {% block extra-script %}{% endblock %}
 </body>
