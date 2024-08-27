@@ -6,6 +6,7 @@ from django.views.decorators.http import require_POST
 from django.contrib import messages
 from django.utils.timezone import now
 from django.utils.timezone import localtime
+from datetime import datetime, timedelta
 from datetime import time
 from datetime import timedelta
 from django.utils import timezone
@@ -176,13 +177,24 @@ def print_payment(req):
 
     check_url = reverse("print_payment_check", args=[latest_order.pk, payment.pk])
 
+    now = datetime.now()
+    next_day = now + timedelta(days=1)
     payment_props = {
+        "pg": "smartro_v2.t_2302141m",
+        "pay_method": "card",
         "merchant_uid": payment.merchant_uid,
         "name": payment.name,
         "amount": payment.desired_amount,
-        "buyer_name": payment.buyer_name,
         "buyer_email": payment.buyer_email,
+        "buyer_name": payment.buyer_name,
+        "buyer_tel": req.user.phone,
+        # "buyer_addr": "서울특별시",
+        # "buyer_postcode": "123",
         "m_redirect_url": req.build_absolute_uri(check_url),
+        "period": {
+            "from": now.strftime("%Y%m%d"),
+            "to": next_day.strftime("%Y%m%d")
+        }
     }
 
     return render(
@@ -229,13 +241,24 @@ def retry_payment(req):
 
     check_url = reverse("print_payment_check", args=[order.pk, payment.pk])
 
+    now = datetime.now()
+    next_day = now + timedelta(days=1)
     payment_props = {
-        "merchant_uid": str(payment.uid),
+        "pg": "smartro_v2.t_2302141m",
+        "pay_method": "card",
+        "merchant_uid": payment.merchant_uid,
         "name": payment.name,
         "amount": payment.desired_amount,
-        "buyer_name": payment.buyer_name,
         "buyer_email": payment.buyer_email,
+        "buyer_name": payment.buyer_name,
+        "buyer_tel": req.user.phone,
+        # "buyer_addr": "서울특별시",
+        # "buyer_postcode": "123",
         "m_redirect_url": req.build_absolute_uri(check_url),
+        "period": {
+            "from": now.strftime("%Y%m%d"),
+            "to": next_day.strftime("%Y%m%d")
+        }
     }
 
     return render(

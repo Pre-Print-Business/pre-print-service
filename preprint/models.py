@@ -103,7 +103,7 @@ class AbstractPortonePayment(models.Model):
 
     @property
     def merchant_uid(self) -> str:
-        return str(self.uid)
+        return str(self.uid).replace("-", "")
 
     @cached_property
     def api(self):
