@@ -120,9 +120,9 @@ def print_detail(req):
             return render(req, "preprint/print_detail.html")
 
         if color == "C":
-            page_price = 200
+            page_price = 300
         else:
-            page_price = 50
+            page_price = 75
 
         order_price = total_pages * page_price
 
