@@ -10,6 +10,12 @@
 <div class="payment-detail-container">
     <h1 class="logo">Complete payment</h1>
     <div class="payment-detail-page">
+        <div class="info-box-green">
+            <p>사물함 번호가 {{ order.locker_number }}번으로 할당되었습니다.<br>
+            서비스 당일 명지대학교 학생회관 1층 preprint매장에 방문하셔서 할당받은 해당 사물함에 고객님이 정하신 pw를 입력하여 파일을 수령하시면 됩니다.<br>
+            주문한 예약서비스는 결제 다음날인 서비스 당일 사물함에서 00시까지 수령하지 않을 시 그 다음 영업일 날 개인정보보호를 위해 일괄 폐기합니다.</p>
+            <p>[중요] 상단 오른쪽 메뉴의 문서 아이콘을 클릭하시면 신청하신 주문의 상세정보를 2일 동안 확인하실 수 있습니다.</p>
+        </div>
         <div class="order-div">
             <h3>사물함 번호: {{ order.locker_number }}</h3>
             <p>주문 날짜: {{ order.order_date }}</p>
