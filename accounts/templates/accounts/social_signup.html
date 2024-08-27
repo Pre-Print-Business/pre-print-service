@@ -12,14 +12,12 @@
     <h1 class="logo">Social Signup</h1>
 
     {% if form_errors %}
-        <div class="form-errors">
-            <ul>
-                {% for field, errors in form_errors.items %}
-                    {% for error in errors %}
-                        <li>{{ field }}: {{ error }}</li>
-                    {% endfor %}
+        <div class="info-box-red">
+            {% for field, errors in form_errors.items %}
+                {% for error in errors %}
+                    <p>{{ field }}: {{ error }}</p>
                 {% endfor %}
-            </ul>
+            {% endfor %}
         </div>
     {% endif %}
     
@@ -39,10 +37,6 @@
                 </div>
             </div>
             <div class="signup-form-group">
-                <label for="{{ form.email_opt_in.id_for_label }}">Subscribe to Emails:</label>
-                {{ form.email_opt_in }}
-            </div>
-            <div class="signup-form-group">
                 <label>Birth Date:</label>
                 <div class="birthdate-fields">
                     {{ form.birth_year }} -
@@ -53,6 +47,29 @@
             <div class="signup-form-group">
                 <label for="{{ form.gender.id_for_label }}">Gender:</label>
                 {{ form.gender }}
+            </div>
+            
+            <hr style="margin: 20px 0;">  <!-- 여기에서 구분선 추가 -->
+            
+            <!-- 약관 동의 체크박스 추가 -->
+            <div class="signup-form-group">
+                <label>(필수) 개인정보처리방침 동의:</label>
+                <input type="checkbox" name="agree_privacy_policy" required>
+                <a href="{% url 'document_privacy_policy' %}" target="_blank" class="terms-link">약관보기</a>
+            </div>
+            <div class="signup-form-group">
+                <label>(필수) 이용약관 동의:</label>
+                <input type="checkbox" name="agree_terms_of_service" required>
+                <a href="{% url 'document_terms_of_service' %}" target="_blank" class="terms-link">약관보기</a>
+            </div>
+            <div class="signup-form-group">
+                <label>(필수) 결제 및 환불 절차 동의:</label>
+                <input type="checkbox" name="agree_payment_refund_policy" required>
+                <a href="{% url 'document_payment_refund_policy' %}" target="_blank" class="terms-link">약관보기</a>
+            </div>
+            <div class="signup-form-group">
+                <label for="{{ form.email_opt_in.id_for_label }}">(선택) 할인 및 이벤트 안내 이메일 수신 동의:</label>
+                {{ form.email_opt_in }}
             </div>
         </div>
         <div>

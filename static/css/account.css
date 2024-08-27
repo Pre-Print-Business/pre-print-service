@@ -8,6 +8,13 @@
     padding-top: 20px;
 }
 
+.terms-link {
+    margin-left: 10px;
+    color: blue;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
 .social-login-form {
     display: flex;
     flex-direction: column;
