@@ -45,5 +45,5 @@ class SocialSignUpForm(forms.ModelForm):
     def clean_username(self):
         username = self.cleaned_data.get('username')
         if not re.match(r'^[a-zA-Z]+$', username):
-            raise forms.ValidationError("Username must contain only English letters.")
+            raise forms.ValidationError("사용자 이름은 영어로만 작성 가능합니다.")
         return username

@@ -114,11 +114,21 @@ def social_signup(request):
         phone1 = request.POST.get('phone1')
         phone2 = request.POST.get('phone2')
 
-        # phone1 또는 phone2 필드가 비어 있거나 4자리가 아닌 경우
-        if not phone1 or not phone2 or len(phone1) != 4 or len(phone2) != 4:
+        if not phone1.isdigit() or not phone2.isdigit() or len(phone1) != 4 or len(phone2) != 4:
             return render(request, 'accounts/social_signup.html', {
                 'form': SocialSignUpForm(request.POST),
-                'form_errors': {'phone': ["전화번호를 올바르게 입력해 주세요. (각각 4자리 숫자)"]},
+                'form_errors': {'phone': ["전화번호를 올바르게 입력해 주세요. (각각 4자리 숫자만 입력해 주세요)"]},
+            })
+
+        # 약관 동의 체크 여부 확인
+        agree_privacy_policy = request.POST.get('agree_privacy_policy')
+        agree_terms_of_service = request.POST.get('agree_terms_of_service')
+        agree_payment_refund_policy = request.POST.get('agree_payment_refund_policy')
+
+        if not (agree_privacy_policy and agree_terms_of_service and agree_payment_refund_policy):
+            return render(request, 'accounts/social_signup.html', {
+                'form': SocialSignUpForm(request.POST),
+                'form_errors': {'terms': ["모든 필수 약관에 동의하셔야 가입이 가능합니다."]},
             })
 
         full_phone = f"010-{phone1}-{phone2}"
@@ -141,6 +151,7 @@ def social_signup(request):
     else:
         form = SocialSignUpForm()
     return render(request, 'accounts/social_signup.html', {'form': form})
+
 
 @login_required
 def profile_update(request):
