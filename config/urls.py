@@ -19,7 +19,9 @@ urlpatterns = [
     path('document_payment_refund_policy', TemplateView.as_view(template_name="documents/document_payment_refund_policy.html"), name="document_payment_refund_policy"),
     path('document_customer_support_policy', TemplateView.as_view(template_name="documents/document_customer_support_policy.html"), name="document_customer_support_policy"),
     path('document_business_information', TemplateView.as_view(template_name="documents/document_business_information.html"), name="document_business_information"),
-    path('document_ecommerce_compliance', TemplateView.as_view(template_name="documents/document_ecommerce_compliance.html"), name="document_ecommerce_compliance")
+    path('document_ecommerce_compliance', TemplateView.as_view(template_name="documents/document_ecommerce_compliance.html"), name="document_ecommerce_compliance"),
+    path('document_guide', TemplateView.as_view(template_name="documents/document_guide.html"), name="document_guide"),
+    path('document_refund_support', TemplateView.as_view(template_name="documents/document_refund_support.html"), name="document_refund_support")
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root = settings.MEDIA_ROOT)

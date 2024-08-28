@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}고객 환불 지원{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="sidebar left"></div>
+    <div class="main-content">
+        <div class="main-document">
+            <h2>고객 환불 지원 안내</h2>
+            <h3>Preprint 서비스를 이용해주셔서 감사합니다. 다음의 경우에 환불이 가능합니다:</h3>
+            <div class="info-box-green">
+                <h3>환불이 가능한 경우:</h3>
+                <ul>
+                    <li>결제 후 출력물 제작이 시작되기 전까지의 환불 신청</li>
+                    <li>회사의 실수로 인해 잘못된 출력물이 제공된 경우</li>
+                    <li>시스템상 오류로 인해 파일 전송이 안된 경우</li>
+                </ul>
+            </div>
+            <h3>다만, 다음의 경우 환불이 불가능하오니, 이용에 참고해주시기 바랍니다:</h3>
+            <div class="info-box-red">
+                <h3>환불이 불가능한 경우:</h3>
+                <ul>
+                    <li>결제 후 출력물 제작이 시작된 후 환불 요청(출력물에 문제가 없는 경우)</li>
+                    <li>사용자의 파일 업로드 오류로 인한 출력물 오류</li>
+                    <li>단순 변심으로 인한 환불 요청</li>
+                    <li>수령 후 발생하는 문제에 의한 환불 요청</li>
+                </ul>
+            </div>
+
+            <h3>환불 신청 방법:</h3>
+            <div class="info-box-grey">
+                <p>환불 신청은 결제 후 영업일 2일내 전액환불 가능합니다. 환불 신청을 원하시는 경우, 아래 카카오톡 채널을 통해 자료와 함께 문의해 주시기 바랍니다.<br>
+                쉽고 빠르게 환불 처리 도와드리겠습니다!</p>
+                <p>준비자료: 해당 주문 내역 캡쳐, 환불사유, 출력물사진(출력물에 문제가 있는 경우 ex. 글자깨짐, 색상오염)</p>
+            </div>
+            <br>
+            <div class="contact-box">
+                <h3>카카오톡 문의 채널:</h3>
+                <img width="50px" src="{% static 'img/logo2.png' %}" alt="preprint 아이콘" class="kakao-icon"/>
+                <div class="navbar-center">
+                    <a class="introduce" href="http://pf.kakao.com/_xhExhaG">문의하기</a>
+                </div>
+                <br>
+                <h3>카카오톡 문의 채널 모바일 바로가기 (큐알코드):</h3>
+                <img width="200px" src="{% static 'img/QR.png' %}" alt="카카오톡 아이콘" class="kakao-icon"/>
+            </div>
+        </div>
+    </div>
+    <div class="sidebar right"></div>
+</div>
+{% endblock %}

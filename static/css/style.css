@@ -155,19 +155,35 @@ margin-top: 5px;
     height: 70px;
 }
 
-.navbar-center{
+.navbar-center {
     background-color: #1855b1;
     border-radius: 40px;
     cursor: pointer;
     width: 95px;
     height: 35px;
     margin-right: 20px;
-    
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
-.introduce{
+
+.introduce {
     color: white;
     text-decoration: none;
     font-size: 18px;
+    line-height: 1;
+}
+
+.image-container {
+    display: flex;
+    justify-content: center; /* 이미지가 중앙에 오도록 설정 */
+    margin: 20px 0; /* 이미지 위아래에 여백 추가 */
+}
+
+.image-container img {
+    max-width: 100%; /* 이미지가 컨테이너 크기를 넘지 않도록 설정 */
+    height: auto; /* 이미지 비율 유지 */
+    border-radius: 10px; /* 이미지 모서리를 둥글게 설정 */
 }
 
 /* 프린트디테일 페이지 */
