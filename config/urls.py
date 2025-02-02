@@ -12,6 +12,8 @@ urlpatterns = [
     path('accounts/', include('allauth.urls')),
     path('accounts/', include('dj_rest_auth.urls')),
     path('preprint/', include('preprint.urls')),
+    path('passorder/', include('passorder.urls')),
+    path('locker/', include('locker.urls')),
     path('',  TemplateView.as_view(template_name="print_main.html"), name="root"),
     # 웹사이트 운영 문서 안내
     path('document_privacy_policy', TemplateView.as_view(template_name="documents/document_privacy_policy.html"), name="document_privacy_policy"),

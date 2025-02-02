@@ -1,0 +1,111 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}결제 내역{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="text-center mb-4">
+                <h1 class="fw-bold display-5">결제 내역</h1>
+            </div>
+
+            <!-- 주문 정보 -->
+            <div class="d-grid gap-3">
+                <div>
+                    <h3 class="fw-bold">주문 정보</h3>
+                </div>
+
+                <div>
+                    <label class="fw-bold">주문 번호</label>
+                    <div class="form-control bg-light text-dark">{{ order.id }}</div>
+                </div>
+
+                <div>
+                    <label class="fw-bold">총 출력될 페이지 수</label>
+                    <div class="form-control bg-light text-dark">{{ order.total_pages }}</div>
+                </div>
+
+                <div>
+                    <label class="fw-bold">주문 날짜</label>
+                    <div class="form-control bg-light text-dark">{{ order.pass_order_date }}</div>
+                </div>
+
+                <div>
+                    <label class="fw-bold">가격</label>
+                    <div class="form-control bg-light text-dark">{{ order.pass_order_price }} 원</div>
+                </div>
+
+                <div>
+                    <label class="fw-bold">색상</label>
+                    <div class="form-control bg-light text-dark">{{ order.pass_order_color }}</div>
+                </div>
+
+                <div>
+                    <label class="fw-bold">패스오더 핀 번호</label>
+                    <div class="form-control bg-light text-dark">{{ order.pass_order_pin_number }}</div>
+                </div>
+
+                <div>
+                    <label class="fw-bold">주문 상태</label>
+                    <div class="form-control bg-light text-dark">{{ order.get_status_display }}</div>
+                </div>
+            </div>
+
+            <!-- 파일 정보 -->
+            <div class="mt-4">
+                <h4 class="fw-bold">파일 목록</h4>
+                <ul class="list-group">
+                    {% for file in files %}
+                        <li class="list-group-item">
+                            <a href="{{ file.pass_order_file.url }}" class="text-decoration-none">
+                                {{ file.pass_order_file.name }}
+                            </a>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+
+            {% if payment %}
+            <!-- 결제 정보 -->
+            <div class="d-grid gap-3 mt-4">
+                <div>
+                    <h3 class="fw-bold">결제 정보</h3>
+                </div>
+
+                <div>
+                    <label class="fw-bold">결제 번호</label>
+                    <div class="form-control bg-light text-dark">{{ payment.id }}</div>
+                </div>
+
+                <div>
+                    <label class="fw-bold">결제 금액</label>
+                    <div class="form-control bg-light text-dark">{{ payment.desired_amount }} 원</div>
+                </div>
+
+                <div>
+                    <label class="fw-bold">결제 방법</label>
+                    <div class="form-control bg-light text-dark">{{ payment.get_pay_method_display }}</div>
+                </div>
+
+                <div>
+                    <label class="fw-bold">결제 상태</label>
+                    <div class="form-control bg-light text-dark">{{ payment.get_pay_status_display }}</div>
+                </div>
+
+                <div>
+                    <label class="fw-bold">결제 성공 여부</label>
+                    <div class="form-control bg-light text-dark">
+                        {% if payment.is_paid_ok %}성공{% else %}실패{% endif %}
+                    </div>
+                </div>
+            </div>
+            {% else %}
+            <div class="alert alert-warning mt-4 text-center">
+                결제 내역이 없습니다.
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -3,32 +3,54 @@
 {% block title %}메인페이지{% endblock %}
 
 {% block content %}
-<div class="print-main">
-  {% if messages %}
-  <div class="info-box-green">
-      {% for message in messages %}
-      <p class="alert {{ message.tags }}">{{ message }}</p>
-      {% endfor %}
-  </div>
-  {% endif %}
-  <h1 class="logo">pre-print</h1>
-  <form action="{% url 'print_detail' %}">
-    <button type="submit" class="print-start-button">print !</button>
-  </form>
+<div class="row justify-content-center align-items-center text-center">
+  <div class="col-12 col-md-8">
+    <!-- 크게 굵은 글자 -->
+    <h1 class="display-5 fw-bold">
+      언제나 어디서나,<br />
+      당신의 프린트를 예약하세요.
+    </h1>
 
-  <div class="authentication">
-    {% if request.user.is_authenticated %}
-    <span>로그인 상태: {{request.user.username}}</span>
-    <form method="post" action="{% url 'logout' %}">
-      {% csrf_token %}
-      <button type="submit" class="logout-button">로그아웃</button>
-    </form>
-    {% else %}
-    <span>비로그인 상태</span>
-    <a href="{% url 'login' %}">로그인</a>
-    <a href="{% url 'signup' %}">회원가입</a>
-    {% endif %}
+    <!-- 연한 설명 글자 -->
+    <p class="fs-5 text-muted mt-3">
+      빠르고 편리한 온라인 예약! 기다림 없는 나의 프린트!
+    </p>
+
+    <!-- 버튼 구역 -->
+    <div class="mt-4 d-flex flex-wrap justify-content-center gap-3">
+      {% if user.is_authenticated %}
+        <!-- 로그인 상태 -->
+        <a href="{% url 'passorder:print_detail' %}" 
+           class="btn btn-primary btn-lg rounded-3 btn-same-width">
+          패스오더 신청
+        </a>
+        <a href="{% url 'passorder:passorder_pin_check' %}" 
+           class="btn btn-primary btn-lg rounded-3 btn-same-width">
+          패스오더 출력
+        </a>
+        <a href="{% url 'locker:print_detail' %}" 
+           class="btn btn-primary btn-lg rounded-3 btn-same-width">
+          사물함 예약
+        </a>
+        
+        <!-- "로그아웃" 버튼 (폼) -->
+        <form method="post" action="{% url 'logout' %}" class="d-inline-block">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-primary btn-lg rounded-3 btn-same-width">
+            로그아웃
+          </button>
+        </form>
+      {% else %}
+        <!-- 비로그인 상태 -->
+        <a href="{% url 'login' %}" class="btn btn-primary btn-lg rounded-3 btn-same-width">
+          로그인
+        </a>
+        <a href="{% url 'signup' %}" class="btn btn-primary btn-lg rounded-3 btn-same-width">
+          회원가입
+        </a>
+      {% endif %}
+    </div>
+    
   </div>
 </div>
-
 {% endblock %}

@@ -3,61 +3,83 @@
 {% load static %}
 {% block title %}프로필 수정{% endblock %}
 
-{% block additional_head %}
-<link rel="stylesheet" href="{% static 'css/account.css' %}?after">
-{% endblock %}
- 
 {% block content %}
-<div class="centered-form-container">
-    <h1 class="logo">Profile_Update</h1>
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="text-center mb-4">
+                <h1 class="fw-bold display-5">Profile Update</h1>
+            </div>
 
-    {% if form_errors %}
-        <div class="form-errors">
-            <ul>
-                {% for field, errors in form_errors.items %}
-                    {% for error in errors %}
-                        <li>{{ field }}: {{ error }}</li>
+            <!-- 에러 메시지 출력 -->
+            {% if form_errors %}
+            <div class="alert alert-danger">
+                <ul class="mb-0">
+                    {% for field, errors in form_errors.items %}
+                        {% for error in errors %}
+                            <li>{{ field }}: {{ error }}</li>
+                        {% endfor %}
                     {% endfor %}
-                {% endfor %}
-            </ul>
-        </div>
-    {% endif %}
-    
-    <form action="" method="POST" enctype="multipart/form-data">
-        {% csrf_token %}
-        <div class="login-container">
-            <div class="signup-form-group">
-                <label for="{{ form.username.id_for_label }}">Name:</label>
-                {{ form.username }}
+                </ul>
             </div>
-            <div class="signup-form-group">
-                <label for="{{ form.phone.id_for_label }}">Phone:</label>
-                <div class="phone-number-fields">
-                    <input type="text" value="010" readonly class="phone-area-code">
-                    <input type="text" name="phone1" maxlength="4" placeholder="1234" class="phone-number-input">
-                    <input type="text" name="phone2" maxlength="4" placeholder="5678" class="phone-number-input">
+            {% endif %}
+
+            <!-- 프로필 수정 폼 -->
+            <form action="" method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                
+                <div class="d-grid gap-3">
+                    <!-- 이름 -->
+                    <div>
+                        <label class="fw-bold">Name</label>
+                        <input type="text" class="form-control border border-secondary-subtle" value="{{ form.username.value }}" name="{{ form.username.name }}">
+                    </div>
+
+                    <!-- 전화번호 -->
+                    <div>
+                        <label class="fw-bold">Phone</label>
+                        <div class="d-flex gap-2">
+                            <input type="text" value="010" readonly class="form-control border border-secondary-subtle" style="max-width: 70px;">
+                            <input type="text" name="phone1" maxlength="4" placeholder="1234" class="form-control border border-secondary-subtle">
+                            <input type="text" name="phone2" maxlength="4" placeholder="5678" class="form-control border border-secondary-subtle">
+                        </div>
+                    </div>
+
+                    <!-- 이메일 구독 여부 -->
+                    <div class="form-check form-switch mt-3">
+                        <input class="form-check-input" type="checkbox" id="email_opt_in" name="{{ form.email_opt_in.name }}" {% if form.email_opt_in.value %}checked{% endif %}>
+                        <label class="form-check-label fw-bold" for="email_opt_in">Subscribe to Emails</label>
+                    </div>
+
+                    <!-- 생년월일 -->
+                    <div>
+                        <label class="fw-bold">Birth Date</label>
+                        <div class="d-flex gap-2">
+                            <input type="text" class="form-control border border-secondary-subtle" placeholder="YYYY" value="{{ form.birth_year.value }}" name="{{ form.birth_year.name }}">
+                            <input type="text" class="form-control border border-secondary-subtle" placeholder="MM" value="{{ form.birth_month.value }}" name="{{ form.birth_month.name }}">
+                            <input type="text" class="form-control border border-secondary-subtle" placeholder="DD" value="{{ form.birth_day.value }}" name="{{ form.birth_day.name }}">
+                        </div>
+                    </div>
+
+                    <!-- 성별 -->
+                    <div>
+                        <label class="fw-bold">Gender</label>
+                        <div class="btn-group w-100" role="group">
+                            <input type="radio" class="btn-check" name="{{ form.gender.name }}" id="male" value="M" {% if form.gender.value == "M" %}checked{% endif %}>
+                            <label class="btn btn-outline-primary" for="male">Male</label>
+
+                            <input type="radio" class="btn-check" name="{{ form.gender.name }}" id="female" value="F" {% if form.gender.value == "F" %}checked{% endif %}>
+                            <label class="btn btn-outline-primary" for="female">Female</label>
+                        </div>
+                    </div>
                 </div>
-            </div>
-            <div class="signup-form-group">
-                <label for="{{ form.email_opt_in.id_for_label }}">Subscribe to Emails:</label>
-                {{ form.email_opt_in }}
-            </div>
-            <div class="signup-form-group">
-                <label>Birth Date:</label>
-                <div class="birthdate-fields">
-                    {{ form.birth_year }} -
-                    {{ form.birth_month }} -
-                    {{ form.birth_day }}
+
+                <!-- 제출 버튼 -->
+                <div class="mt-4 text-center">
+                    <button type="submit" class="btn btn-primary btn-lg btn-same-width">Profile Update</button>
                 </div>
-            </div>
-            <div class="signup-form-group">
-                <label for="{{ form.gender.id_for_label }}">Gender:</label>
-                {{ form.gender }}
-            </div>
+            </form>
         </div>
-        <div>
-            <input type="submit" value="Profile Updat" class="signup-button">
-        </div>
-    </form>
+    </div>
 </div>
 {% endblock %}

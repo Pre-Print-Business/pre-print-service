@@ -1,332 +1,43 @@
-/* 메인페이지 css */
-body {
-    font-family: Arial, sans-serif;
-    min-height: 100vh;
+/* 1) 기본값 리셋 */
+html, body {
     margin: 0;
-    padding-bottom: 60px;
-    position: relative;
-}
-
-.content {
-    text-align: center;
-}
-
-.preprint-logo{
-    width: 130px;
-}
-
-.logo-image{
-    width: 130px;
-}
-
-.mypage-image{
-    width: 50px;
-}
-
-.cloud-image{
-    width: 50px;
-}
-
-.navbar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    max-width: 1200px;
-    margin: 0 auto;
-}
-
-.navbar-left, .navbar-center, .navbar-right {
-    display: flex;
-    align-items: center;
-}
-
-
-.navbar-right a{
-    margin-right: 20px;
-}
-
-.navbar-center a {
-    margin: 0 10px;
-}
-
-.content {
-    text-align: center;
-    padding-bottom: 300px;
-}
-
-.logo {
-    color: #1855b1;
-    margin-top: 50px;
-    font-size: 80px;
-}
-
-.print-start-button {
-    background-color: #1855b1;
-    padding: 20px 250px 20px 250px;
-    border-radius: 40px;
-    border: none;
-    cursor: pointer;
-    font-size: 40px;
-    color: white;
-}
-
-.authentication {
-margin-top: 10px;
-}
-
-.logout-link {
-display: block;
-font-size: 12px;
-margin-top: 5px;
-}
-
-.footer {
-    background-color: #dfdfdf;
-    padding: 20px;
-    display: flex;
-    justify-content: space-between;
-    position: fixed;
-    bottom: 0;
-    width: 100%;
-    left: 0;
-    box-sizing: border-box;
-    height: calc(100vh / 7.5);
-    align-items: flex-start;
-    overflow-y: auto; /* 푸터에 스크롤 기능 추가 */
-}
-
-.footer-section.large {
-    flex: 3; /* 첫 번째 섹션의 너비를 3배로 설정 */
-    text-align: left;
-    padding-right: 10px;
-}
-
-.footer-section.small {
-    flex: 2; /* 두 번째와 세 번째 섹션의 너비를 동일하게 설정 */
-    text-align: left;
-    padding-right: 10px;
-}
-
-.footer-section p {
-    margin: 1px;
     padding: 0;
 }
-
-.footer-links {
-    display: flex;
-    justify-content: flex-start;
-    gap: 20px; /* a 태그 사이의 간격을 20px로 설정 */
+  
+/* 2) 메인 콘텐츠: 네비게이션 바가 fixed-top이므로,
+      그만큼 margin-top을 줘서 본문이 가려지지 않게 함.
+      또한 페이지를 충분히 길게(200vh) 만들어 스크롤 유도. */
+.main-content {
+  margin-top: 200px;  /* 네비게이션 바 높이만큼 조정 */
+  min-height: 200vh;  /* 2배 화면 높이 (원하시면 300vh 등 조정 가능) */
+}
+  
+/* 3) 푸터: 검은 배경, 흰 글씨 + 적절한 패딩 */
+footer {
+  background-color: #000; /* 검은색 */
+  color: #fff;            /* 흰색 글씨 */
+  padding: 2rem 0;        /* 세로 여백 */
 }
 
-.footer-links a {
-    text-decoration: none; /* 링크의 밑줄 제거 */
-    color: #1500ff; /* 링크 색상 설정 */
+/* 모든 통일 버튼에 같은 최소 너비를 지정하는 예시 */
+.btn-same-width {
+  min-width: 200px; /* 원하는 값 */
+  /* 필요하다면 text-align: center; etc... */
 }
 
-
-.print-main{
-    position: relative;
-    top: 80px;
+/* 네비게이션 바 스타일 개선 */
+.navbar-nav .nav-item {
+  margin-left: 20px; /* 요소 간 간격 추가 */
 }
 
-.search-form-group {
-    margin-bottom: 20px;
-}
-.search-space{
-    background-color: #EDEDED;
-    padding: 10px 20px 10px 20px;
-    border-radius: 40px 20px 20px 40px;
-    border: none;
-    cursor: pointer;
-    font-size: 40px;
-    width: 500px;
-    height: 50px;
+.navbar-nav .nav-link {
+  font-size: 1.1rem; /* 글씨 크기 키우기 */
+  font-weight: 600; /* 글씨 더 진하게 */
+  color: #333 !important; /* 기본 색상 더 진하게 */
+  transition: color 0.3s ease-in-out; /* 색상 변화 부드럽게 */
 }
 
-.search-submit-button {
-    background-color: #1855b1;
-    padding: 5px 20px 5px 20px;
-    border-radius: 20px 40px 40px 20px;
-    border: none;
-    cursor: pointer;
-    font-size: 40px;
-    color: white;
-    width: 100px;
-    height: 70px;
-}
-
-.navbar-center {
-    background-color: #1855b1;
-    border-radius: 40px;
-    cursor: pointer;
-    width: 95px;
-    height: 35px;
-    margin-right: 20px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.introduce {
-    color: white;
-    text-decoration: none;
-    font-size: 18px;
-    line-height: 1;
-}
-
-.image-container {
-    display: flex;
-    justify-content: center; /* 이미지가 중앙에 오도록 설정 */
-    margin: 20px 0; /* 이미지 위아래에 여백 추가 */
-}
-
-.image-container img {
-    max-width: 100%; /* 이미지가 컨테이너 크기를 넘지 않도록 설정 */
-    height: auto; /* 이미지 비율 유지 */
-    border-radius: 10px; /* 이미지 모서리를 둥글게 설정 */
-}
-
-/* 프린트디테일 페이지 */
-.detail-form-group {
-    display: flex;
-    align-items: center;
-    margin-bottom: 20px;
-}
- 
-.detail-form-group h2 {
-    margin-right: 20px; 
-}
-
-.centered-form-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: calc(100vh - (300px));
-}
-
-.color-space{
-    background-color: #EDEDED;
-    padding: 17px 40px 17px 40px;
-    border-radius: 20px;
-    border: none;
-    cursor: pointer;
-    font-size: 20px;
-}
-
-.pw-space{
-    background-color: #EDEDED;
-    padding: 10px 20px 10px 20px;
-    border-radius: 20px;
-    border: none;
-    cursor: pointer;
-    font-size: 40px;
-}
-
-.pw-submit-button {
-    background-color: #1855b1;
-    padding: 5px 20px 5px 20px;
-    border-radius: 20px;
-    border: none;
-    cursor: pointer;
-    font-size: 40px;
-    color: white;
-}
-
-/* 결제 페이지 */
-.payment-files{
-    background-color: #EDEDED;
-    padding: 10px 20px 10px 20px;
-    border-radius: 20px;
-    border: none;
-    cursor: pointer;
-    font-size: 20px;
-}
-
-.payment-file-container {
-    background-color: #EDEDED; 
-    padding: 10px;       
-    margin-top: 20px;
-    border-radius: 5px;   
-    border-radius: 30px;
-    max-width: 900px; 
-    margin-left: auto; 
-    margin-right: auto; 
-}
-
-@media only screen and (max-width: 600px) {
-    .centered-form-container{
-        position: relative;
-        top: 50px;
-    }
-    .search-space {
-        font-size: 20px;
-        width: 200px;
-        height: 40px;
-        padding: 10px;
-    }
-    
-    .search-submit-button {
-        font-size: 20px;
-        width: 80px;
-        height: 50px;
-    }
-
-    .print-start-button {
-        padding: 10px 60px;
-        font-size: 20px;
-        border-radius: 20px;
-    }
-
-    .logo {
-        font-size: 50px;
-    }
-
-    .logo-image, .preprint-logo {
-        width: 80px;
-    }
-
-    /* 디테일 */
-    .detail-form-group {
-        flex-direction: column;
-        align-items: flex-start;
-        margin-bottom: 10px;
-    }
-     
-    .detail-form-group h2 {
-        margin-right: 10px;
-        font-size: 16px;
-    }
-    
-    .color-space, .pw-space {
-        font-size: 16px;
-        padding: 10px 15px;
-    }
-
-    .pw-submit-button {
-        font-size: 20px;
-        padding: 10px 20px;
-        border-radius: 10px;
-    }
-    .payment-detail-page {
-        padding: 15px;
-    }
-
-    .payment-detail-page h2 {
-        font-size: 24px;
-        margin-bottom: 15px;
-    }
-
-    .payment-detail-page p {
-        font-size: 14px;
-        margin-bottom: 8px;
-    }
-
-    .order-div ul li {
-        font-size: 14px;
-    }
-
-    .btn-primary {
-        font-size: 16px;
-        padding: 8px 15px;
-    }
+/* 커서 올라갔을 때 파란색으로 변경 */
+.navbar-nav .nav-link:hover {
+  color: #007bff !important; /* 부트스트랩 기본 파란색 */
 }

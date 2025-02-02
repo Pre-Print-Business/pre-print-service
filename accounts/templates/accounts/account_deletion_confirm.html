@@ -2,24 +2,32 @@
 {% load static %}
 {% block title %}회원 탈퇴 확인{% endblock %}
 
-{% block additional_head %}
-<link rel="stylesheet" href="{% static 'css/account.css' %}?after">
-{% endblock %}
-
 {% block content %}
-<div class="centered-form-container">
-    <h1 class="logo">Account Deletion</h1>
-    <div class="social-login-form">
-        <div class="info-box-red">
-            <p>정말로 회원 탈퇴를 원하시나요?</p>
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="text-center mb-4">
+                <h1 class="fw-bold display-5">Account Deletion</h1>
+            </div>
+
+            <!-- 경고 메시지 -->
+            <div class="alert alert-danger text-center">
+                <p class="mb-0 fw-bold">정말로 회원 탈퇴를 원하시나요?</p>
+            </div>
+
+            <!-- 마이페이지로 돌아가기 (글씨 형태로 변경) -->
+            <div class="text-center mb-3">
+                <a href="{% url 'mypage' %}" class="text-muted text-decoration-none fw-bold">
+                    ← 마이페이지로 돌아가기
+                </a>
+            </div>
+
+            <!-- 탈퇴하기 버튼 -->
+            <form action="{% url 'account_deletion_confirm' %}" method="post" class="text-center">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-primary btn-lg btn-same-width">탈퇴하기</button>
+            </form>
         </div>
-        <div class="info-box-grey">
-            <a href="{% url 'mypage' %}" class="cancel-button">마이페이지로 돌아가기</a>
-        </div>
-        <form action="{% url 'account_deletion_confirm' %}" method="post">
-            {% csrf_token %}
-            <button type="submit" class="delete-button">탈퇴하기</button>
-        </form>
     </div>
 </div>
 {% endblock %}

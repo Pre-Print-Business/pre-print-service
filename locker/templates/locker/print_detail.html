@@ -1,0 +1,149 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}사물함 대여{% endblock %}
+
+{% block content %}
+<style>
+    .locker-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        gap: 10px;
+        margin-bottom: 20px;
+    }
+    
+    .legend {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        font-size: 14px;
+        margin-bottom: 20px;
+    }
+    
+    .legend-item {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+    
+    .legend-box {
+        width: 20px;
+        height: 20px;
+        border-radius: 3px;
+    }
+    
+    .available { background-color: lightgreen; }
+    .unavailable { background-color: lightgray; }
+    
+    .locker-grid {
+        display: grid;
+        grid-template-columns: repeat(6, 1fr);
+        gap: 10px;
+        justify-items: center;
+        max-width: 600px;
+        margin: 0 auto;
+    }
+    
+    .locker-box {
+        width: 60px;
+        height: 60px;
+        border-radius: 5px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        cursor: pointer;
+    }
+    
+    .locker-box.available:hover {
+        background-color: #90ee90; /* 연두색 강조 */
+    }
+    
+    .locker-box.unavailable {
+        cursor: not-allowed;
+    }
+
+    .locker-form {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+        margin-top: 20px;
+    }
+
+    .form-row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .locker-form select, .locker-form input {
+        padding: 8px 12px;
+        font-size: 16px;
+    }
+</style>
+
+<div class="locker-container">
+    <h1>사물함 대여</h1>
+
+    <!-- 🚨 에러 메시지 표시 -->
+    {% if messages %}
+        <div class="alert alert-danger">
+            {% for message in messages %}
+                <p>{{ message }}</p>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <div class="legend">
+        <div class="legend-item">
+            <div class="legend-box available"></div> 사용 가능한 사물함
+        </div>
+        <div class="legend-item">
+            <div class="legend-box unavailable"></div> 사용 불가능한 사물함
+        </div>
+    </div>
+
+    <div class="locker-grid">
+        {% for locker in lockers %}
+            <div class="locker-box {% if locker.is_using %}unavailable{% else %}available{% endif %}" 
+                 data-locker-id="{{ locker.id }}">
+                {{ locker.locker_number }}
+            </div>
+        {% endfor %}
+    </div>
+
+    <form action="" method="POST" class="locker-form">
+        {% csrf_token %}
+        
+        <div class="form-row">
+            <label for="locker_id">선택한 사물함:</label>
+            <input type="text" id="locker_id" name="locker_id" readonly required>
+        </div>
+
+        <div class="form-row">
+            <label for="rental_period">사용 개월 수:</label>
+            <select id="rental_period" name="rental_period">
+                <option value="1">1개월</option>
+                <option value="2">2개월</option>
+                <option value="3">3개월</option>
+                <option value="4">4개월</option>
+            </select>
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-same-width">대여 신청</button>
+    </form>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        document.querySelectorAll(".locker-box.available").forEach(box => {
+            box.addEventListener("click", function() {
+                document.getElementById("locker_id").value = this.dataset.lockerId;
+            });
+        });
+    });
+</script>
+{% endblock %}
