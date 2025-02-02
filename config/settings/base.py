@@ -37,6 +37,8 @@ PROJECT_APPS = [
     'preprint',
     'users',
     'accounts',
+    'passorder',
+    'locker'
 ]
 THIRD_PARTY_APPS = [
     # django-rest-framework

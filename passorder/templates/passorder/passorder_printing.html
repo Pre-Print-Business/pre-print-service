@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}패스오더 프린팅{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="text-center mb-4">
+        <h1 class="fw-bold display-5">패스오더 프린트</h1>
+        <p class="text-muted">주문 번호: <strong>{{ order.id }}</strong></p>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <h3 class="fw-bold">출력할 파일 목록</h3>
+            {% if files %}
+                <ul class="list-group">
+                    {% for file in files %}
+                        <li class="list-group-item">
+                            <a href="{{ file.pass_order_file.url }}" target="_blank">{{ file.pass_order_file.name }}</a>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p class="text-muted">첨부된 파일이 없습니다.</p>
+            {% endif %}
+
+            <div class="alert alert-danger mt-4 text-center">
+                한 번 출력하면 되돌릴 수 없습니다. 신중하게 진행하세요.
+            </div>
+
+            <form method="post" action="{% url 'passorder:passorder_printing' %}">
+                {% csrf_token %}
+                <input type="hidden" name="order_id" value="{{ order.id }}">
+                <button type="submit" class="btn btn-primary btn-lg btn-same-width">출력하기</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

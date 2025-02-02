@@ -180,7 +180,7 @@ def print_payment(req):
     now = datetime.now()
     next_day = now + timedelta(days=1)
     payment_props = {
-        "pg": "smartro_v2.t_2302141m",
+        "pg": "smartro_v2.imp000112m",
         "pay_method": "card",
         "merchant_uid": payment.merchant_uid,
         "name": payment.name,

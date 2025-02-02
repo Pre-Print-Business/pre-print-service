@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}패스오더 - 프린트 설정{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="text-center mb-4">
+                <h1 class="fw-bold display-5">패스오더</h1>
+            </div>
+
+            <div class="alert alert-info">
+                <p>프린트 시 색상을 선택할 수 있습니다. 흑백/컬러 선택이 가능합니다.<br>
+                <strong>페이지 장당 가격:</strong> 흑백 75원 | 컬러 300원</p>
+            </div>
+
+            {% if messages %}
+            <div class="alert alert-danger">
+                {% for message in messages %}
+                    <p class="mb-0">{{ message }}</p>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <form action="" method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+
+                <!-- 파일 업로드 -->
+                <div class="mb-3">
+                    <label class="fw-bold" for="file-upload">파일 업로드</label>
+                    <input type="file" class="form-control" id="file-upload" name="files" multiple required>
+                </div>
+
+                <!-- 색상 선택 -->
+                <div class="mb-3">
+                    <label class="fw-bold" for="color">색상 선택</label>
+                    <select class="form-select" id="color" name="color">
+                        <option value="BW">흑백</option>
+                        <option value="C">컬러</option>
+                    </select>
+                </div>
+
+                <!-- 비밀번호 입력 -->
+                <div class="mb-3">
+                    <label class="fw-bold" for="password">비밀번호 (16자리 숫자)</label>
+                    <input type="text" class="form-control" id="password" name="pw" required>
+                </div>
+
+                <div class="alert alert-secondary">
+                    <p>비밀번호는 16자리 숫자의 조합으로 작성해주세요.<br>
+                    Shift, Control 키를 활용하여 여러 파일을 선택할 수 있습니다.</p>
+                </div>
+
+                <!-- 제출 버튼 -->
+                <div class="d-grid">
+                    <button type="submit" class="btn btn-primary btn-lg btn-same-width">print!</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

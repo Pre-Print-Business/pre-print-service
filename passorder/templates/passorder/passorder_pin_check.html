@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}패스오더 핀 번호 확인{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="text-center mb-4">
+        <h1 class="fw-bold display-5">패스오더 프린트</h1>
+    </div>
+
+    {% if messages %}
+    <div class="alert alert-info">
+        {% for message in messages %}
+            <p class="mb-0">{{ message }}</p>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <form method="post" action="{% url 'passorder:passorder_pin_check' %}">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label for="pin_number" class="form-label fw-bold">핀 번호 입력</label>
+                    <input type="text" id="pin_number" name="pin_number" class="form-control text-center" required>
+                </div>
+                <button type="submit" class="btn btn-primary btn-lg btn-same-width">프린트하기</button>
+            </form>
+
+            <div class="alert alert-warning mt-4 text-center">
+                패스오더 출력 시 한 번만 사용할 수 있습니다. <br>
+                신중하게 진행해주세요.
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

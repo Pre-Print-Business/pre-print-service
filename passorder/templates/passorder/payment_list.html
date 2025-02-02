@@ -1,0 +1,134 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}결제 내역{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="text-center mb-4">
+        <h1 class="fw-bold display-5">결제 내역</h1>
+        <p class="text-muted">현재 예약된 주문: <strong>{{ orders_count }}</strong></p>
+    </div>
+
+    {% if messages %}
+    <div class="alert alert-info">
+        {% for message in messages %}
+            <p class="mb-0">{{ message }}</p>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            {% for order_with_payment in orders_with_files %}
+            <div class="card shadow-sm mb-4">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h3 class="fw-bold">주문 번호: {{ order_with_payment.order.id }}</h3>
+                        {% if order_with_payment.order.status == 'cancelled' %}
+                            <span class="badge bg-danger">취소된 주문</span>
+                        {% elif order_with_payment.payment and order_with_payment.payment.is_paid_ok %}
+                            <span class="badge bg-success">결제 완료</span>
+                        {% else %}
+                            <span class="badge bg-warning text-dark">미결제 상태</span>
+                        {% endif %}
+                    </div>
+                    <hr>
+
+                    <!-- 주문 정보 -->
+                    <div class="d-grid gap-2">
+                        <div>
+                            <label class="fw-bold">주문 날짜</label>
+                            <div class="form-control bg-light text-dark">{{ order_with_payment.order.pass_order_date }}</div>
+                        </div>
+                        <div>
+                            <label class="fw-bold">총 매수</label>
+                            <div class="form-control bg-light text-dark">{{ order_with_payment.order.total_pages }} 장</div>
+                        </div>
+                        <div>
+                            <label class="fw-bold">핀 번호</label>
+                            <div class="form-control bg-light text-dark">{{ order_with_payment.order.pass_order_pin_number }}</div>
+                        </div>
+                        <div>
+                            <label class="fw-bold">색상</label>
+                            <div class="form-control bg-light text-dark">
+                                {% if order_with_payment.order.pass_order_color == "BW" %}
+                                    흑백
+                                {% else %}
+                                    컬러
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div>
+                            <label class="fw-bold">가격</label>
+                            <div class="form-control bg-light text-dark">{{ order_with_payment.order.pass_order_price }} 원</div>
+                        </div>
+                        <div>
+                            <label class="fw-bold">주문 상태</label>
+                            <div class="form-control bg-light text-dark">{{ order_with_payment.order.get_status_display }}</div>
+                        </div>
+                    </div>
+
+                    <!-- 파일 목록 -->
+                    <hr>
+                    <h4 class="fw-bold">파일 목록</h4>
+                    {% if order_with_payment.files %}
+                        <ul class="list-group">
+                            {% for file in order_with_payment.files %}
+                                <li class="list-group-item">
+                                    <a href="{{ file.pass_order_file.url }}" target="_blank">{{ file.pass_order_file.name }}</a>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p class="text-muted">첨부된 파일이 없습니다.</p>
+                    {% endif %}
+
+                    <!-- 결제 정보 -->
+                    {% if order_with_payment.payment %}
+                    <hr>
+                    <h4 class="fw-bold">결제 정보</h4>
+                    <div class="d-grid gap-2">
+                        <div>
+                            <label class="fw-bold">결제 금액</label>
+                            <div class="form-control bg-light text-dark">{{ order_with_payment.payment.desired_amount }} 원</div>
+                        </div>
+                        <div>
+                            <label class="fw-bold">결제 상태</label>
+                            <div class="form-control bg-light text-dark">{{ order_with_payment.payment.get_pay_status_display }}</div>
+                        </div>
+                        <div>
+                            <label class="fw-bold">결제 수단</label>
+                            <div class="form-control bg-light text-dark">{{ order_with_payment.payment.get_pay_method_display }}</div>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <!-- 버튼 영역 -->
+                    <div class="mt-4 d-flex justify-content-between">
+                        {% if order_with_payment.order.status == 'cancelled' %}
+                            <button class="btn btn-secondary btn-lg btn-same-width" disabled>주문 취소됨</button>
+                        {% elif order_with_payment.payment and order_with_payment.payment.is_paid_ok %}
+                            {% if not order_with_payment.is_archived %}
+                            <form method="post" action="{% url 'passorder:cancel_order' order_with_payment.order.id %}">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-danger btn-lg btn-same-width">주문 취소</button>
+                            </form>
+                            {% endif %}
+                        {% else %}
+                            {% if not order_with_payment.is_archived %}
+                            <form method="post" action="{% url 'passorder:retry_payment' %}">
+                                {% csrf_token %}
+                                <input type="hidden" name="order_id" value="{{ order_with_payment.order.id }}">
+                                <input type="hidden" name="payment_id" value="{{ order_with_payment.payment.id }}">
+                                <button type="submit" class="btn btn-primary btn-lg btn-same-width">결제하기</button>
+                            </form>
+                            {% endif %}
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

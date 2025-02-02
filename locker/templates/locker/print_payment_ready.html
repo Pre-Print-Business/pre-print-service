@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}결제 준비{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="text-center mb-4">
+                <h1 class="fw-bold display-5">결제 준비</h1>
+            </div>
+
+            <!-- 메시지 알림 -->
+            {% if messages %}
+            <div class="alert alert-danger">
+                {% for message in messages %}
+                <p class="mb-0">{{ message }}</p>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <!-- 주문 정보 -->
+            <div class="d-grid gap-3">
+                <!-- 주문 번호 -->
+                <div>
+                    <label class="fw-bold">주문 번호</label>
+                    <div class="form-control bg-light text-dark">{{ order.id }}</div>
+                </div>
+
+                <!-- 락커 번호 -->
+                <div>
+                    <label class="fw-bold">락커 번호</label>
+                    <div class="form-control bg-light text-dark">{{ order.locker.locker_number }}</div>
+                </div>
+
+                <!-- 대여 기간 -->
+                <div>
+                    <label class="fw-bold">대여 기간</label>
+                    <div class="form-control bg-light text-dark">{{ order.rental_period }} 개월</div>
+                </div>
+
+                <!-- 가격 -->
+                <div>
+                    <label class="fw-bold">가격</label>
+                    <div class="form-control bg-light text-dark">{{ order.order_price }} 원</div>
+                </div>
+
+                <!-- 대여 시작일 -->
+                <div>
+                    <label class="fw-bold">대여 시작일</label>
+                    <div class="form-control bg-light text-dark">{{ order.order_start_date }}</div>
+                </div>
+
+                <!-- 대여 종료일 -->
+                <div>
+                    <label class="fw-bold">대여 종료일</label>
+                    <div class="form-control bg-light text-dark">{{ order.order_end_date }}</div>
+                </div>
+            </div>
+
+            <!-- 결제 버튼 -->
+            <div class="mt-4 text-center">
+                <form method="post" action="{% url 'locker:print_payment' %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="order_id" value="{{ order.id }}">
+                    <button type="submit" class="btn btn-primary btn-lg btn-same-width">결제하기</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
