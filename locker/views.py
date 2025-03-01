@@ -24,6 +24,8 @@ from django.http import HttpResponse
 from django.conf import settings
 from django.db import transaction
 from django.db.models import Sum
+import re
+
 
 def locker_main(req):
     return render(req, 'locker/locker_main.html')
@@ -44,10 +46,17 @@ def print_detail(req):
     if req.method == "POST":
         locker_id = req.POST.get("locker_id")
         rental_period = int(req.POST.get("rental_period", 1))  # 기본값 1개월
+        # 사용자가 입력한 사물함 비밀번호를 받습니다.
+        locker_pw = req.POST.get("locker_pw", "").strip()
+
+        # 비밀번호 유효성 검사: 반드시 4자리 숫자여야 함
+        if not re.fullmatch(r'\d{4}', locker_pw):
+            messages.error(req, "사물함 비밀번호는 반드시 4자리 숫자로 입력해 주세요.")
+            lockers = Locker.objects.all().order_by('locker_number')
+            return render(req, "locker/print_detail.html", {"lockers": lockers})
 
         locker = get_object_or_404(Locker, id=locker_id)
 
-        # 🚨 이미 사용 중인 락커라면 오류 메시지를 띄우고 다시 입력 페이지로 이동
         if locker.is_using:
             messages.error(req, "이미 사용 중인 사물함입니다. 다른 사물함을 선택해주세요.")
             lockers = Locker.objects.all().order_by('locker_number')
@@ -64,11 +73,10 @@ def print_detail(req):
             order_price=price,
             order_start_date=order_start_date,
             order_end_date=order_end_date,
-            rental_period=rental_period
+            rental_period=rental_period,
+            locker_pw=locker_pw  # 비밀번호 저장
         )
-
-        locker.is_using = True  # 🚨 대여가 확정되면 해당 락커 사용 중으로 변경
-        locker.save()
+        # 필요에 따라 locker.is_using 상태 변경 등을 처리
 
         return redirect("locker:print_payment_ready", order_id=order.id)
     
@@ -88,6 +96,13 @@ def print_payment(req):
         return redirect('mypage')
 
     latest_order = orders_to_pay.first()
+
+    if latest_order.locker.is_using == False:
+        latest_order.locker.is_using = True
+        latest_order.locker.save()
+    else:
+        messages.error(req, "다른 유저가 결제 진행중에 있거나 이미 사용중인 사물합입니다. 이후에 다시 시도해주세요.")
+        return redirect('locker:print_detail')
 
     payment = LockerOrderPayment.create_by_locker_order(latest_order)
 
@@ -132,9 +147,12 @@ def retry_payment(req):
     # 주문 ID로 직접 가져오기 (FAILED_PAYMENT 상태 검사 제거)
     order = get_object_or_404(LockerOrder, id=order_id, order_user=req.user)
 
-    if order.locker.is_using == True:
-        messages.error(req, "이미 사용중인 사물함입니다.")
-        return redirect('locker:print_payment_list')
+    if order.locker.is_using == False:
+        order.locker.is_using = True
+        order.locker.save()
+    else:
+        messages.error(req, "다른 유저가 결제 진행중에 있거나 이미 사용중인 사물합입니다. 이후에 다시 시도해주세요.")
+        return redirect('locker:print_detail')
 
     # 기존 결제 정보가 없으면 새로운 결제 생성
     if not payment_id or payment_id == '':
@@ -194,6 +212,9 @@ def print_payment_check(req, order_pk, payment_pk):
         print("geag: 실패함 " + str(payment.locker_order.locker.is_using))
         payment.locker_order.locker.is_using = False
         payment.locker_order.locker.save()
+    else:
+        payment.locker_order.locker_status = payment.locker_order.LockerStatus.INSERVICE
+        payment.locker_order.save()
     return redirect("locker:print_payment_detail", order_pk=order_pk)
 
 
@@ -235,6 +256,12 @@ def cancel_order(request, order_id):
     messages.success(request, "주문이 취소되었습니다.")
     return redirect('locker:print_payment_list')
 
+@login_required
+def delete_order(request, order_pk):
+    order = get_object_or_404(LockerOrder, pk=order_pk, order_user=request.user)
+    order.delete()
+    messages.success(request, "주문이 삭제되었습니다.")
+    return redirect('locker:print_payment_list')
 
 ### 마이페이지 & 결제내역
 def print_mypage(req):
@@ -260,13 +287,25 @@ def print_payment_list(req):
         if order.status != LockerOrder.Status.PAID and now - order.order_date > timedelta(hours=3):
             order.delete()
             continue
-        # 결제완료 상태에서 주문 시간이 2일이 지난 경우 스킵
-        if order.status == LockerOrder.Status.PAID and now - order.order_date > timedelta(days=2):
-            continue
         payment = LockerOrderPayment.objects.filter(locker_order=order).first()
+        
+        # 남은 시간을 정확히 계산 (분까지)
+        remaining_delta = order.order_end_date - now
+        if remaining_delta.total_seconds() <= 0:
+            remaining_str = "0분"
+        else:
+            days = remaining_delta.days
+            hours, rem = divmod(remaining_delta.seconds, 3600)
+            minutes, _ = divmod(rem, 60)
+            if days > 0:
+                remaining_str = f"{days}일 {hours}시간 {minutes}분"
+            else:
+                remaining_str = f"{hours}시간 {minutes}분"
+        
         orders_with_files.append({
             'order': order,
             'payment': payment,
+            'remaining_time': remaining_str,
         })
     context = {
         'orders_with_files': orders_with_files,

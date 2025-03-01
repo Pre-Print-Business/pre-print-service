@@ -13,5 +13,6 @@ urlpatterns = [
     path('print_payment_detail/<int:order_pk>/', print_payment_detail, name='print_payment_detail'),
     path('print_payment_list/', print_payment_list, name='print_payment_list'),
     path('cancel_order/<int:order_id>/', cancel_order, name='cancel_order'),
+    path('delete_order/<int:order_pk>/', delete_order, name='delete_order'),
     path('webhook/', portone_webhook, name='webhook'),
 ]
