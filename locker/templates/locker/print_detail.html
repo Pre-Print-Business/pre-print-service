@@ -133,6 +133,12 @@
             </select>
         </div>
 
+        <!-- 신규: 사물함 비밀번호 입력 필드 (4자리 숫자) -->
+        <div class="form-row">
+            <label for="locker_pw">사물함 비밀번호 (4자리 숫자):</label>
+            <input type="text" id="locker_pw" name="locker_pw" pattern="\d{4}" maxlength="4" required>
+        </div>
+
         <button type="submit" class="btn btn-primary btn-same-width">대여 신청</button>
     </form>
 </div>

@@ -174,3 +174,6 @@ SIMPLE_JWT = {
     'ROTATE_REFRESH_TOKENS': False,
     'BLACKLIST_AFTER_ROTATION': True,
 }
+
+# 구글 메일
+APP_PASSWORD = get_secrets('APP_PASSWORD')

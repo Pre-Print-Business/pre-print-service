@@ -4,6 +4,7 @@ from uuid import uuid4
 from django.conf import settings
 from django.http import Http404
 from django.utils.functional import cached_property
+from django.core.validators import RegexValidator
 from iamport import Iamport
 
 User = get_user_model()
@@ -23,7 +24,13 @@ class LockerOrder(models.Model):
         PREPARED_PRODUCT = "prepared_product", "상품준비중"
         SHIPPED = "shipped", "배송중"
         DELIVERED = "delivered", "배송완료"
+        INSERVICE = "inservice", "서비스이용중"
+        OUTSERVICE = "outservice", "서비스종료"
         CANCELLED = "cancelled", "주문취소"
+    class LockerStatus(models.TextChoices):
+        REQUESTED = "requested", "주문요청"
+        INSERVICE = "inservice", "서비스이용중"
+        OUTSERVICE = "outservice", "서비스종료"
     order_user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="유저")
     locker = models.ForeignKey(Locker, on_delete=models.CASCADE, verbose_name="락커", null=True, blank=True)
     order_price = models.DecimalField(verbose_name="가격", max_digits=10, decimal_places=2)
@@ -31,6 +38,19 @@ class LockerOrder(models.Model):
     order_start_date = models.DateTimeField(verbose_name="대여 시작일")
     order_end_date = models.DateTimeField(verbose_name="대여 종료일")
     rental_period = models.IntegerField(verbose_name="대여 기간(일 단위)")
+    locker_pw = models.CharField(
+        "사물함 비밀번호",
+        max_length=4,
+        default="1234",
+        validators=[RegexValidator(regex=r'^\d{4}$', message="비밀번호는 4자리 숫자여야 합니다.")]
+    )
+    locker_status = models.CharField(
+        "진행상태",
+        max_length=20,
+        choices=Status.choices,
+        default=Status.REQUESTED,
+        db_index=True,
+    )
     status = models.CharField(
         "진행상태",
         max_length=20,
