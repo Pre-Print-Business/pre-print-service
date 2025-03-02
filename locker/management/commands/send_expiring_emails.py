@@ -15,7 +15,7 @@ class Command(BaseCommand):
     help = "서비스 만료 임박 주문 건에 대해 이메일 알림을 발송합니다."
 
     def handle(self, *args, **options):
-        now = timezone.now()
+        now = timezone.localtime()
         # locker_status가 INSERVICE인 주문들만 필터링
         orders = LockerOrder.objects.filter(locker_status=LockerOrder.Status.INSERVICE)
         emails_sent = 0
