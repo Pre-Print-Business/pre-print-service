@@ -8,7 +8,7 @@ class Command(BaseCommand):
     help = '대여 종료 시간이 지난 LockerOrder의 상태를 업데이트하고, 관련 Locker를 사용가능 상태로 변경합니다.'
 
     def handle(self, *args, **options):
-        now = timezone.now()
+        now = timezone.localtime()
         expired_orders = LockerOrder.objects.filter(locker_status=LockerOrder.Status.INSERVICE)
         
         for order in expired_orders:
