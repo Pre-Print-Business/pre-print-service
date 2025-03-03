@@ -19,6 +19,15 @@
   <!-- 커스텀 CSS -->
   <link rel="stylesheet" href="{% static 'css/style.css' %}">
   <!-- <link rel="stylesheet" href="{% static 'css/information.css' %}?after"> -->
+   <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-XMV7FL9J4Z"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-XMV7FL9J4Z');
+  </script>
   {% block additional_head %}{% endblock %}
 </head>
 <body>
