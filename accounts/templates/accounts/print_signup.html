@@ -13,10 +13,10 @@
     <!-- 구글 아이디로 회원가입 버튼 추가 -->
     <div class="social-login-form">
         <form action="{% url 'google_login' %}" method="get">
-            <button class="google-login-button" type="submit">Sign with Google</button>
+            <button class="btn btn-primary btn-lg rounded-3 social-login-signup-button" type="submit">Sign with Google</button>
         </form>
         <form action="{% url 'kakao_login' %}" method="get">
-            <button class="kakao-login-button" type="submit">Sign with Kakao</button>
+            <button class="btn btn-primary btn-lg rounded-3 social-login-signup-button" type="submit">Sign with Kakao</button>
         </form>
     </div>
     <p>이미 계정이 있으신가요? <a href="{% url 'login' %}">로그인</a></p>

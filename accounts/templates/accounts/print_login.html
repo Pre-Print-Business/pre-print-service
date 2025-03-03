@@ -12,10 +12,10 @@
     <h1 class="logo">Login</h1>
     <div class="social-login-form">
         <form action="{% url 'google_login' %}" method="get">
-            <button class="google-login-button" type="submit">Login with Google</button>
+            <button class="btn btn-primary btn-lg rounded-3 social-login-signup-button" type="submit">Login with Google</button>
         </form>
         <form action="{% url 'kakao_login' %}" method="get">
-            <button class="kakao-login-button" type="submit">Login with Kakao</button>
+            <button class="btn btn-primary btn-lg rounded-3 social-login-signup-button" type="submit">Login with Kakao</button>
         </form>
     </div>
     <p>회원이 아니신가요? <a href="{% url 'signup' %}">회원가입</a></p>

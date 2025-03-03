@@ -8,9 +8,18 @@
         display: flex;
         flex-direction: column;
         align-items: center;
-        text-align: center;
-        gap: 10px;
         margin-bottom: 20px;
+    }
+    /* 두 섹션을 나누는 컨테이너 */
+    .two-sections {
+        display: flex;
+        gap: 20px;
+        width: 100%;
+        max-width: 1200px;
+    }
+    .left-section, .right-section {
+        flex: 1;
+        padding: 10px;
     }
     
     .legend {
@@ -34,16 +43,20 @@
         border-radius: 3px;
     }
     
-    .available { background-color: lightgreen; }
-    .unavailable { background-color: lightgray; }
+    /* 원래 기능 유지: 사용 가능하면 연두, 불가능하면 회색 */
+    .available { 
+        background-color: lightgreen; 
+    }
+    .unavailable { 
+        background-color: lightgray; 
+    }
     
+    /* 사물함 그리드: 고정된 크기의 컬럼과 일정한 gap으로 */
     .locker-grid {
         display: grid;
-        grid-template-columns: repeat(6, 1fr);
+        grid-template-columns: repeat(6, 60px);
         gap: 10px;
-        justify-items: center;
-        max-width: 600px;
-        margin: 0 auto;
+        justify-content: center;
     }
     
     .locker-box {
@@ -58,89 +71,137 @@
     }
     
     .locker-box.available:hover {
-        background-color: #90ee90; /* 연두색 강조 */
+        background-color: #90ee90; /* hover 시 약간 강조 */
     }
     
     .locker-box.unavailable {
         cursor: not-allowed;
     }
-
+    
+    /* 오른쪽 섹션 폼 텍스트와 입력 필드 예쁘게 처리 */
+    .right-section h1 {
+        text-align: center;
+        margin-bottom: 20px;
+        font-size: 24px;
+        color: #333;
+    }
     .locker-form {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 10px;
         margin-top: 20px;
     }
-
-    .form-row {
-        display: flex;
-        align-items: center;
-        gap: 10px;
+    .locker-form .form-row {
+        margin-bottom: 15px;
     }
-
-    .locker-form select, .locker-form input {
-        padding: 8px 12px;
+    .locker-form label {
+        display: block;
         font-size: 16px;
+        font-weight: 600;
+        margin-bottom: 5px;
+        color: #444;
+    }
+    .locker-form input,
+    .locker-form select {
+        width: 100%;
+        padding: 10px;
+        font-size: 16px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        transition: border-color 0.3s;
+        box-sizing: border-box;
+    }
+    .locker-form input:focus,
+    .locker-form select:focus {
+        border-color: #007bff;
+        outline: none;
+    }
+    .locker-form button {
+        width: 100%;
+        padding: 10px;
+        font-size: 18px;
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+    .locker-form button:hover {
+        background-color: #0056b3;
     }
 </style>
 
 <div class="locker-container">
-    <h1>사물함 대여</h1>
+    <div class="two-sections">
+        <!-- 왼쪽 섹션: 사물함 정보 출력 -->
+        <div class="left-section">
+            <h1 style="text-align: center;">사물함 현황</h1>
+            {% if messages %}
+                <div class="alert alert-danger">
+                    {% for message in messages %}
+                        <p>{{ message }}</p>
+                    {% endfor %}
+                </div>
+            {% endif %}
 
-    <!-- 🚨 에러 메시지 표시 -->
-    {% if messages %}
-        <div class="alert alert-danger">
-            {% for message in messages %}
-                <p>{{ message }}</p>
-            {% endfor %}
-        </div>
-    {% endif %}
-
-    <div class="legend">
-        <div class="legend-item">
-            <div class="legend-box available"></div> 사용 가능한 사물함
-        </div>
-        <div class="legend-item">
-            <div class="legend-box unavailable"></div> 사용 불가능한 사물함
-        </div>
-    </div>
-
-    <div class="locker-grid">
-        {% for locker in lockers %}
-            <div class="locker-box {% if locker.is_using %}unavailable{% else %}available{% endif %}" 
-                 data-locker-id="{{ locker.id }}">
-                {{ locker.locker_number }}
+            <div class="legend">
+                <div class="legend-item">
+                    <div class="legend-box available"></div> 사용 가능한 사물함
+                </div>
+                <div class="legend-item">
+                    <div class="legend-box unavailable"></div> 사용 불가능한 사물함
+                </div>
             </div>
-        {% endfor %}
+
+            <div class="locker-grid">
+                {% for locker in lockers %}
+                    <div class="locker-box {% if locker.is_using %}unavailable{% else %}available{% endif %}" 
+                         data-locker-id="{{ locker.id }}">
+                        {{ locker.locker_number }}
+                    </div>
+                {% endfor %}
+            </div>
+            <br>
+            <div class="alert alert-info">
+                <strong>※ 위 사물함 정보에서 대여하실 사물함을 클릭해주세요. </strong>
+            </div>
+        </div>
+
+        <!-- 오른쪽 섹션: "결제 정보" 제목 및 폼 (텍스트와 입력 필드만 예쁘게 처리) -->
+        <div class="right-section">
+            <h1 style="text-align: center; margin-bottom:20px;">결제 정보</h1>
+            <form action="" method="POST" class="locker-form">
+                {% csrf_token %}
+                
+                <div class="form-row">
+                    <label for="locker_id">선택한 사물함:</label>
+                    <input type="text" id="locker_id" name="locker_id" readonly required placeholder="사물함 번호 선택">
+                </div>
+
+                <div class="form-row">
+                    <label for="plan">이용권 선택:</label>
+                    <select id="plan" name="plan">
+                        <option value="semester">학기권 (2025.03.05 ~ 2025.06.20, 107일, 18,000원)</option>
+                        <option value="long">장기권 (2025.03.05 ~ 2025.08.31, 179일, 30,000원)</option>
+                    </select>
+                </div>
+
+                <div class="form-row">
+                    <label for="locker_pw">사물함 비밀번호 (4자리 숫자):</label>
+                    <input type="text" id="locker_pw" name="locker_pw" pattern="\d{4}" maxlength="4" required placeholder="예: 1234">
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-same-width">대여 신청</button>
+            </form>
+            <br>
+            <div class="alert alert-warning">
+                <strong>※ 결제일 다음날 AM 10시부터 서비스 이용 가능합니다.</strong><br>
+                <strong>※ 위 설정하신 사물함 비밀번호로 사물함 pw가 설정됩니다.</strong>
+            </div>
+            <div class="alert alert-info">
+                <strong>※ 03.05일 이후 결제하시는 경우, 지난 일수당 170원씩 할인됩니다.<br>
+                   예: 03.09일 결제 시, 03.10일부터 서비스 이용이 가능하므로 5일 × 170원 = 850원이 할인되어 최종 결제금액이 차감됩니다.</strong>
+            </div>
+        </div>
     </div>
-
-    <form action="" method="POST" class="locker-form">
-        {% csrf_token %}
-        
-        <div class="form-row">
-            <label for="locker_id">선택한 사물함:</label>
-            <input type="text" id="locker_id" name="locker_id" readonly required>
-        </div>
-
-        <div class="form-row">
-            <label for="rental_period">사용 개월 수:</label>
-            <select id="rental_period" name="rental_period">
-                <option value="1">1개월</option>
-                <option value="2">2개월</option>
-                <option value="3">3개월</option>
-                <option value="4">4개월</option>
-            </select>
-        </div>
-
-        <!-- 신규: 사물함 비밀번호 입력 필드 (4자리 숫자) -->
-        <div class="form-row">
-            <label for="locker_pw">사물함 비밀번호 (4자리 숫자):</label>
-            <input type="text" id="locker_pw" name="locker_pw" pattern="\d{4}" maxlength="4" required>
-        </div>
-
-        <button type="submit" class="btn btn-primary btn-same-width">대여 신청</button>
-    </form>
 </div>
 
 <script>

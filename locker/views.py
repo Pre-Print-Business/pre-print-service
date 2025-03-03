@@ -40,43 +40,65 @@ def print_detail(req):
         if not req.user.is_authenticated:
             return redirect('login')
 
-        lockers = Locker.objects.all().order_by('locker_number')  # 락커 번호순 정렬
+        lockers = Locker.objects.all().order_by('locker_number')
         return render(req, "locker/print_detail.html", {"lockers": lockers})
 
     if req.method == "POST":
         locker_id = req.POST.get("locker_id")
-        rental_period = int(req.POST.get("rental_period", 1))  # 기본값 1개월
-        # 사용자가 입력한 사물함 비밀번호를 받습니다.
         locker_pw = req.POST.get("locker_pw", "").strip()
+        plan = req.POST.get("plan")
 
-        # 비밀번호 유효성 검사: 반드시 4자리 숫자여야 함
+        # 사물함 비밀번호 유효성 검사: 4자리 숫자여야 함
         if not re.fullmatch(r'\d{4}', locker_pw):
             messages.error(req, "사물함 비밀번호는 반드시 4자리 숫자로 입력해 주세요.")
             lockers = Locker.objects.all().order_by('locker_number')
             return render(req, "locker/print_detail.html", {"lockers": lockers})
 
         locker = get_object_or_404(Locker, id=locker_id)
-
         if locker.is_using:
             messages.error(req, "이미 사용 중인 사물함입니다. 다른 사물함을 선택해주세요.")
             lockers = Locker.objects.all().order_by('locker_number')
             return render(req, "locker/print_detail.html", {"lockers": lockers})
 
-        price = rental_period * 100  # 1개월당 10,000원
+        # 고정 서비스 시작일 (03.05) 설정
+        fixed_start_date = datetime(2025, 3, 5)
+        if plan == "semester":
+            fixed_end_date = datetime(2025, 6, 20)
+            rental_period = 107
+            base_price = 100
+        elif plan == "long":
+            fixed_end_date = datetime(2025, 8, 31)
+            rental_period = 179
+            base_price = 100
+        else:
+            messages.error(req, "유효한 이용권을 선택해 주세요.")
+            lockers = Locker.objects.all().order_by('locker_number')
+            return render(req, "locker/print_detail.html", {"lockers": lockers})
 
-        order_start_date = now()
-        order_end_date = order_start_date + timedelta(days=30 * rental_period)
+        # 테스트를 위해 current_time을 2025-03-20으로 고정
+        # current_time = datetime(2025, 3, 5)
+        current_time = datetime.now()
+        # 결제시간 기준으로 서비스 시작일 산정
+        if current_time.date() < fixed_start_date.date():
+            effective_start = fixed_start_date.date()
+        else:
+            effective_start = current_time.date() + timedelta(days=1)
+
+        # 할인: (결제일 다음날 - 03.05) 일수 × 170원
+        discount_days = (effective_start - fixed_start_date.date()).days if effective_start > fixed_start_date.date() else 0
+        discount_amount = discount_days * 170
+        final_price = base_price - discount_amount
 
         order = LockerOrder.objects.create(
             order_user=req.user,
             locker=locker,
-            order_price=price,
-            order_start_date=order_start_date,
-            order_end_date=order_end_date,
+            order_price=final_price,
+            order_start_date=fixed_start_date,
+            order_end_date=fixed_end_date,
             rental_period=rental_period,
-            locker_pw=locker_pw  # 비밀번호 저장
+            locker_pw=locker_pw
         )
-        # 필요에 따라 locker.is_using 상태 변경 등을 처리
+        # 필요 시, locker 상태 변경 등의 추가 처리
 
         return redirect("locker:print_payment_ready", order_id=order.id)
     
@@ -101,15 +123,13 @@ def print_payment(req):
         latest_order.locker.is_using = True
         latest_order.locker.save()
     else:
-        messages.error(req, "다른 유저가 결제 진행중에 있거나 이미 사용중인 사물합입니다. 이후에 다시 시도해주세요.")
+        messages.error(req, "다른 유저가 결제 진행중에 있거나 이미 사용중인 사물함입니다. 이후에 다시 시도해주세요.")
         return redirect('locker:print_detail')
 
     payment = LockerOrderPayment.create_by_locker_order(latest_order)
 
     check_url = reverse("locker:print_payment_check", args=[latest_order.pk, payment.pk])
 
-    now = datetime.now()
-    next_day = now + timedelta(days=1)
     payment_props = {
         "pg": "smartro_v2.imp000112m",
         "pay_method": "card",
@@ -123,8 +143,8 @@ def print_payment(req):
         # "buyer_postcode": "123",
         "m_redirect_url": req.build_absolute_uri(check_url),
         "period": {
-            "from": now.strftime("%Y%m%d"),
-            "to": next_day.strftime("%Y%m%d")
+            "from": latest_order.order_start_date.strftime("%Y%m%d"),
+            "to": latest_order.order_end_date.strftime("%Y%m%d")
         }
     }
 
@@ -151,7 +171,7 @@ def retry_payment(req):
         order.locker.is_using = True
         order.locker.save()
     else:
-        messages.error(req, "다른 유저가 결제 진행중에 있거나 이미 사용중인 사물합입니다. 이후에 다시 시도해주세요.")
+        messages.error(req, "다른 유저가 결제 진행중에 있거나 이미 사용중인 사물함입니다. 이후에 다시 시도해주세요.")
         return redirect('locker:print_detail')
 
     # 기존 결제 정보가 없으면 새로운 결제 생성
@@ -172,9 +192,6 @@ def retry_payment(req):
     # 결제 확인 URL 생성
     check_url = reverse("locker:print_payment_check", args=[order.pk, payment.pk])
 
-    now = datetime.now()
-    next_day = now + timedelta(days=1)
-
     # 포트원 결제 요청 데이터 생성
     payment_props = {
         "pg": "smartro_v2.imp000112m",
@@ -187,8 +204,8 @@ def retry_payment(req):
         "buyer_tel": req.user.phone,
         "m_redirect_url": req.build_absolute_uri(check_url),
         "period": {
-            "from": now.strftime("%Y%m%d"),
-            "to": next_day.strftime("%Y%m%d")
+            "from": order.order_start_date.strftime("%Y%m%d"),
+            "to": order.order_end_date.strftime("%Y%m%d")
         }
     }
 
@@ -283,6 +300,10 @@ def print_payment_list(req):
 
     # Order 처리
     for order in active_orders:
+        print(order.order_end_date.strftime('%Y-%m-%d %H:%M:%S'))
+        # 주문 상태가 결제완료(PAID) 또는 결제실패(FAILED_PAYMENT)가 아니면
+        if order.status not in [LockerOrder.Status.PAID, LockerOrder.Status.FAILED_PAYMENT]:
+            continue
         # 결제완료가 아닌 상태에서 주문 시간이 3시간이 지난 경우 삭제
         if order.status != LockerOrder.Status.PAID and now - order.order_date > timedelta(hours=3):
             order.delete()

@@ -5,35 +5,22 @@
 {% block content %}
 <div class="row justify-content-center align-items-center text-center">
   <div class="col-12 col-md-8">
-    <!-- 크게 굵은 글자 -->
-    <h1 class="display-5 fw-bold">
-      언제나 어디서나,<br />
-      당신의 프린트를 예약하세요.
-    </h1>
-
-    <!-- 연한 설명 글자 -->
-    <p class="fs-5 text-muted mt-3">
-      빠르고 편리한 온라인 예약! 기다림 없는 나의 프린트!
-    </p>
-
-    <!-- 버튼 구역 -->
+    <br><br>
+    <h1 class="display-5 fw-bold" style="font-size: 60px;">언제나 어디서나,<br />당신의 프린트를 예약하세요.</h1>
+    <br>
+    <p class="fs-5 text-muted mt-3">빠르고 편리한 온라인 예약! 기다림 없는 나의 프린트!</p>
+    <br>
     <div class="mt-4 d-flex flex-wrap justify-content-center gap-3">
       {% if user.is_authenticated %}
-        <!-- 로그인 상태 -->
-        <a href="{% url 'passorder:print_detail' %}" 
-           class="btn btn-primary btn-lg rounded-3 btn-same-width">
+        <a href="{% url 'passorder:print_detail' %}" class="btn btn-primary btn-lg rounded-3 btn-same-width">
           패스오더 신청
         </a>
-        <a href="{% url 'passorder:passorder_pin_check' %}" 
-           class="btn btn-primary btn-lg rounded-3 btn-same-width">
+        <a href="{% url 'passorder:passorder_pin_check' %}" class="btn btn-primary btn-lg rounded-3 btn-same-width">
           패스오더 출력
         </a>
-        <a href="{% url 'locker:print_detail' %}" 
-           class="btn btn-primary btn-lg rounded-3 btn-same-width">
+        <a href="{% url 'locker:print_detail' %}" class="btn btn-primary btn-lg rounded-3 btn-same-width">
           사물함 예약
         </a>
-        
-        <!-- "로그아웃" 버튼 (폼) -->
         <form method="post" action="{% url 'logout' %}" class="d-inline-block">
           {% csrf_token %}
           <button type="submit" class="btn btn-primary btn-lg rounded-3 btn-same-width">
@@ -41,7 +28,6 @@
           </button>
         </form>
       {% else %}
-        <!-- 비로그인 상태 -->
         <a href="{% url 'login' %}" class="btn btn-primary btn-lg rounded-3 btn-same-width">
           로그인
         </a>
@@ -50,7 +36,9 @@
         </a>
       {% endif %}
     </div>
-    
   </div>
+  <!-- 첫 번째 이미지: 상하에 각각 100px의 마진 적용 -->
+  <img src="{% static 'img/main1.png' %}" class="img-fluid" style="margin: 220px 0;" alt="Main1">
+  <img src="{% static 'img/main2.png' %}" class="img-fluid" alt="Main2">
 </div>
 {% endblock %}
