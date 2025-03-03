@@ -65,11 +65,11 @@ def print_detail(req):
         if plan == "semester":
             fixed_end_date = datetime(2025, 6, 20)
             rental_period = 107
-            base_price = 100
+            base_price = 18000
         elif plan == "long":
             fixed_end_date = datetime(2025, 8, 31)
             rental_period = 179
-            base_price = 100
+            base_price = 30000
         else:
             messages.error(req, "유효한 이용권을 선택해 주세요.")
             lockers = Locker.objects.all().order_by('locker_number')
