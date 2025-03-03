@@ -41,3 +41,140 @@ footer {
 .navbar-nav .nav-link:hover {
   color: #007bff !important; /* 부트스트랩 기본 파란색 */
 }
+
+.locker-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 20px;
+}
+/* 두 섹션을 나누는 컨테이너 */
+.two-sections {
+  display: flex;
+  gap: 20px;
+  width: 100%;
+  max-width: 1200px;
+}
+.left-section, .right-section {
+  flex: 1;
+  padding: 10px;
+}
+
+.legend {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  font-size: 14px;
+  margin-bottom: 20px;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.legend-box {
+  width: 20px;
+  height: 20px;
+  border-radius: 3px;
+}
+
+/* 원래 기능 유지: 사용 가능하면 연두, 불가능하면 회색 */
+.available { 
+  background-color: lightgreen; 
+}
+.unavailable { 
+  background-color: lightgray; 
+}
+
+/* 사물함 그리드: 항상 6열 유지하되, 화면이 작으면 셀 크기를 자동 축소 */
+.locker-grid {
+  display: grid;
+  gap: 10px;
+  justify-content: center;
+  /* 6개의 셀, 각 셀은 최대 60px이지만, 화면이 작으면 (전체 너비 - 5×10px gap)로 자동 계산 */
+  grid-template-columns: repeat(6, min(60px, calc((100% - 50px)/6)));
+}
+
+.locker-box {
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  cursor: pointer;
+  /* 셀의 너비에 맞춰 100% 채우고, 정사각형 유지 */
+  width: 100%;
+  aspect-ratio: 1 / 1;
+}
+
+.locker-box.available:hover {
+  background-color: #90ee90; /* hover 시 약간 강조 */
+}
+
+.locker-box.unavailable {
+  cursor: not-allowed;
+}
+
+/* 오른쪽 섹션 폼 텍스트와 입력 필드 예쁘게 처리 */
+.right-section h1 {
+  text-align: center;
+  margin-bottom: 20px;
+  font-size: 24px;
+  color: #333;
+}
+.locker-form {
+  margin-top: 20px;
+}
+.locker-form .form-row {
+  margin-bottom: 15px;
+}
+.locker-form label {
+  display: block;
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 5px;
+  color: #444;
+}
+.locker-form input,
+.locker-form select {
+  width: 100%;
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  transition: border-color 0.3s;
+  box-sizing: border-box;
+}
+.locker-form input:focus,
+.locker-form select:focus {
+  border-color: #007bff;
+  outline: none;
+}
+.locker-form button {
+  width: 100%;
+  padding: 10px;
+  font-size: 18px;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+.locker-form button:hover {
+  background-color: #0056b3;
+}
+
+/* 반응형 스타일: 화면폭 480px 이하일 때 버튼 영역 조정 */
+@media only screen and (max-width: 700px) {
+  .btn-same-width {
+    min-width: 0;
+    width: 100%;
+  }
+  .two-sections {
+    flex-direction: column;
+  }
+}
