@@ -127,6 +127,13 @@
     .locker-form button:hover {
         background-color: #0056b3;
     }
+
+    /* 반응형 디자인: 화면이 작아지면 두 섹션을 세로로 나열 */
+    @media (max-width: 768px) {
+        .two-sections {
+            flex-direction: column;
+        }
+    }
 </style>
 
 <div class="locker-container">
@@ -161,7 +168,8 @@
             </div>
             <br>
             <div class="alert alert-info">
-                <strong>※ 위 사물함 정보에서 대여하실 사물함을 클릭해주세요. </strong>
+                <strong>※ 위 사물함 정보에서 대여하실 사물함을 클릭해주세요. <br>
+                    ※ 사물함 색이 회색인 경우 이미 결제하여 사용하고 있는 사물함입니다.</strong>
             </div>
         </div>
 
