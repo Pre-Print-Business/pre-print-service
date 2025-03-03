@@ -1,0 +1,109 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Preprint 이용 안내{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="text-center mb-4">
+        <h1 class="fw-bold">PREPRINT 사물함 서비스</h1>
+    </div>
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            <p class="lead">
+                (주) 노커(Knocker)의 프로젝트 Preprint(프리프린트) 서비스는 이용자가 ‘PREPRINT 웹사이트(현재 사이트)‘에서 출력할 파일을 업로드 및 결제를 통해 미리 출력물을 준비할 수 있도록 돕는 서비스입니다.
+            </p>
+            <p>
+                미리 예약하여 준비된 출력물을 찾아갈 수 있는 서비스를 지원함으로서 시간 절약과 편의를 충족시켜 주고자 합니다.
+            </p>
+        </div>
+    </div>
+
+    <!-- 이용 방법 -->
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            <h2 class="fw-bold mt-5">Preprint 사물함 이용방법</h2>
+
+            <!-- 1. 회원가입 및 로그인 -->
+            <h3 class="fw-bold mt-4">1. 사물함 대여</h3>
+            <ol class="mb-3">
+                <div class="alert alert-info">
+                    <strong>※ 사물함은 명지대학교 학생회관 1층에 비치되어있으며, 사물함 30개중 자유롭게 대여 가능합니다.
+                        <br>※ 해당 페이지 상단 카테고리 "사물함 예약"을 통해 학기권, 장기권 중 하나를 결제하실 수 있습니다.</strong>
+                </div>
+                <h3>- 실제 사물함 모습</h3>
+                <div class="row">
+                    <div class="col-md-6 mx-auto">
+                        <img src="{% static 'img/locker5.png' %}" class="img-fluid rounded shadow-sm" alt="주문 확인 화면">
+                    </div>
+                </div>
+                <br>
+                <div class="alert alert-info">
+                    <strong>※ 아래 사진과 같이 30개 중 자유롭게 사물함 선택이 가능하며, 원하시는 사물함을 클릭하면 자동 선택됩니다.
+                        <br>※ 학기권은 03.05~06.20일까지, 장기권은 03.05~08.31까지 사용할 수 있습니다.
+                        <br>※ 이후 사용일 10일 이내 연장결제가 가능합니다.</strong>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mx-auto">
+                        <img src="{% static 'img/locker6.png' %}" class="img-fluid rounded shadow-sm" alt="주문 확인 화면">
+                    </div>
+                </div>
+            </ol>
+
+            <!-- 2. 출력물 예약 -->
+            <h3 class="fw-bold mt-5">2. 학생회관 1층 사물함 방문 및 사물함 사용</h3>
+            <ol class="mb-3">
+                <div class="alert alert-info">
+                    <strong>※ 사물함은 총 30개로 명지대학교 학생회관 1층 계단 앞에 있습니다.<br>※ 결제하신 번호의 사물함을 기간동안 사용하시면 됩니다.</strong>
+                </div>
+                <div class="alert alert-warning">
+                    <strong>※ 사물함은 시간제한 없이 24시간 사용가능합니다.</strong><br>
+                    <strong>※ 결제시 설정하신 사물함 비밀번호로 사물함 pw가 설정됩니다. pw변경을 원하시면 카카오톡 문의를 부탁드립니다.</strong>
+                </div>
+            </ol>
+            <div class="row">
+                <div class="col-md-6">
+                    <img src="{% static 'img/locker2.png' %}" class="img-fluid rounded shadow-sm" alt="파일 선택 화면">
+                </div>
+                <div class="col-md-6">
+                    <img src="{% static 'img/locker1.png' %}" class="img-fluid rounded shadow-sm" alt="비밀번호 설정 화면">
+                </div>
+            </div>
+            <br>
+            <ol class="mb-3">
+                <div class="alert alert-warning">
+                 <strong>※ 왼쪽 사진과 같이 잠겨있는 상태에서 설정하신 비밀번호를 맞추시면 스위치를 오른쪽으로 돌려 열림 상태로 두고 사물함 이용이 가능합니다. </strong><br>
+                 <strong>※ 사물함을 모두 사용하신 후에는 분실 방지를 위해 다시 잠금상태로 변경후 비밀번호 다이얼을 돌려주세요.</strong>
+                </div>
+            </ol>
+
+            <!-- 6. 마이페이지 -->
+            <h3 class="fw-bold mt-5">3. 사물함 결제내역</h3>
+            <div class="row">
+                <div class="alert alert-info">
+                    <strong>※ 아래 사진과 같이 상단 "사물함 결제내역"페이지를 통해서 사물함 이용내역 및 정보를 확인하실 수 있습니다.
+                        <br>※ 사용일이 3일 남은 시점부터 자동으로 메일이 발송되니 참고바랍니다.</strong>
+                </div>
+                <div class="col-md-6">
+                    <img src="{% static 'img/locker3.png' %}" class="img-fluid rounded shadow-sm" alt="마이페이지 화면">
+                </div>
+                <div class="col-md-6">
+                    <img src="{% static 'img/locker4.png' %}" class="img-fluid rounded shadow-sm" alt="마이페이지 화면">
+                </div>
+            </div>
+            <br>
+            <h3 class="fw-bold mt-5">4. 사물함관련 문제 문의</h3>
+            <div class="contact-box">
+                <h3>카카오톡 문의 채널:</h3>
+                <img width="50px" src="{% static 'img/logo2.png' %}" alt="preprint 아이콘" class="kakao-icon"/>
+                <div class="navbar-center">
+                    <a class="introduce" href="http://pf.kakao.com/_xhExhaG">문의하기</a>
+                </div>
+                <br>
+                <h3>카카오톡 문의 채널 모바일 바로가기 (큐알코드):</h3>
+                <img width="200px" src="{% static 'img/QR.png' %}" alt="카카오톡 아이콘" class="kakao-icon"/>
+            </div>
+
+        </div>
+    </div>
+</div>
+{% endblock %}

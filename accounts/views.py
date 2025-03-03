@@ -21,6 +21,7 @@ from django.contrib.auth.decorators import login_required
 from django.utils import timezone
 from datetime import timedelta
 from preprint.models import Order, ArchivedOrder
+from locker.models import LockerOrder
 
 state = 'stsegsdfsdfsfd'
 BASE_URL = "http://127.0.0.1:8000/" if settings.DEBUG else "https://preprintreserve.com/"
@@ -183,6 +184,11 @@ def profile_update(request):
 
 @login_required
 def account_deletion_confirm(request):
+    # 추가: 사용자가 보유한 LockerOrder 중 locker_status가 INSERVICE인지 확인
+    if LockerOrder.objects.filter(order_user=request.user, locker_status=LockerOrder.Status.INSERVICE).exists():
+         messages.error(request, "사물함 대여 기간이 끝난 이후 탈퇴하실 수 있습니다.")
+         return redirect('mypage')
+         
     threshold_date = timezone.localtime() - timedelta(days=2)
     print(timezone.localtime())
     recent_order = Order.objects.filter(
@@ -195,29 +201,30 @@ def account_deletion_confirm(request):
         status=ArchivedOrder.Status.PAID, 
         order_date__gte=threshold_date
     ).exists()
+    
     if recent_order or recent_archived_order:
-        latest_order = (
-            Order.objects.filter(order_user=request.user, status=Order.Status.PAID)
-            .order_by('-order_date')
-            .first()
+        latest_order = Order.objects.filter(
+            order_user=request.user, status=Order.Status.PAID
+        ).order_by('-order_date').first()
+        latest_archived_order = ArchivedOrder.objects.filter(
+            order_user=request.user, status=ArchivedOrder.Status.PAID
+        ).order_by('-order_date').first()
+        latest_date = max(
+            latest_order.order_date if latest_order else threshold_date,
+            latest_archived_order.order_date if latest_archived_order else threshold_date
         )
-        latest_archived_order = (
-            ArchivedOrder.objects.filter(order_user=request.user, status=ArchivedOrder.Status.PAID)
-            .order_by('-order_date')
-            .first()
-        )
-        latest_date = max(latest_order.order_date if latest_order else threshold_date,
-                          latest_archived_order.order_date if latest_archived_order else threshold_date)
         time_remaining = latest_date + timedelta(days=2) - timezone.now()
         hours_remaining = time_remaining.total_seconds() // 3600
         messages.error(request, f"최근 주문내역이 남아있습니다. {int(hours_remaining)}시간 뒤 회원탈퇴가 가능합니다.")
         return redirect('mypage')
+        
     if request.method == 'POST':
         user = request.user
         user.delete()
         logout(request)
         messages.success(request, 'Your account has been deleted successfully.')
         return redirect('root')
+        
     return render(request, 'accounts/account_deletion_confirm.html')
 
 # 이전 코드
