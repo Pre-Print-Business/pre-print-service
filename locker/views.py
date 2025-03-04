@@ -119,10 +119,7 @@ def print_payment(req):
 
     latest_order = orders_to_pay.first()
 
-    if latest_order.locker.is_using == False:
-        latest_order.locker.is_using = True
-        latest_order.locker.save()
-    else:
+    if latest_order.locker.is_using == True:
         messages.error(req, "다른 유저가 결제 진행중에 있거나 이미 사용중인 사물함입니다. 이후에 다시 시도해주세요.")
         return redirect('locker:print_detail')
 
@@ -167,10 +164,7 @@ def retry_payment(req):
     # 주문 ID로 직접 가져오기 (FAILED_PAYMENT 상태 검사 제거)
     order = get_object_or_404(LockerOrder, id=order_id, order_user=req.user)
 
-    if order.locker.is_using == False:
-        order.locker.is_using = True
-        order.locker.save()
-    else:
+    if order.locker.is_using == True:
         messages.error(req, "다른 유저가 결제 진행중에 있거나 이미 사용중인 사물함입니다. 이후에 다시 시도해주세요.")
         return redirect('locker:print_detail')
 
@@ -184,10 +178,6 @@ def retry_payment(req):
     if payment.is_paid_ok:
         messages.error(req, "이미 결제된 주문입니다.")
         return redirect('locker:print_payment_list')
-
-    # 결제하기전 다시 할당 해주기
-    order.locker.is_using = True
-    order.locker.save()
 
     # 결제 확인 URL 생성
     check_url = reverse("locker:print_payment_check", args=[order.pk, payment.pk])
@@ -223,6 +213,12 @@ def retry_payment(req):
 @login_required
 def print_payment_check(req, order_pk, payment_pk):
     payment = get_object_or_404(LockerOrderPayment, pk=payment_pk, locker_order__pk=order_pk)
+
+    if payment.locker_order.locker.is_using == True:
+        payment.cancel(reason="다른 사용자가 먼저 결제하여 결제가 취소되었습니다.")
+        messages.error(req, "다른 사용자가 먼저 결제하여, 결제가 취소되었습니다. 다른 사물함으로 결제해주세요.")
+        return redirect('locker:print_detail')
+
     payment.update()
 
     if not payment.is_paid_ok:
@@ -230,6 +226,8 @@ def print_payment_check(req, order_pk, payment_pk):
         payment.locker_order.locker.is_using = False
         payment.locker_order.locker.save()
     else:
+        payment.locker_order.locker.is_using = True
+        payment.locker_order.locker.save()
         payment.locker_order.locker_status = payment.locker_order.LockerStatus.INSERVICE
         payment.locker_order.save()
     return redirect("locker:print_payment_detail", order_pk=order_pk)
@@ -305,7 +303,7 @@ def print_payment_list(req):
         if order.status not in [LockerOrder.Status.PAID, LockerOrder.Status.FAILED_PAYMENT]:
             continue
         # 결제완료가 아닌 상태에서 주문 시간이 3시간이 지난 경우 삭제
-        if order.status != LockerOrder.Status.PAID and now - order.order_date > timedelta(hours=3):
+        if order.status != LockerOrder.Status.PAID and now - order.order_date > timedelta(hours=1):
             order.delete()
             continue
         payment = LockerOrderPayment.objects.filter(locker_order=order).first()
