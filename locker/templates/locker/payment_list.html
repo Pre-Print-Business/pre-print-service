@@ -64,7 +64,7 @@
                         </div>
                         <div>
                             <label class="fw-bold">가격</label>
-                            <div class="form-control bg-light text-dark">{{ order_with_payment.order.order_price }} 원</div>
+                            <div class="form-control bg-light text-dark">{{ order_with_payment.order.order_price|floatformat:"0" }} 원</div>
                         </div>
                         <div>
                             <label class="fw-bold">상태</label>
