@@ -20,6 +20,9 @@
         <a href="{% url 'locker:print_detail' %}" class="btn btn-primary btn-lg rounded-3 btn-same-width">
           사물함 예약
         </a>
+        <a href="https://preprintcloud.com" class="btn btn-primary btn-lg rounded-3 btn-same-width">
+          클라우드 서비스
+         </a>
         <form method="post" action="{% url 'logout' %}" class="d-inline-block">
           {% csrf_token %}
           <button type="submit" class="btn btn-primary btn-lg rounded-3 btn-same-width">
@@ -27,6 +30,9 @@
           </button>
         </form>
       {% else %}
+      <a href="https://preprintcloud.com" class="btn btn-primary btn-lg rounded-3 btn-same-width">
+        클라우드 서비스
+       </a>
         <a href="{% url 'login' %}" class="btn btn-primary btn-lg rounded-3 btn-same-width">
           로그인
         </a>
