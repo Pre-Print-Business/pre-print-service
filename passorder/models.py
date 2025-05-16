@@ -46,6 +46,20 @@ class PassOrderFile(models.Model):
     pass_order = models.ForeignKey(PassOrder, on_delete=models.CASCADE)
     pass_order_file = models.FileField(upload_to='pass_order_files/')
 
+class PrintQueue(models.Model):
+    created_at = models.DateTimeField(verbose_name='생성 시각', auto_now_add=True)
+    pass_order = models.ForeignKey(PassOrder, verbose_name='패스 주문', on_delete=models.CASCADE)
+    is_print = models.BooleanField(verbose_name='인쇄 여부', default=False)
+    log = models.CharField(verbose_name='로그', max_length=300, null=True, blank=True)
+    
+    def __str__(self):
+        return f"Print Queue #{self.id} - Order: {self.pass_order.id} - Printed: {self.is_print}"
+    
+    class Meta:
+        verbose_name = '인쇄 대기열'
+        verbose_name_plural = '인쇄 대기열'
+
+
 class AbstractPortonePayment(models.Model):
     class PayMethod(models.TextChoices):
         CARD = "card", "신용카드"
