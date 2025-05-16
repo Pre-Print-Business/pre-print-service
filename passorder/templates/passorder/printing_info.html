@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}결제 준비{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="text-center mb-4">
+                <h1 class="fw-bold display-5">프린트 진행중</h1>
+            </div>
+
+            <!-- 결제 안내 메시지 -->
+            <div class="alert alert-info">
+                <p><strong>곧 주문하신 인쇄물이 20초 내 출력될 예정입니다.</strong></p>
+            </div>
+
+            <!-- 주문 정보 -->
+            <div class="card p-3 mb-3">
+                <h3 class="fw-bold mb-3">주문 정보</h3>
+                <p><strong>주문 번호:</strong> {{ pass_order.id }}</p>
+                <p><strong>총 매수:</strong> {{ pass_order.total_pages }}</p>
+                <p><strong>가격:</strong> {{ pass_order.pass_order_price }} 원</p>
+                <p><strong>색상:</strong> {{ pass_order.pass_order_color }}</p>
+                <p><strong>사물함 PW:</strong> {{ pass_order.pass_order_pin_number }}</p>
+                
+                <h4 class="fw-bold mt-3">파일 목록:</h4>
+                <ul class="list-group">
+                    {% for file in files %}
+                        <li class="list-group-item">{{ file.pass_order_file.name }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+
+            <!-- 중요 공지 -->
+            <div class="alert alert-danger">
+                <p>주문하신 파일들이 모두 출력될 때까지 일반 프린트 결제를 진행하지마세요.</p>
+                <p>추가 패스오더 출력을 진행하실 경우 <strong>모든 인쇄물이 출력완료된 후</strong> 진행해주세요.</p>
+            </div>
+            <div class="alert alert-warning">
+                <p>20초 내 인쇄물이 출력되지 않는다면, <strong>데스크탑 아래 부착된 고객센터 큐알사진</strong>을 통해 문의해주시길 바랍니다.</p>
+                <p>오류가 발생하거나 인쇄물 문제가 발생하면 위와 동일하게 고객센터 문의를 부탁드립니다.</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

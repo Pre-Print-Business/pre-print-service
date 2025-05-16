@@ -1,6 +1,6 @@
 import json
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import PassOrder, PassOrderFile, PassOrderPayment
+from .models import PassOrder, PassOrderFile, PassOrderPayment, PrintQueue
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_POST
 from django.contrib import messages
@@ -24,6 +24,7 @@ from django.http import HttpResponse
 from django.conf import settings
 from django.db import transaction
 from django.db.models import Sum
+import random
 
 # Create your views here.
 def passorder_main(req):
@@ -45,18 +46,20 @@ def passorder_pin_check(req):
         # PassOrder에서 해당 핀번호 주문 찾기
         order = PassOrder.objects.filter(pass_order_pin_number=pin_number).first()
 
+
         if not order:
             messages.error(req, "해당 핀 번호로 등록된 주문이 없습니다.")
             return render(req, "passorder/passorder_pin_check.html")
+
+        if order.status != 'paid':
+            messages.error(req, "결제가 완료되지 않은 주문건은 출력할 수 없습니다.")
+            return render(req, "passorder/passorder_pin_check.html")
+
 
         # 이미 출력한 주문인지 확인
         if order.is_takeout:
             messages.error(req, "이미 패스오더 프린트를 진행한 주문 핀 번호입니다.")
             return render(req, "passorder/passorder_pin_check.html")
-
-        # is_takeout을 True로 변경 후 저장
-        order.is_takeout = True
-        order.save()
 
         # 해당 주문의 파일들 가져오기
         files = PassOrderFile.objects.filter(pass_order=order)
@@ -69,9 +72,27 @@ def passorder_pin_check(req):
 def passorder_printing(req):
     if req.method == "POST":
         order_id = req.POST.get("order_id")
-        print(f"오더 {order_id} 출력중..")  # 콘솔 로그 출력 (테스트 용도)
+
+        pass_order = get_object_or_404(PassOrder, id=order_id, pass_order_user=req.user)
+        pass_order_files = PassOrderFile.objects.filter(pass_order=pass_order)
+
+        # is_takeout을 True로 변경 후 저장
+        pass_order.is_takeout = True
+        pass_order.save()
+        
+        # PrintQueue 생성
+        PrintQueue.objects.create(
+            pass_order=pass_order,
+        )
+
         messages.success(req, f"오더 {order_id}가 성공적으로 출력되었습니다.")
-        return redirect("passorder:print_payment_list")  # 다시 핀 번호 입력 페이지로 이동
+
+        context = {
+            'pass_order': pass_order,
+            'files': pass_order_files,
+        }
+        return render(req, 'passorder/printing_info.html', context)
+
 
 ### 윈도우 용
 # def get_pdf_page_count(pdf_path):
@@ -93,6 +114,12 @@ def get_pdf_page_count(pdf_path):
     except Exception as e:
         return 0
 
+def generate_unique_pin():
+    while True:
+        pin = ''.join([str(random.randint(0, 9)) for _ in range(16)])
+        if not PassOrder.objects.filter(pass_order_pin_number=pin).exists():
+            return pin
+
 def print_detail(req):
     if req.method == "GET":
         if not req.user.is_authenticated:
@@ -102,7 +129,7 @@ def print_detail(req):
     elif req.method == "POST":
         files = req.FILES.getlist('files')
         color = req.POST['color']
-        pw = req.POST['pw']
+        # pw = req.POST['pw']
         if not files:
             messages.error(req, "파일을 선택해주세요.")
             return render(req, "passorder/print_detail.html")
@@ -116,9 +143,11 @@ def print_detail(req):
             messages.error(req, "모든 파일의 크기 합이 200MB를 초과할 수 없습니다.")
             return render(req, "passorder/print_detail.html")
 
-        if not pw or not pw.isdigit() or len(pw) != 16:
-            messages.error(req, "비밀번호는 숫자 16자리를 입력해야 합니다.")
-            return render(req, "passorder/print_detail.html")
+        # if not pw or not pw.isdigit() or len(pw) != 16:
+        #     messages.error(req, "비밀번호는 숫자 16자리를 입력해야 합니다.")
+        #     return render(req, "passorder/print_detail.html")
+
+        pw = generate_unique_pin()
 
         total_pages = 0
         for file in files:
@@ -296,6 +325,10 @@ def print_payment_detail(req, order_pk):
 def cancel_order(request, order_id):
     order = get_object_or_404(PassOrder, id=order_id, pass_order_user=request.user)
 
+    if order.is_takeout == True:
+        messages.error(request, "이미 출력한 주문은 취소할 수 없습니다.")
+        return redirect('passorder:print_payment_list')
+
     # 주문이 이미 취소된 상태인지 확인
     if order.status == PassOrder.Status.CANCELLED:
         messages.error(request, "이 주문은 이미 취소되었습니다.")
@@ -317,6 +350,12 @@ def cancel_order(request, order_id):
     messages.success(request, "주문이 취소되었습니다.")
     return redirect('passorder:print_payment_list')
 
+@login_required
+def delete_order(request, order_pk):
+    order = get_object_or_404(PassOrder, pk=order_pk, pass_order_user=request.user)
+    order.delete()
+    messages.success(request, "주문이 삭제되었습니다.")
+    return redirect('locker:print_payment_list')
 
 ### 마이페이지 & 결제내역
 def print_mypage(req):
