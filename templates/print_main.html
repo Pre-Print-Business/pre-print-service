@@ -30,9 +30,12 @@
           </button>
         </form>
       {% else %}
-      <a href="https://preprintcloud.com" class="btn btn-primary btn-lg rounded-3 btn-same-width">
-        클라우드 서비스
-       </a>
+        <a href="{% url 'passorder:passorder_pin_check' %}" class="btn btn-primary btn-lg rounded-3 btn-same-width">
+          패스오더 출력
+        </a>
+        <a href="https://preprintcloud.com" class="btn btn-primary btn-lg rounded-3 btn-same-width">
+          클라우드 서비스
+        </a>
         <a href="{% url 'login' %}" class="btn btn-primary btn-lg rounded-3 btn-same-width">
           로그인
         </a>

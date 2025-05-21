@@ -43,9 +43,7 @@ def passorder_pin_check(req):
     if req.method == "POST":
         pin_number = req.POST.get("pin_number")
 
-        # PassOrder에서 해당 핀번호 주문 찾기
         order = PassOrder.objects.filter(pass_order_pin_number=pin_number).first()
-
 
         if not order:
             messages.error(req, "해당 핀 번호로 등록된 주문이 없습니다.")
@@ -55,25 +53,37 @@ def passorder_pin_check(req):
             messages.error(req, "결제가 완료되지 않은 주문건은 출력할 수 없습니다.")
             return render(req, "passorder/passorder_pin_check.html")
 
-
-        # 이미 출력한 주문인지 확인
         if order.is_takeout:
             messages.error(req, "이미 패스오더 프린트를 진행한 주문 핀 번호입니다.")
             return render(req, "passorder/passorder_pin_check.html")
 
-        # 해당 주문의 파일들 가져오기
+        # 클라이언트 IP 주소 확인
+        def get_client_ip(request):
+            x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+            if x_forwarded_for:
+                ip = x_forwarded_for.split(',')[0]
+            else:
+                ip = request.META.get('REMOTE_ADDR')
+            return ip
+        
+        client_ip = get_client_ip(req)
+        
+        # 허용된 IP인지 확인 -> 본관에서 데스크탑을 통해서만 가능해야함
+        if client_ip != "220.66.17.71":
+            messages.error(req, "명지대학교 본관 1층 데스크탑에서만 preprint출력이 가능합니다. 본관 1층 데스크탑에서 시도해주세요.")
+            return render(req, "passorder/passorder_pin_check.html")
+
         files = PassOrderFile.objects.filter(pass_order=order)
 
         return render(req, "passorder/passorder_printing.html", {"order": order, "files": files})
 
 
-# 프린트 버튼 클릭 시 실행 (테스트용)
 @csrf_exempt
 def passorder_printing(req):
     if req.method == "POST":
         order_id = req.POST.get("order_id")
 
-        pass_order = get_object_or_404(PassOrder, id=order_id, pass_order_user=req.user)
+        pass_order = get_object_or_404(PassOrder, id=order_id)
         pass_order_files = PassOrderFile.objects.filter(pass_order=pass_order)
 
         # is_takeout을 True로 변경 후 저장
@@ -116,7 +126,7 @@ def get_pdf_page_count(pdf_path):
 
 def generate_unique_pin():
     while True:
-        pin = ''.join([str(random.randint(0, 9)) for _ in range(16)])
+        pin = ''.join([str(random.randint(0, 9)) for _ in range(6)])
         if not PassOrder.objects.filter(pass_order_pin_number=pin).exists():
             return pin
 
