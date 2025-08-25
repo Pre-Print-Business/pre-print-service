@@ -48,44 +48,72 @@ def print_detail(req):
         locker_pw = req.POST.get("locker_pw", "").strip()
         plan = req.POST.get("plan")
 
+        # 사물함 선택 여부 확인
+        if not locker_id:
+            messages.error(req, "사물함을 선택해 주세요.")
+            lockers = Locker.objects.all().order_by('locker_number')
+            return render(req, "locker/print_detail.html", {"lockers": lockers})
+
         # 사물함 비밀번호 유효성 검사: 4자리 숫자여야 함
         if not re.fullmatch(r'\d{4}', locker_pw):
             messages.error(req, "사물함 비밀번호는 반드시 4자리 숫자로 입력해 주세요.")
             lockers = Locker.objects.all().order_by('locker_number')
             return render(req, "locker/print_detail.html", {"lockers": lockers})
 
-        locker = get_object_or_404(Locker, id=locker_id)
+        try:
+            locker = Locker.objects.get(id=locker_id)
+        except Locker.DoesNotExist:
+            messages.error(req, "선택한 사물함이 존재하지 않습니다. 다시 선택해 주세요.")
+            lockers = Locker.objects.all().order_by('locker_number')
+            return render(req, "locker/print_detail.html", {"lockers": lockers})
         if locker.is_using:
             messages.error(req, "이미 사용 중인 사물함입니다. 다른 사물함을 선택해주세요.")
             lockers = Locker.objects.all().order_by('locker_number')
             return render(req, "locker/print_detail.html", {"lockers": lockers})
 
-        # 고정 서비스 시작일 (03.05) 설정
-        fixed_start_date = datetime(2025, 3, 5)
+        # 고정 서비스 시작일 (09.01) 설정
+        fixed_start_date = datetime(2025, 9, 1)
         if plan == "semester":
-            fixed_end_date = datetime(2025, 6, 20)
-            rental_period = 107
-            base_price = 18000
-        elif plan == "long":
-            fixed_end_date = datetime(2025, 8, 31)
-            rental_period = 179
+            # 2학기권(방학포함): 2025.09.01~2026.2.25 (약 6개월)
+            fixed_end_date = datetime(2026, 2, 25)
+            rental_period = 177  # 약 6개월
             base_price = 30000
+        elif plan == "long":
+            # 1년권: 2025.09.01~2026.08.28 (약 1년)
+            fixed_end_date = datetime(2026, 8, 28)
+            rental_period = 361  # 약 1년
+            base_price = 55000
         else:
             messages.error(req, "유효한 이용권을 선택해 주세요.")
             lockers = Locker.objects.all().order_by('locker_number')
             return render(req, "locker/print_detail.html", {"lockers": lockers})
 
-        # 테스트를 위해 current_time을 2025-03-20으로 고정
-        # current_time = datetime(2025, 3, 5)
         current_time = datetime.now()
-        # 결제시간 기준으로 서비스 시작일 산정
+        
+        # 대여 종료일이 이미 지났는지 확인
+        if current_time.date() >= fixed_end_date.date():
+            messages.error(req, "대여 기간이 종료되어 더 이상 대여할 수 없습니다.")
+            lockers = Locker.objects.all().order_by('locker_number')
+            return render(req, "locker/print_detail.html", {"lockers": lockers})
+        
+        # 결제시간 기준으로 서비스 시작일 산정 (결제 직후 바로 사용가능)
         if current_time.date() < fixed_start_date.date():
             effective_start = fixed_start_date.date()
         else:
-            effective_start = current_time.date() + timedelta(days=1)
+            effective_start = current_time.date()  # 당일부터 바로 사용 가능
 
-        # 할인: (결제일 다음날 - 03.05) 일수 × 170원
+        # 사용 기간이 한달 미만인지 확인 (30일 기준)
+        remaining_days = (fixed_end_date.date() - effective_start).days
+        if remaining_days < 30:
+            messages.error(req, "대여일이 한달 미만인 경우 대여할 수 없습니다.")
+            lockers = Locker.objects.all().order_by('locker_number')
+            return render(req, "locker/print_detail.html", {"lockers": lockers})
+
+        # 할인: (결제일 - 09.01) 일수 × 170원, 최대 14일까지만 적용
         discount_days = (effective_start - fixed_start_date.date()).days if effective_start > fixed_start_date.date() else 0
+        # 14일 초과시 14일까지만 할인 적용
+        if discount_days > 14:
+            discount_days = 14
         discount_amount = discount_days * 170
         final_price = base_price - discount_amount
 
@@ -98,8 +126,6 @@ def print_detail(req):
             rental_period=rental_period,
             locker_pw=locker_pw
         )
-        # 필요 시, locker 상태 변경 등의 추가 처리
-
         return redirect("locker:print_payment_ready", order_id=order.id)
     
 def print_payment_ready(req, order_id):

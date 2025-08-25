@@ -5,7 +5,6 @@
 {% block content %}
 <div class="locker-container">
     <div class="two-sections">
-        <!-- 왼쪽 섹션: 사물함 정보 출력 -->
         <div class="left-section">
             <h1 style="text-align: center;">사물함 현황</h1>
             {% if messages %}
@@ -40,7 +39,6 @@
             </div>
         </div>
 
-        <!-- 오른쪽 섹션: "결제 정보" 제목 및 폼 (텍스트와 입력 필드만 예쁘게 처리) -->
         <div class="right-section">
             <h1 style="text-align: center; margin-bottom:20px;">결제 정보</h1>
             <form action="" method="POST" class="locker-form">
@@ -53,9 +51,9 @@
 
                 <div class="form-row">
                     <label for="plan">이용권 선택:</label>
-                    <select id="plan" name="plan">
-                        <option value="semester">학기권 (2025.03.05 ~ 2025.06.20, 107일, 18,000원)</option>
-                        <option value="long">장기권 (2025.03.05 ~ 2025.08.31, 179일, 30,000원)</option>
+                    <select id="plan" name="plan" style="height: auto; padding: 8px;">
+                        <option value="semester">🎓 2학기권(방학포함) - 4개월 학기권 구매하면 방학전체기간 무료 2개월 추가! ✨ (2025.09.01 ~ 2026.02.25, 177일, 30,000원)</option>
+                        <option value="long">💝 1년권 - 최대 절약! 장기 이용시 혜택 가득! 📚 (2025.09.01 ~ 2026.08.28, 361일, 55,000원)</option>
                     </select>
                 </div>
 
@@ -68,12 +66,13 @@
             </form>
             <br>
             <div class="alert alert-warning">
-                <strong>※ 결제일 다음날 AM 10시부터 서비스 이용 가능합니다.</strong><br>
-                <strong>※ 위 설정하신 사물함 비밀번호로 사물함 pw가 설정됩니다.</strong>
+                <strong>※ 결제직후 바로 학생회관 1층 사물함 현장에서 pw설정후 사용가능합니다.</strong><br>
+                <strong>※ 위 입력하신 사물함 비밀번호로 현장에서 사물함 pw를 설정하시면 됩니다. <a href="{% url 'document_locker_password_guide' %}" class="text-primary">(사물함 pw설정 가이드)</a></strong>
+                <strong>※ pw설정 방법은 상단 "사물함 pw설정 가이드"를 확인해주세요.</strong><br>
             </div>
             <div class="alert alert-info">
-                <strong>※ 03.05일 이후 결제하시는 경우, 지난 일수당 170원씩 할인됩니다.<br>
-                   예: 03.09일 결제 시, 03.10일부터 서비스 이용이 가능하므로 5일 × 170원 = 850원이 할인되어 최종 결제금액이 차감됩니다.</strong>
+                <strong>※ 09.01일 이후 결제하시는 경우, 지난 일수당 170원씩 할인됩니다 (최대 14일까지만 적용).<br>
+                   예: 09.06일 결제 시, 사용하지 못한 기간 5일 × 170원 = 850원이 할인되어 최종 결제금액이 차감됩니다.</strong>
             </div>
         </div>
     </div>
@@ -83,9 +82,28 @@
     document.addEventListener("DOMContentLoaded", function() {
         document.querySelectorAll(".locker-box.available").forEach(box => {
             box.addEventListener("click", function() {
+                document.querySelectorAll(".locker-box").forEach(b => b.classList.remove("selected"));
+                this.classList.add("selected");
                 document.getElementById("locker_id").value = this.dataset.lockerId;
             });
         });
+
+        document.querySelector(".locker-form").addEventListener("submit", function(e) {
+            const lockerId = document.getElementById("locker_id").value;
+            if (!lockerId) {
+                e.preventDefault();
+                alert("사물함을 선택해 주세요!");
+                return false;
+            }
+        });
     });
 </script>
+
+<style>
+    .locker-box.selected {
+        background-color: #007bff !important;
+        color: white !important;
+        border: 2px solid #0056b3 !important;
+    }
+</style>
 {% endblock %}
