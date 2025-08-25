@@ -4,7 +4,6 @@
 
 {% block content %}
 <style>
-/* locker_status가 OUTSERVICE인 주문 카드에 적용할 스타일 (회색, 그레이스케일) */
 .expired-card {
     background-color: #e9ecef;
     filter: grayscale(100%);
@@ -44,7 +43,6 @@
                     </div>
                     <hr>
 
-                    <!-- 주문 정보 -->
                     <div class="d-grid gap-2">
                         <div>
                             <label class="fw-bold">주문 날짜</label>
@@ -74,14 +72,12 @@
                             <label class="fw-bold">락커 상태</label>
                             <div class="form-control bg-light text-dark">{{ order_with_payment.order.get_locker_status_display }}</div>
                         </div>
-                        <!-- 신규: 사물함 비밀번호 표시 -->
                         <div>
                             <label class="fw-bold">사물함 비밀번호</label>
                             <div class="form-control bg-light text-dark">{{ order_with_payment.order.locker_pw }}</div>
                         </div>
                     </div>
 
-                    <!-- 결제 정보 -->
                     {% if order_with_payment.payment %}
                     <hr>
                     <h4 class="fw-bold">결제 정보</h4>
@@ -101,14 +97,15 @@
                     </div>
                     {% endif %}
 
-                    <!-- 버튼 영역 -->
                     <div class="mt-4 d-flex justify-content-between">
                         {% if order_with_payment.order.status == 'cancelled' %}
                             <button class="btn btn-secondary btn-lg btn-same-width" disabled>주문 취소됨</button>
                         {% elif order_with_payment.payment and order_with_payment.payment.is_paid_ok %}
                             {% if order_with_payment.remaining_time != "0분" %}
                                 <div class="alert alert-info p-3">
-                                    고객님께서 입력하신 pw로 사물함 pw가 설정될 예정입니다. 결제 직후 다음날 AM 10:00시부터 사물함 서비스 이용이 가능하며, 서비스 종료일은 <strong>{{ order_with_payment.order.order_end_date|date:"Y-m-d" }}</strong>입니다.
+                                    결제가 완료되었습니다. 입력하신 pw로 현장에서 pw설정하여 사용하시면 됩니다. 결제 직후 바로 학생회관 1층 사물함 현장에서 pw설정후 사용가능하며, 서비스 종료일은 <strong>{{ order_with_payment.order.order_end_date|date:"Y-m-d" }}</strong>입니다.
+                                    <br><br>
+                                    <a href="{% url 'document_locker_password_guide' %}" class="btn btn-outline-primary btn-sm">사물함 pw설정 가이드</a>
                                 </div>
                             {% else %}
                                 <div class="alert alert-warning p-3">

@@ -1,109 +1,274 @@
 {% extends 'base.html' %}
 {% load static %}
-{% block title %}Preprint 이용 안내{% endblock %}
+
+{% block title %}사물함 이용 가이드{% endblock %}
 
 {% block content %}
-<div class="container py-5">
-    <div class="text-center mb-4">
-        <h1 class="fw-bold">PREPRINT 사물함 서비스</h1>
-    </div>
+<div class="container my-5">
     <div class="row justify-content-center">
-        <div class="col-md-10">
-            <p class="lead">
-                (주) 노커(Knocker)의 프로젝트 Preprint(프리프린트) 서비스는 이용자가 ‘PREPRINT 웹사이트(현재 사이트)‘에서 출력할 파일을 업로드 및 결제를 통해 미리 출력물을 준비할 수 있도록 돕는 서비스입니다.
-            </p>
-            <p>
-                미리 예약하여 준비된 출력물을 찾아갈 수 있는 서비스를 지원함으로서 시간 절약과 편의를 충족시켜 주고자 합니다.
-            </p>
-        </div>
-    </div>
+        <div class="col-lg-10 col-xl-8">
+            <div class="text-center mb-5">
+                <h1 class="display-5 fw-bold text-primary mb-3">
+                    🏫 PREPRINT 사물함 서비스 가이드
+                </h1>
+                <p class="lead text-muted">
+                    명지대학교 학생회관 1층 사물함 서비스 완벽 가이드
+                </p>
+            </div>
 
-    <!-- 이용 방법 -->
-    <div class="row justify-content-center">
-        <div class="col-md-10">
-            <h2 class="fw-bold mt-5">Preprint 사물함 이용방법</h2>
-
-            <!-- 1. 회원가입 및 로그인 -->
-            <h3 class="fw-bold mt-4">1. 사물함 대여</h3>
-            <ol class="mb-3">
-                <div class="alert alert-info">
-                    <strong>※ 사물함은 명지대학교 학생회관 1층에 비치되어있으며, 사물함 30개중 자유롭게 대여 가능합니다.
-                        <br>※ 해당 페이지 상단 카테고리 "사물함 예약"을 통해 학기권, 장기권 중 하나를 결제하실 수 있습니다.</strong>
+            <div class="card border-0 shadow-sm mb-5">
+                <div class="card-body p-4">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="bg-primary bg-opacity-10 rounded-circle p-3 me-3">
+                            <i class="fas fa-info-circle text-primary fs-4"></i>
+                        </div>
+                        <h5 class="card-title mb-0 text-primary">서비스 소개</h5>
+                    </div>
+                    <p class="card-text text-muted mb-3">
+                        (주) 노커(Knocker)의 PREPRINT 사물함 서비스는 명지대학교 학생회관 1층에서 
+                        안전하고 편리한 개인 보관함을 제공하는 서비스입니다.
+                    </p>
+                    <p class="card-text text-muted mb-0">
+                        학습 자료, 개인 물품을 안전하게 보관하고 언제든지 접근할 수 있어 
+                        캠퍼스 라이프를 더욱 편리하게 만들어드립니다.
+                    </p>
                 </div>
-                <h3>- 실제 사물함 모습</h3>
-                <div class="row">
-                    <div class="col-md-6 mx-auto">
-                        <img src="{% static 'img/locker5.png' %}" class="img-fluid rounded shadow-sm" alt="주문 확인 화면">
+            </div>
+
+            <div class="mb-5">
+                <div class="d-flex align-items-center mb-4">
+                    <span class="badge bg-primary rounded-circle p-3 me-3 fs-5">1</span>
+                    <h3 class="text-primary mb-0">사물함 대여하기</h3>
+                </div>
+
+                <div class="card border-0 shadow-sm mb-4">
+                    <div class="card-body">
+                        <div class="alert alert-info border-0 mb-4">
+                            <div class="d-flex">
+                                <i class="fas fa-map-marker-alt text-info me-3 mt-1"></i>
+                                <div>
+                                    <strong>위치 안내</strong>
+                                    <ul class="mb-0 mt-2">
+                                        <li>명지대학교 학생회관 1층 계단 앞</li>
+                                        <li>총 30개 사물함 중 자유롭게 선택 가능</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="text-center mb-4">
+                            <img src="{% static 'img/locker5.png' %}" class="img-fluid rounded shadow" alt="실제 사물함 모습" style="max-width: 400px;">
+                            <p class="text-muted mt-2 mb-0"><strong>실제 사물함 모습</strong></p>
+                        </div>
+
+                        <div class="alert alert-primary border-0">
+                            <div class="d-flex">
+                                <i class="fas fa-credit-card text-primary me-3 mt-1"></i>
+                                <div>
+                                    <strong>2025년 2학기 요금제</strong>
+                                    <ul class="mb-0 mt-2">
+                                        <li><strong>🎓 2학기권(방학포함):</strong> 2025.09.01 ~ 2026.02.25 (30,000원)<br>
+                                            <span class="text-success">✨ 4개월 학기권 구매하면 방학 전체기간 무료 2개월 추가!</span></li>
+                                        <li><strong>💝 1년권:</strong> 2025.09.01 ~ 2026.08.28 (55,000원)<br>
+                                            <span class="text-success">📚 장기 이용시 최대 절약 혜택!</span></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="text-center">
+                            <img src="{% static 'img/locker6.png' %}" class="img-fluid rounded shadow" alt="사물함 선택 화면" style="max-width: 400px;">
+                            <p class="text-muted mt-2 mb-0"><strong>사물함 선택 화면</strong></p>
+                        </div>
                     </div>
                 </div>
-                <br>
-                <div class="alert alert-info">
-                    <strong>※ 아래 사진과 같이 30개 중 자유롭게 사물함 선택이 가능하며, 원하시는 사물함을 클릭하면 자동 선택됩니다.
-                        <br>※ 학기권은 03.05~06.20일까지, 장기권은 03.05~08.31까지 사용할 수 있습니다.
-                        <br>※ 이후 사용일 10일 이내 연장결제가 가능합니다.</strong>
+            </div>
+
+            <div class="mb-5">
+                <div class="d-flex align-items-center mb-4">
+                    <span class="badge bg-primary rounded-circle p-3 me-3 fs-5">2</span>
+                    <h3 class="text-primary mb-0">사물함 사용하기</h3>
                 </div>
-                <div class="row">
-                    <div class="col-md-6 mx-auto">
-                        <img src="{% static 'img/locker6.png' %}" class="img-fluid rounded shadow-sm" alt="주문 확인 화면">
+
+                <div class="card border-0 shadow-sm mb-4">
+                    <div class="card-body">
+                        <div class="alert alert-success border-0 mb-4">
+                            <div class="d-flex">
+                                <i class="fas fa-clock text-success me-3 mt-1"></i>
+                                <div>
+                                    <strong>이용 시간</strong>
+                                    <ul class="mb-0 mt-2">
+                                        <li>24시간 언제든지 이용 가능</li>
+                                        <li>결제 직후 바로 현장에서 사용 시작</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="alert alert-warning border-0 mb-4">
+                            <div class="d-flex">
+                                <i class="fas fa-key text-warning me-3 mt-1"></i>
+                                <div>
+                                    <strong>비밀번호 설정</strong>
+                                    <ul class="mb-0 mt-2">
+                                        <li>결제시 입력하신 비밀번호로 현장에서 직접 설정</li>
+                                        <li>비밀번호 변경은 언제든지 직접 가능</li>
+                                        <li><a href="{% url 'document_locker_password_guide' %}" class="text-primary">비밀번호 설정 상세 가이드 보기</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row g-4 mb-4">
+                            <div class="col-md-6">
+                                <div class="card h-100 border-0 shadow-sm">
+                                    <img src="{% static 'img/locker2.png' %}" class="card-img-top img-fluid" alt="잠긴 상태" style="height: 200px; object-fit: cover;">
+                                    <div class="card-body">
+                                        <h6 class="card-title text-center fw-bold">잠긴 상태</h6>
+                                        <p class="card-text text-muted text-center">
+                                            비밀번호를 맞춘 후 스위치를 오른쪽으로 돌려주세요
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card h-100 border-0 shadow-sm">
+                                    <img src="{% static 'img/locker1.png' %}" class="card-img-top img-fluid" alt="사용 가능 상태" style="height: 200px; object-fit: cover;">
+                                    <div class="card-body">
+                                        <h6 class="card-title text-center fw-bold">사용 가능 상태</h6>
+                                        <p class="card-text text-muted text-center">
+                                            사용 후에는 분실 방지를 위해 다시 잠금 상태로 변경
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </ol>
-
-            <!-- 2. 출력물 예약 -->
-            <h3 class="fw-bold mt-5">2. 학생회관 1층 사물함 방문 및 사물함 사용</h3>
-            <ol class="mb-3">
-                <div class="alert alert-info">
-                    <strong>※ 사물함은 총 30개로 명지대학교 학생회관 1층 계단 앞에 있습니다.<br>※ 결제하신 번호의 사물함을 기간동안 사용하시면 됩니다.</strong>
-                </div>
-                <div class="alert alert-warning">
-                    <strong>※ 사물함은 시간제한 없이 24시간 사용가능합니다.</strong><br>
-                    <strong>※ 결제시 설정하신 사물함 비밀번호로 사물함 pw가 설정됩니다. pw변경을 원하시면 카카오톡 문의를 부탁드립니다.</strong>
-                </div>
-            </ol>
-            <div class="row">
-                <div class="col-md-6">
-                    <img src="{% static 'img/locker2.png' %}" class="img-fluid rounded shadow-sm" alt="파일 선택 화면">
-                </div>
-                <div class="col-md-6">
-                    <img src="{% static 'img/locker1.png' %}" class="img-fluid rounded shadow-sm" alt="비밀번호 설정 화면">
-                </div>
-            </div>
-            <br>
-            <ol class="mb-3">
-                <div class="alert alert-warning">
-                 <strong>※ 왼쪽 사진과 같이 잠겨있는 상태에서 설정하신 비밀번호를 맞추시면 스위치를 오른쪽으로 돌려 열림 상태로 두고 사물함 이용이 가능합니다. </strong><br>
-                 <strong>※ 사물함을 모두 사용하신 후에는 분실 방지를 위해 다시 잠금상태로 변경후 비밀번호 다이얼을 돌려주세요.</strong>
-                </div>
-            </ol>
-
-            <!-- 6. 마이페이지 -->
-            <h3 class="fw-bold mt-5">3. 사물함 결제내역</h3>
-            <div class="row">
-                <div class="alert alert-info">
-                    <strong>※ 아래 사진과 같이 상단 "사물함 결제내역"페이지를 통해서 사물함 이용내역 및 정보를 확인하실 수 있습니다.
-                        <br>※ 사용일이 3일 남은 시점부터 자동으로 메일이 발송되니 참고바랍니다.</strong>
-                </div>
-                <div class="col-md-6">
-                    <img src="{% static 'img/locker3.png' %}" class="img-fluid rounded shadow-sm" alt="마이페이지 화면">
-                </div>
-                <div class="col-md-6">
-                    <img src="{% static 'img/locker4.png' %}" class="img-fluid rounded shadow-sm" alt="마이페이지 화면">
-                </div>
-            </div>
-            <br>
-            <h3 class="fw-bold mt-5">4. 사물함관련 문제 문의</h3>
-            <div class="contact-box">
-                <h3>카카오톡 문의 채널:</h3>
-                <img width="50px" src="{% static 'img/logo2.png' %}" alt="preprint 아이콘" class="kakao-icon"/>
-                <div class="navbar-center">
-                    <a class="introduce" href="http://pf.kakao.com/_xhExhaG">문의하기</a>
-                </div>
-                <br>
-                <h3>카카오톡 문의 채널 모바일 바로가기 (큐알코드):</h3>
-                <img width="200px" src="{% static 'img/QR.png' %}" alt="카카오톡 아이콘" class="kakao-icon"/>
             </div>
 
+            <div class="mb-5">
+                <div class="d-flex align-items-center mb-4">
+                    <span class="badge bg-primary rounded-circle p-3 me-3 fs-5">3</span>
+                    <h3 class="text-primary mb-0">사물함 결제내역 확인</h3>
+                </div>
+
+                <div class="card border-0 shadow-sm mb-4">
+                    <div class="card-body">
+                        <div class="alert alert-info border-0 mb-4">
+                            <div class="d-flex">
+                                <i class="fas fa-list text-info me-3 mt-1"></i>
+                                <div>
+                                    <strong>결제내역 관리</strong>
+                                    <ul class="mb-0 mt-2">
+                                        <li>상단 "사물함 결제내역" 페이지에서 이용내역 확인</li>
+                                        <li>사용 종료 3일 전부터 자동 이메일 알림 발송</li>
+                                        <li>남은 이용 기간 실시간 확인 가능</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row g-4">
+                            <div class="col-md-6">
+                                <div class="card border-0 shadow-sm">
+                                    <img src="{% static 'img/locker3.png' %}" class="card-img-top img-fluid" alt="결제내역 화면" style="height: 200px; object-fit: cover;">
+                                    <div class="card-body">
+                                        <h6 class="card-title text-center fw-bold">결제내역 화면</h6>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card border-0 shadow-sm">
+                                    <img src="{% static 'img/locker4.png' %}" class="card-img-top img-fluid" alt="이용정보 화면" style="height: 200px; object-fit: cover;">
+                                    <div class="card-body">
+                                        <h6 class="card-title text-center fw-bold">이용정보 화면</h6>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="text-center mt-5">
+                <div class="card border-0 shadow-sm bg-light">
+                    <div class="card-body p-4">
+                        <h4 class="text-primary mb-3">💬 문의하기</h4>
+                        <p class="text-muted mb-3">
+                            사물함 이용 중 문제가 발생하거나 궁금한 사항이 있으시면 언제든지 문의해주세요
+                        </p>
+                        <div class="row justify-content-center align-items-center">
+                            <div class="col-md-6 mb-3">
+                                <div class="d-flex align-items-center justify-content-center">
+                                    <img src="{% static 'img/logo2.png' %}" alt="preprint 로고" class="me-3" style="width: 50px;">
+                                    <div>
+                                        <a href="http://pf.kakao.com/_xhExhaG" class="btn btn-warning btn-lg">
+                                            <i class="fas fa-comment me-2"></i>카카오톡 문의
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <div class="text-center">
+                                    <img src="{% static 'img/QR.png' %}" alt="QR코드" class="img-fluid rounded shadow" style="max-width: 150px;">
+                                    <p class="text-muted mt-2 mb-0">QR코드로 빠른 문의</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="text-center mt-4">
+                <a href="javascript:history.back()" class="btn btn-outline-primary btn-lg px-5">
+                    <i class="fas fa-arrow-left me-2"></i>이전 페이지로
+                </a>
+            </div>
         </div>
     </div>
 </div>
+
+<style>
+.card {
+    transition: transform 0.2s ease-in-out;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+}
+
+.badge {
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+@media (max-width: 768px) {
+    .display-5 {
+        font-size: 2rem;
+    }
+    
+    .lead {
+        font-size: 1rem;
+    }
+    
+    .card-img-top {
+        height: 150px !important;
+    }
+    
+    .badge {
+        width: 40px;
+        height: 40px;
+        font-size: 1rem;
+    }
+    
+    .btn-lg {
+        font-size: 1rem;
+        padding: 0.5rem 1rem;
+    }
+}
+</style>
 {% endblock %}
