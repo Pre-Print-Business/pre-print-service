@@ -1,12 +1,18 @@
 {% extends 'base.html' %}
 {% load static %}
-{% block title %}결제 내역{% endblock %}
+{% block title %}패스오더 결제 내역{% endblock %}
 
 {% block content %}
 <div class="container py-5">
     <div class="text-center mb-4">
-        <h1 class="fw-bold display-5">결제 내역</h1>
+        <h1 class="fw-bold display-5">패스오더 결제 내역</h1>
         <p class="text-muted">현재 예약된 주문: <strong>{{ orders_count }}</strong></p>
+        {% if four_weeks_limit %}
+        <div class="alert alert-info mt-3">
+            <i class="fas fa-info-circle me-2"></i>
+            최근 4주 이내의 패스오더 결제내역만 표시됩니다.
+        </div>
+        {% endif %}
     </div>
 
     {% if messages %}
@@ -19,7 +25,14 @@
 
     <div class="row justify-content-center">
         <div class="col-md-10">
-            {% for order_with_payment in orders_with_files %}
+            {% for date, orders_list in orders_by_date %}
+            <div class="mb-5">
+                <div class="d-flex align-items-center mb-3">
+                    <h3 class="fw-bold text-primary mb-0">{{ date|date:"Y.m.d" }}</h3>
+                    <hr class="flex-grow-1 ms-3" style="height: 2px; background-color: #dee2e6;">
+                </div>
+                
+                {% for order_with_payment in orders_list %}
             <div class="card shadow-sm mb-4">
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-center">
@@ -119,9 +132,9 @@
                             </form>
                         {% elif order_with_payment.payment and order_with_payment.payment.is_paid_ok %}
                             {% if not order_with_payment.is_archived %}
-                            <form method="post" action="{% url 'passorder:cancel_order' order_with_payment.order.id %}">
+                            <form method="post" action="{% url 'passorder:cancel_order' order_with_payment.order.id %}" id="cancelForm{{ order_with_payment.order.id }}">
                                 {% csrf_token %}
-                                <button type="submit" class="btn btn-danger btn-lg btn-same-width">주문 취소</button>
+                                <button type="button" class="btn btn-danger btn-lg btn-same-width" onclick="confirmCancel({{ order_with_payment.order.id }})">주문 취소</button>
                             </form>
                             {% endif %}
                         {% else %}
@@ -143,8 +156,30 @@
                     </div>
                 </div>
             </div>
+                {% endfor %}
+            </div>
+            {% empty %}
+            <div class="text-center py-5">
+                <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
+                <h4 class="text-muted">최근 4주 내에 패스오더 주문 내역이 없습니다.</h4>
+                <p class="text-muted">새로운 패스오더를 신청해보세요!</p>
+                <a href="{% url 'passorder:print_detail' %}" class="btn btn-primary">패스오더 신청하기</a>
+            </div>
             {% endfor %}
         </div>
     </div>
 </div>
+{% endblock %}
+
+{% block extra-script %}
+<script>
+function confirmCancel(orderId) {
+    showConfirmModal(
+        '정말로 주문을 취소하시겠습니까?', 
+        function() {
+            document.getElementById('cancelForm' + orderId).submit();
+        }
+    );
+}
+</script>
 {% endblock %}

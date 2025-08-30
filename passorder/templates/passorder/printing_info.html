@@ -10,12 +10,24 @@
                 <h1 class="fw-bold display-5">프린트 진행중</h1>
             </div>
 
-            <!-- 결제 안내 메시지 -->
-            <div class="alert alert-info">
-                <p><strong>곧 주문하신 인쇄물이 20초 내 출력될 예정입니다.</strong></p>
+            <div class="card border-success shadow-sm">
+                <div class="card-header bg-success bg-opacity-10 text-center py-3">
+                    <i class="fas fa-print fs-2 text-success mb-2"></i>
+                    <h4 class="fw-bold text-success mb-0">출력이 시작되었습니다!</h4>
+                </div>
+                <div class="card-body text-center py-4">
+                    <div class="fs-5 fw-bold mb-3">
+                        <i class="fas fa-clock me-2 text-primary"></i>
+                        곧 주문하신 인쇄물이 <span class="text-danger">20초 내</span> 출력될 예정입니다.
+                    </div>
+                    <div class="progress mb-3" style="height: 8px;">
+                        <div class="progress-bar bg-success progress-bar-striped progress-bar-animated" 
+                             role="progressbar" style="width: 100%"></div>
+                    </div>
+                    <small class="text-muted">복합기에서 출력음이 들리면 출력이 완료된 것입니다.</small>
+                </div>
             </div>
 
-            <!-- 주문 정보 -->
             <div class="card p-3 mb-3">
                 <h3 class="fw-bold mb-3">주문 정보</h3>
                 <p><strong>주문 번호:</strong> {{ pass_order.id }}</p>
@@ -32,14 +44,109 @@
                 </ul>
             </div>
 
-            <!-- 중요 공지 -->
-            <div class="alert alert-danger">
-                <p>주문하신 파일들이 모두 출력될 때까지 일반 프린트 결제를 진행하지마세요.</p>
-                <p>추가 패스오더 출력을 진행하실 경우 <strong>모든 인쇄물이 출력완료된 후</strong> 진행해주세요.</p>
+            <div class="card border-danger shadow-sm mb-3">
+                <div class="card-header bg-danger bg-opacity-10 text-center py-3">
+                    <i class="fas fa-ban fs-3 text-danger mb-2"></i>
+                    <h5 class="fw-bold text-danger mb-0">출력 중 주의사항</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="d-flex align-items-center mb-2">
+                                <i class="fas fa-stop-circle text-danger me-2"></i>
+                                <strong>일반 프린트 금지</strong>
+                            </div>
+                            <p class="small text-muted ps-4">주문하신 파일들이 모두 출력될 때까지 일반 프린트 결제를 진행하지마세요.</p>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="d-flex align-items-center mb-2">
+                                <i class="fas fa-clock text-warning me-2"></i>
+                                <strong>추가 패스오더 대기</strong>
+                            </div>
+                            <p class="small text-muted ps-4">추가 패스오더 출력을 진행하실 경우 <strong>모든 인쇄물이 출력완료된 후</strong> 진행해주세요.</p>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="alert alert-warning">
-                <p>20초 내 인쇄물이 출력되지 않는다면, <strong>데스크탑 아래 부착된 고객센터 큐알사진</strong>을 통해 문의해주시길 바랍니다.</p>
-                <p>오류가 발생하거나 인쇄물 문제가 발생하면 위와 동일하게 고객센터 문의를 부탁드립니다.</p>
+
+            <div class="card border-warning shadow-sm mb-3">
+                <div class="card-header bg-warning bg-opacity-10 text-center py-3">
+                    <i class="fas fa-tools fs-3 text-warning mb-2"></i>
+                    <h5 class="fw-bold text-warning mb-0">혹시 출력되지 않는다면?</h5>
+                </div>
+                <div class="card-body">
+                    <p class="text-center mb-4 fw-bold">다음 문제들로 출력이 되지 않을 수 있으며, 오류를 해결하면 출력이 정상적으로 이어집니다.</p>
+                    
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <div class="card h-100 border-0 bg-light">
+                                <div class="card-body text-center p-3">
+                                    <i class="fas fa-file-alt fs-2 text-danger mb-2"></i>
+                                    <h6 class="fw-bold text-danger">용지 끼임</h6>
+                                    <p class="small mb-0">복합기 스크린 안내에 따라 간단히 해결 가능합니다.</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="card h-100 border-0 bg-light">
+                                <div class="card-body text-center p-3">
+                                    <i class="fas fa-copy fs-2 text-warning mb-2"></i>
+                                    <h6 class="fw-bold text-warning">용지 부족</h6>
+                                    <p class="small mb-0">데스크탑 아래에서 용지를 채워 기다리면 자동으로 출력됩니다.</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="card h-100 border-0 bg-light">
+                                <div class="card-body text-center p-3">
+                                    <i class="fas fa-tint fs-2 text-info mb-2"></i>
+                                    <h6 class="fw-bold text-info">토너 부족</h6>
+                                    <p class="small mb-0">복합기 스크린에 토너 교체 안내가 표시됩니다.</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="card h-100 border-0 bg-light">
+                                <div class="card-body text-center p-3">
+                                    <i class="fas fa-exclamation-triangle fs-2 text-secondary mb-2"></i>
+                                    <h6 class="fw-bold text-secondary">기타 오류</h6>
+                                    <p class="small mb-0">복합기 스크린의 오류 메시지를 확인해주세요.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="text-center mt-4">
+                        <div class="alert alert-info py-2 mb-0">
+                            <i class="fas fa-lightbulb me-2"></i>
+                            <small><strong>팁:</strong> 대부분의 문제는 복합기 스크린의 안내를 따라 쉽게 해결할 수 있습니다!</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card border-primary shadow-sm">
+                <div class="card-header bg-primary bg-opacity-10 text-center py-3">
+                    <i class="fas fa-headset fs-3 text-primary mb-2"></i>
+                    <h5 class="fw-bold text-primary mb-0">문제가 해결되지 않나요?</h5>
+                </div>
+                <div class="card-body text-center">
+                    <p class="mb-3">
+                        <strong>20초 내 인쇄물이 출력되지 않거나</strong><br>
+                        오류가 해결되지 않으면 즉시 문의해주세요.
+                    </p>
+                    <div class="d-flex justify-content-center align-items-center">
+                        <i class="fas fa-qrcode fs-2 text-primary me-3"></i>
+                        <div class="text-start">
+                            <div class="fw-bold">데스크탑 아래 부착된</div>
+                            <div class="text-primary fw-bold">고객센터 QR코드</div>
+                            <small class="text-muted">스캔하여 문의해주세요</small>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

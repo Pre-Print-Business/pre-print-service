@@ -352,8 +352,20 @@ def print_payment_list(req):
             'payment': payment,
             'remaining_time': remaining_str,
         })
+    
+    # 날짜별로 그룹핑
+    from collections import defaultdict
+    orders_by_date = defaultdict(list)
+    
+    for order_data in orders_with_files:
+        order_date = order_data['order'].order_date.date()
+        orders_by_date[order_date].append(order_data)
+    
+    # 날짜순으로 정렬 (최신 날짜 먼저)
+    sorted_orders_by_date = sorted(orders_by_date.items(), key=lambda x: x[0], reverse=True)
+    
     context = {
-        'orders_with_files': orders_with_files,
+        'orders_by_date': sorted_orders_by_date,
         'orders_count': len(orders_with_files),
     }
     return render(req, 'locker/payment_list.html', context)
