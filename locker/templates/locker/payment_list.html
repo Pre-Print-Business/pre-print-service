@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
-{% block title %}결제 내역{% endblock %}
+{% block title %}사물함 결제 내역{% endblock %}
 
 {% block content %}
 <style>
@@ -11,8 +11,12 @@
 </style>
 <div class="container py-5">
     <div class="text-center mb-4">
-        <h1 class="fw-bold display-5">결제 내역</h1>
+        <h1 class="fw-bold display-5">사물함 결제 내역</h1>
         <p class="text-muted">현재 예약된 주문: <strong>{{ orders_count }}</strong></p>
+        <div class="alert alert-info mt-3">
+            <i class="fas fa-info-circle me-2"></i>
+            사물함은 장기 대여 서비스로 모든 결제내역이 표시됩니다.
+        </div>
     </div>
 
     {% if messages %}
@@ -25,7 +29,14 @@
 
     <div class="row justify-content-center">
         <div class="col-md-10">
-            {% for order_with_payment in orders_with_files %}
+            {% for date, orders_list in orders_by_date %}
+            <div class="mb-5">
+                <div class="d-flex align-items-center mb-3">
+                    <h3 class="fw-bold text-primary mb-0">{{ date|date:"Y.m.d" }}</h3>
+                    <hr class="flex-grow-1 ms-3" style="height: 2px; background-color: #dee2e6;">
+                </div>
+                
+                {% for order_with_payment in orders_list %}
             <div class="card shadow-sm mb-4 {% if order_with_payment.order.locker_status == 'outservice' %}expired-card{% endif %}">
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-center">
@@ -132,6 +143,15 @@
                         {% endif %}
                     </div>
                 </div>
+            </div>
+                {% endfor %}
+            </div>
+            {% empty %}
+            <div class="text-center py-5">
+                <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
+                <h4 class="text-muted">사물함 주문 내역이 없습니다.</h4>
+                <p class="text-muted">새로운 사물함을 예약해보세요!</p>
+                <a href="{% url 'locker:print_detail' %}" class="btn btn-primary">사물함 예약하기</a>
             </div>
             {% endfor %}
         </div>

@@ -175,9 +175,9 @@ def print_detail(req):
             return render(req, "passorder/print_detail.html")
 
         if color == "C":
-            page_price = 300
+            page_price = 250
         else:
-            page_price = 75
+            page_price = 50
 
         order_price = total_pages * page_price
 
@@ -381,12 +381,19 @@ def print_payment_list(req):
     if not req.user.is_authenticated:
         return redirect('login')
 
-    active_orders = PassOrder.objects.filter(pass_order_user=req.user).order_by('-pass_order_date')
+    # 4주 전 날짜 계산
+    four_weeks_ago = timezone.now() - timedelta(weeks=4)
+    
+    # 4주 이내의 주문만 가져오기
+    active_orders = PassOrder.objects.filter(
+        pass_order_user=req.user, 
+        pass_order_date__gte=four_weeks_ago
+    ).order_by('-pass_order_date')
+    
     orders_with_files = []
 
     # Order 처리
     for order in active_orders:
-
         order_files = PassOrderFile.objects.filter(pass_order=order)
         payment = PassOrderPayment.objects.filter(pass_order=order).first()
         orders_with_files.append({
@@ -394,9 +401,22 @@ def print_payment_list(req):
             'files': order_files,
             'payment': payment
         })
+    
+    # 날짜별로 그룹핑
+    from collections import defaultdict
+    orders_by_date = defaultdict(list)
+    
+    for order_data in orders_with_files:
+        order_date = order_data['order'].pass_order_date.date()
+        orders_by_date[order_date].append(order_data)
+    
+    # 날짜순으로 정렬 (최신 날짜 먼저)
+    sorted_orders_by_date = sorted(orders_by_date.items(), key=lambda x: x[0], reverse=True)
+    
     context = {
-        'orders_with_files': orders_with_files,
+        'orders_by_date': sorted_orders_by_date,
         'orders_count': len(orders_with_files),
+        'four_weeks_limit': True,
     }
     return render(req, 'passorder/payment_list.html', context)
 
