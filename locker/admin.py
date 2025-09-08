@@ -10,9 +10,9 @@ class LockerAdmin(admin.ModelAdmin):
 
 # Locker Order Admin
 class LockerOrderAdmin(admin.ModelAdmin):
-    list_display = ['id', 'order_user', 'locker', 'order_price', 'order_start_date', 'order_end_date', 'rental_period', 'status']
-    search_fields = ['user__username', 'user__email']
-    list_filter = ['status', 'order_start_date', 'order_end_date']
+    list_display = ['id', 'order_user', 'locker', 'order_price', 'order_date', 'order_start_date', 'order_end_date', 'rental_period', 'locker_pw', 'locker_status', 'status']
+    search_fields = ['order_user__username', 'order_user__email']
+    list_filter = ['status', 'locker_status', 'order_start_date', 'order_end_date', 'order_date']
     ordering = ['-order_start_date']
 
 # Locker Order Payment Admin

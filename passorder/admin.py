@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import PassOrder, PassOrderPayment
+from .models import PassOrder, PassOrderPayment, PrintQueue
 
 # Register your models here.
 # Pass Order Admin
@@ -16,5 +16,13 @@ class PassOrderPaymentAdmin(admin.ModelAdmin):
     list_filter = ['pay_status']
     ordering = ['-id']
 
+# Print Queue Admin
+class PrintQueueAdmin(admin.ModelAdmin):
+    list_display = ['id', 'pass_order', 'created_at', 'is_print', 'log']
+    search_fields = ['pass_order__pass_order_user__username', 'pass_order__pass_order_user__email', 'pass_order__id']
+    list_filter = ['is_print', 'created_at']
+    ordering = ['-created_at']
+
 admin.site.register(PassOrder, PassOrderAdmin)
 admin.site.register(PassOrderPayment, PassOrderPaymentAdmin)
+admin.site.register(PrintQueue, PrintQueueAdmin)
