@@ -1,0 +1,104 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}사물함 이용안내{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-12 col-lg-8">
+      <div class="text-center mb-5">
+        <h1 class="display-6 fw-bold text-primary mb-3">사물함 이용안내</h1>
+        <p class="lead text-muted">사물함 이용방법과 비밀번호 설정에 대한 안내를 확인해보세요</p>
+      </div>
+
+      <div class="row g-4">
+        <!-- 사물함 이용방법 및 문의하기 카드 -->
+        <div class="col-12 col-md-6">
+          <div class="card h-100 border-0 shadow-sm hover-card">
+            <div class="card-body d-flex flex-column text-center p-4">
+              <div class="mb-4">
+                <i class="fas fa-box-open text-primary" style="font-size: 3rem;"></i>
+              </div>
+              <h4 class="card-title fw-bold mb-3">사물함 이용방법</h4>
+              <p class="card-text text-muted mb-4 flex-grow-1">
+                사물함 예약부터 이용까지의 전체 과정과<br>
+                문의사항에 대한 안내를 확인하세요
+              </p>
+              <a href="{% url 'document_locker_guide' %}" class="btn btn-primary btn-lg rounded-3 w-100">
+                <i class="fas fa-arrow-right me-2"></i>이용방법 보기
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- 사물함 비밀번호 설정 가이드 카드 -->
+        <div class="col-12 col-md-6">
+          <div class="card h-100 border-0 shadow-sm hover-card">
+            <div class="card-body d-flex flex-column text-center p-4">
+              <div class="mb-4">
+                <i class="fas fa-key text-primary" style="font-size: 3rem;"></i>
+              </div>
+              <h4 class="card-title fw-bold mb-3">비밀번호 설정</h4>
+              <p class="card-text text-muted mb-4 flex-grow-1">
+                사물함 비밀번호 설정 방법과<br>
+                주의사항에 대한 가이드를 확인하세요
+              </p>
+              <a href="{% url 'document_locker_password_guide' %}" class="btn btn-primary btn-lg rounded-3 w-100">
+                <i class="fas fa-arrow-right me-2"></i>설정 가이드 보기
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 추가 정보 섹션 -->
+      <div class="row mt-5">
+        <div class="col-12">
+          <div class="alert alert-info border-0 shadow-sm">
+            <div class="d-flex align-items-start">
+              <i class="fas fa-info-circle text-info me-3 mt-1"></i>
+              <div>
+                <h6 class="fw-bold mb-2">도움이 필요하신가요?</h6>
+                <p class="mb-2">사물함 이용 중 문제가 발생하거나 궁금한 점이 있으시면 언제든지 문의해 주세요.</p>
+                <a href="http://pf.kakao.com/_xgxewxmn" class="btn btn-outline-info btn-sm">
+                  <i class="fab fa-kakaotalk me-1"></i>카카오톡 문의하기
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+.hover-card {
+  transition: all 0.3s ease;
+}
+
+.hover-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.15) !important;
+}
+
+.card-body .btn:hover {
+  transform: scale(1.02);
+  transition: transform 0.2s ease;
+}
+
+@media (max-width: 768px) {
+  .display-6 {
+    font-size: 2rem;
+  }
+  
+  .card-body {
+    padding: 2rem !important;
+  }
+  
+  .lead {
+    font-size: 1rem;
+  }
+}
+</style>
+{% endblock %}

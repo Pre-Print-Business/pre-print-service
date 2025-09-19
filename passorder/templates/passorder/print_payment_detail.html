@@ -33,12 +33,12 @@
 
                 <div>
                     <label class="fw-bold">가격</label>
-                    <div class="form-control bg-light text-dark">{{ order.pass_order_price }} 원</div>
+                    <div class="form-control bg-light text-dark">{{ order.pass_order_price|floatformat:"0" }} 원</div>
                 </div>
 
                 <div>
                     <label class="fw-bold">색상</label>
-                    <div class="form-control bg-light text-dark">{{ order.pass_order_color }}</div>
+                    <div class="form-control bg-light text-dark">{% if order.pass_order_color == "BW" %}흑백 (black){% else %}컬러 (color){% endif %}</div>
                 </div>
 
                 <div>
@@ -80,7 +80,7 @@
 
                 <div>
                     <label class="fw-bold">결제 금액</label>
-                    <div class="form-control bg-light text-dark">{{ payment.desired_amount }} 원</div>
+                    <div class="form-control bg-light text-dark">{{ payment.desired_amount|floatformat:"0" }} 원</div>
                 </div>
 
                 <div>
