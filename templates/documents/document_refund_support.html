@@ -1,52 +1,267 @@
 {% extends 'base.html' %}
 {% load static %}
-{% block title %}고객 환불 지원{% endblock %}
+{% block title %}환불 및 취소 안내{% endblock %}
 
 {% block content %}
-<div class="container">
-    <div class="sidebar left"></div>
-    <div class="main-content">
-        <div class="main-document">
-            <h2>고객 환불 지원 안내</h2>
-            <h3>Preprint 서비스를 이용해주셔서 감사합니다. 다음의 경우에 환불이 가능합니다:</h3>
-            <div class="info-box-green">
-                <h3>환불이 가능한 경우:</h3>
-                <ul>
-                    <li>결제 후 출력물 제작이 시작되기 전까지의 환불 신청</li>
-                    <li>회사의 실수로 인해 잘못된 출력물이 제공된 경우</li>
-                    <li>시스템상 오류로 인해 파일 전송이 안된 경우</li>
-                </ul>
-            </div>
-            <h3>다만, 다음의 경우 환불이 불가능하오니, 이용에 참고해주시기 바랍니다:</h3>
-            <div class="info-box-red">
-                <h3>환불이 불가능한 경우:</h3>
-                <ul>
-                    <li>결제 후 출력물 제작이 시작된 후 환불 요청(출력물에 문제가 없는 경우)</li>
-                    <li>사용자의 파일 업로드 오류로 인한 출력물 오류</li>
-                    <li>단순 변심으로 인한 환불 요청</li>
-                    <li>수령 후 발생하는 문제에 의한 환불 요청</li>
-                </ul>
-            </div>
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-12 col-lg-10">
+      <!-- 헤더 섹션 -->
+      <div class="text-center mb-5">
+        <h1 class="display-6 fw-bold text-primary mb-3">환불 안내</h1>
+        <p class="lead text-muted">Preprint는 무인프린트(현장 출력)와 <strong>예약 서비스</strong>를 함께 운영하고 있습니다.<br>
+        아래의 환불 조건을 참고해 주세요.</p>
+      </div>
 
-            <h3>환불 신청 방법:</h3>
-            <div class="info-box-grey">
-                <p>환불 신청은 결제 후 영업일 2일내 전액환불 가능합니다. 환불 신청을 원하시는 경우, 아래 카카오톡 채널을 통해 자료와 함께 문의해 주시기 바랍니다.<br>
-                쉽고 빠르게 환불 처리 도와드리겠습니다!</p>
-                <p>준비자료: 해당 주문 내역 캡쳐, 환불사유, 출력물사진(출력물에 문제가 있는 경우 ex. 글자깨짐, 색상오염)</p>
+      <div class="row g-4">
+        <!-- 무인프린트 환불 안내 -->
+        <div class="col-12">
+          <div class="card border-0 shadow-sm h-100">
+            <div class="card-header bg-primary bg-opacity-10 border-0">
+              <h3 class="fw-bold text-primary mb-0">
+                <i class="fas fa-print me-2"></i>무인프린트 환불 안내
+              </h3>
             </div>
-            <br>
-            <div class="contact-box">
-                <h3>카카오톡 문의 채널:</h3>
-                <img width="50px" src="{% static 'img/logo2.png' %}" alt="preprint 아이콘" class="kakao-icon"/>
-                <div class="navbar-center">
-                    <a class="introduce" href="http://pf.kakao.com/_xgxewxmn">문의하기</a>
+            <div class="card-body p-4">
+              
+              <!-- 인쇄 섹션 -->
+              <div class="mb-5">
+                <h4 class="fw-bold text-dark mb-3">
+                  <i class="fas fa-file-alt me-2 text-primary"></i>1) 인쇄
+                </h4>
+                
+                <!-- 환불 대상 -->
+                <div class="alert alert-success border-0 shadow-sm mb-4">
+                  <h6 class="fw-bold text-success mb-3">
+                    <i class="fas fa-check-circle me-2"></i>환불 대상
+                  </h6>
+                  <ul class="mb-0 ps-3">
+                    <li>결제 후 출력물이 나오지 않은 경우</li>
+                    <li>용지 부족, 종이 걸림으로 인해 미출력된 경우</li>
+                    <li>출력물 색상이 고르지 않게 나온 경우</li>
+                    <li>출력물에 오염 발생(줄, 색상 번짐 등)</li>
+                    <li>종이가 구겨지거나 찝혀서 출력된 경우</li>
+                    <li>이면지 등에 출력된 경우</li>
+                    <li>결제 후 백지가 출력되어 매장에 반납한 경우</li>
+                  </ul>
                 </div>
-                <br>
-                <h3>카카오톡 문의 채널 바로가기 (QR코드를 스캔해주세요.):</h3>
-                <img width="200px" src="{% static 'img/QR.png' %}" alt="카카오톡 아이콘" class="kakao-icon"/>
+
+                <!-- 환불 불가 -->
+                <div class="alert alert-danger border-0 shadow-sm">
+                  <h6 class="fw-bold text-danger mb-3">
+                    <i class="fas fa-times-circle me-2"></i>환불 불가
+                  </h6>
+                  <ul class="mb-0 ps-3">
+                    <li>컬러 설정을 하지 않아 흑백으로 출력된 경우</li>
+                    <li>인쇄 옵션(용지 크기, 방향 등) 설정 오류로 잘린 출력물 발생</li>
+                    <li>PIN 번호 오류로 타인의 출력물이 함께 결제된 경우</li>
+                    <li>복합기 최종 금액 확인 창의 정보를 확인하지 않고 결제한 경우</li>
+                  </ul>
+                </div>
+              </div>
+
+              <!-- 복사 섹션 -->
+              <div class="mb-5">
+                <h4 class="fw-bold text-dark mb-3">
+                  <i class="fas fa-copy me-2 text-primary"></i>2) 복사
+                </h4>
+                
+                <!-- 환불 대상 -->
+                <div class="alert alert-success border-0 shadow-sm mb-4">
+                  <h6 class="fw-bold text-success mb-3">
+                    <i class="fas fa-check-circle me-2"></i>환불 대상
+                  </h6>
+                  <ul class="mb-0 ps-3">
+                    <li>결제 후 출력물이 나오지 않은 경우</li>
+                    <li>용지 부족, 종이 걸림으로 인해 미출력된 경우</li>
+                    <li>복사물 색상이 고르지 않게 나온 경우</li>
+                    <li>복사물에 오염 발생</li>
+                    <li>종이가 구겨지거나 찝혀서 출력된 경우</li>
+                    <li>이면지 등에 출력된 경우</li>
+                  </ul>
+                </div>
+
+                <!-- 환불 불가 -->
+                <div class="alert alert-danger border-0 shadow-sm">
+                  <h6 class="fw-bold text-danger mb-3">
+                    <i class="fas fa-times-circle me-2"></i>환불 불가
+                  </h6>
+                  <ul class="mb-0 ps-3">
+                    <li>복사 매수를 잘못 입력한 경우</li>
+                    <li>원본을 잘못 위치시켜 백지가 출력된 경우</li>
+                    <li>원본 방향 설정 오류로 일부 내용이 잘린 경우</li>
+                  </ul>
+                </div>
+              </div>
+
+              <!-- 스캔 섹션 -->
+              <div>
+                <h4 class="fw-bold text-dark mb-3">
+                  <i class="fas fa-scanner me-2 text-primary"></i>3) 스캔
+                </h4>
+                
+                <!-- 환불 대상 -->
+                <div class="alert alert-success border-0 shadow-sm mb-4">
+                  <h6 class="fw-bold text-success mb-3">
+                    <i class="fas fa-check-circle me-2"></i>환불 대상
+                  </h6>
+                  <ul class="mb-0 ps-3">
+                    <li>결제 후 스캔 보관함 폴더가 열리지 않는 경우</li>
+                    <li>PC 재시작 후에도 스캔 보관함 폴더가 생성되지 않은 경우</li>
+                  </ul>
+                </div>
+
+                <!-- 환불 불가 -->
+                <div class="alert alert-danger border-0 shadow-sm">
+                  <h6 class="fw-bold text-danger mb-3">
+                    <i class="fas fa-times-circle me-2"></i>환불 불가
+                  </h6>
+                  <ul class="mb-0 ps-3">
+                    <li>원본 방향 오류로 백지가 스캔된 경우</li>
+                    <li>이미지 방향 오류로 일부 내용이 잘린 경우</li>
+                    <li>스캔 보관함에 저장된 파일을 30분 이상 방치해 자동 삭제된 경우</li>
+                    <li>완료된 스캔 파일을 고객이 직접 삭제한 경우</li>
+                  </ul>
+                </div>
+              </div>
             </div>
+          </div>
         </div>
+
+        <!-- 예약 서비스 환불 안내 -->
+        <div class="col-12">
+          <div class="card border-0 shadow-sm h-100">
+            <div class="card-header bg-warning bg-opacity-10 border-0">
+              <h3 class="fw-bold text-warning mb-0">
+                <i class="fas fa-calendar-check me-2"></i>예약 서비스 환불 안내
+              </h3>
+            </div>
+            <div class="card-body p-4">
+              
+              <!-- 환불 대상 -->
+              <div class="alert alert-success border-0 shadow-sm mb-4">
+                <h6 class="fw-bold text-success mb-3">
+                  <i class="fas fa-check-circle me-2"></i>환불 대상
+                </h6>
+                <ul class="mb-0 ps-3">
+                  <li>Preprint 서비스 자체 기술적 문제로 인한 출력 오류</li>
+                  <li>네트워크·통신 오류로 전송이 실패한 경우(예: 응답 없음 등)</li>
+                  <li>부분 전송 실패 시, 전송되지 않은 매수에 한해 환불 가능</li>
+                </ul>
+              </div>
+
+              <!-- 환불 불가 -->
+              <div class="alert alert-danger border-0 shadow-sm">
+                <h6 class="fw-bold text-danger mb-3">
+                  <i class="fas fa-times-circle me-2"></i>환불 불가
+                </h6>
+                <ul class="mb-0 ps-3">
+                  <li>팝업 공지 확인 후에도 복합기 오류 상태에서 출력을 진행한 경우</li>
+                  <li>원본 위치 오류로 백지가 전송된 경우</li>
+                  <li>원본 스캔 전 결제하여 백지가 전송된 경우</li>
+                  <li>이미지 방향 오류로 일부 내용이 잘린 경우</li>
+                  <li>대량 전송 시 매장 고지(20매씩 분할 발송) 지침을 지키지 않고 20매 초과 발송한 경우</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 환불 신청 방법 -->
+        <div class="col-12">
+          <div class="card border-0 shadow-sm h-100">
+            <div class="card-header bg-info bg-opacity-10 border-0">
+              <h3 class="fw-bold text-info mb-0">
+                <i class="fas fa-clipboard-list me-2"></i>환불 신청 방법
+              </h3>
+            </div>
+            <div class="card-body p-4">
+              <div class="alert alert-info border-0 shadow-sm mb-4">
+                <p class="mb-3">
+                  <strong>환불 신청은 결제 후 영업일 2일내 전액환불 가능합니다.</strong><br>
+                  환불 신청을 원하시는 경우, 아래 카카오톡 채널을 통해 자료와 함께 문의해 주시기 바랍니다.<br>
+                  쉽고 빠르게 환불 처리 도와드리겠습니다!
+                </p>
+                <div class="fw-bold text-dark">
+                  <i class="fas fa-file-alt me-2"></i>준비자료:
+                </div>
+                <ul class="mb-0 ps-3 mt-2">
+                  <li>해당 주문 내역 캡쳐</li>
+                  <li>환불사유</li>
+                  <li>출력물사진(출력물에 문제가 있는 경우 ex. 글자깨짐, 색상오염)</li>
+                </ul>
+              </div>
+
+              <!-- 카카오톡 문의 -->
+              <div class="row g-4">
+                <div class="col-md-6">
+                  <div class="card border-primary h-100">
+                    <div class="card-body text-center p-4">
+                      <img width="60px" src="{% static 'img/logo2.png' %}" alt="preprint 아이콘" class="mb-3"/>
+                      <h5 class="fw-bold text-primary mb-3">카카오톡 문의 채널</h5>
+                      <a href="http://pf.kakao.com/_xgxewxmn" class="btn btn-primary btn-lg w-100">
+                        <i class="fab fa-kakaotalk me-2"></i>문의하기
+                      </a>
+                    </div>
+                  </div>
+                </div>
+                
+                <div class="col-md-6">
+                  <div class="card border-secondary h-100">
+                    <div class="card-body text-center p-4">
+                      <img width="150px" src="{% static 'img/QR.png' %}" alt="카카오톡 QR코드" class="mb-3"/>
+                      <h5 class="fw-bold text-secondary mb-2">QR코드 스캔</h5>
+                      <p class="text-muted mb-0">카카오톡 문의 채널 바로가기</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
-    <div class="sidebar right"></div>
+  </div>
 </div>
+
+<style>
+.card {
+  transition: all 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.1) !important;
+}
+
+.alert {
+  border-left: 4px solid;
+}
+
+.alert-success {
+  border-left-color: #198754;
+}
+
+.alert-danger {
+  border-left-color: #dc3545;
+}
+
+.alert-info {
+  border-left-color: #0dcaf0;
+}
+
+@media (max-width: 768px) {
+  .display-6 {
+    font-size: 2rem;
+  }
+  
+  .card-body {
+    padding: 1.5rem !important;
+  }
+  
+  .lead {
+    font-size: 1rem;
+  }
+}
+</style>
 {% endblock %}

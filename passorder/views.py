@@ -365,7 +365,7 @@ def delete_order(request, order_pk):
     order = get_object_or_404(PassOrder, pk=order_pk, pass_order_user=request.user)
     order.delete()
     messages.success(request, "주문이 삭제되었습니다.")
-    return redirect('locker:print_payment_list')
+    return redirect('passorder:print_payment_list')
 
 ### 마이페이지 & 결제내역
 def print_mypage(req):

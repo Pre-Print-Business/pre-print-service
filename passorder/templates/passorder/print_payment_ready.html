@@ -23,8 +23,8 @@
                 <h3 class="fw-bold mb-3">주문 정보</h3>
                 <p><strong>주문 번호:</strong> {{ pass_order.id }}</p>
                 <p><strong>총 매수:</strong> {{ pass_order.total_pages }}</p>
-                <p><strong>가격:</strong> {{ pass_order.pass_order_price }} 원</p>
-                <p><strong>색상:</strong> {{ pass_order.pass_order_color }}</p>
+                <p><strong>가격:</strong> {{ pass_order.pass_order_price|floatformat:"0" }} 원</p>
+                <p><strong>색상:</strong> {% if pass_order.pass_order_color == "BW" %}흑백 (black){% else %}컬러 (color){% endif %}</p>
                 <p><strong>사물함 PW:</strong> {{ pass_order.pass_order_pin_number }}</p>
                 
                 <h4 class="fw-bold mt-3">파일 목록:</h4>

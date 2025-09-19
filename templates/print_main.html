@@ -6,7 +6,7 @@
 <div class="row justify-content-center align-items-center text-center">
   <div class="col-12 col-md-8">
     <br><br>
-    <h1 class="display-5 fw-bold">언제나 어디서나,<br />당신의 프린트를 예약하세요.</h1>
+    <h1 class="display-5 fw-bold">쉬는시간에도 줄서지 않고, <br> 미리 예약하면 현장에서 바로 출력</h1>
     <p class="fs-5 text-muted mt-3">빠르고 편리한 온라인 예약! 기다림 없는 나의 프린트!</p>
     <br>
     <div class="mt-4 d-flex flex-wrap justify-content-center gap-3">
@@ -32,6 +32,9 @@
       {% else %}
         <a href="{% url 'passorder:passorder_pin_check' %}" class="btn btn-primary btn-lg rounded-3 btn-same-width">
           패스오더 출력
+        </a>
+        <a href="{% url 'locker:print_detail' %}" class="btn btn-primary btn-lg rounded-3 btn-same-width">
+          사물함 예약
         </a>
         <a href="https://preprintcloud.com" class="btn btn-primary btn-lg rounded-3 btn-same-width">
           클라우드 서비스
