@@ -12,19 +12,19 @@
 
             <!-- 주문 정보 -->
             <div class="d-grid gap-3">
-                <div>
+                <!-- <div>
                     <h3 class="fw-bold">주문 정보</h3>
-                </div>
+                </div> -->
 
-                <div>
+                <!-- <div>
                     <label class="fw-bold">주문 번호</label>
                     <div class="form-control bg-light text-dark">{{ order.id }}</div>
-                </div>
+                </div> -->
 
-                <div>
+                <!-- <div>
                     <label class="fw-bold">총 출력될 페이지 수</label>
                     <div class="form-control bg-light text-dark">{{ order.total_pages }}</div>
-                </div>
+                </div> -->
 
                 <div>
                     <label class="fw-bold">주문 날짜</label>
@@ -42,14 +42,14 @@
                 </div>
 
                 <div>
-                    <label class="fw-bold">패스오더 핀 번호</label>
+                    <label class="fw-bold">프리프린트 핀 번호</label>
                     <div class="form-control bg-light text-dark">{{ order.pass_order_pin_number }}</div>
                 </div>
-
+<!-- 
                 <div>
                     <label class="fw-bold">주문 상태</label>
                     <div class="form-control bg-light text-dark">{{ order.get_status_display }}</div>
-                </div>
+                </div> -->
             </div>
 
             <!-- 파일 정보 -->
@@ -69,19 +69,19 @@
             {% if payment %}
             <!-- 결제 정보 -->
             <div class="d-grid gap-3 mt-4">
-                <div>
+                <!-- <div>
                     <h3 class="fw-bold">결제 정보</h3>
-                </div>
+                </div> -->
 
-                <div>
+                <!-- <div>
                     <label class="fw-bold">결제 번호</label>
                     <div class="form-control bg-light text-dark">{{ payment.id }}</div>
-                </div>
+                </div> -->
 
-                <div>
+                <!-- <div>
                     <label class="fw-bold">결제 금액</label>
                     <div class="form-control bg-light text-dark">{{ payment.desired_amount|floatformat:"0" }} 원</div>
-                </div>
+                </div> -->
 
                 <div>
                     <label class="fw-bold">결제 방법</label>
