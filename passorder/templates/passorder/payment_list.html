@@ -5,12 +5,12 @@
 {% block content %}
 <div class="container py-5">
     <div class="text-center mb-4">
-        <h1 class="fw-bold display-5">패스오더 결제 내역</h1>
+        <h1 class="fw-bold display-5">프리프린트 결제내역</h1>
         <p class="text-muted">현재 예약된 주문: <strong>{{ orders_count }}</strong></p>
         {% if four_weeks_limit %}
         <div class="alert alert-info mt-3">
             <i class="fas fa-info-circle me-2"></i>
-            최근 4주 이내의 패스오더 결제내역만 표시됩니다.
+            최근 4주 이내의 프리프린트 결제내역만 표시됩니다.
         </div>
         {% endif %}
     </div>
@@ -132,22 +132,39 @@
                             </form>
                         {% elif order_with_payment.payment and order_with_payment.payment.is_paid_ok %}
                             {% if not order_with_payment.is_archived %}
+                            <!-- 환불 정책 안내 -->
+                            <div class="alert alert-warning border-warning mb-3">
+                                <div class="d-flex align-items-start">
+                                    <i class="fas fa-info-circle text-warning me-2 mt-1"></i>
+                                    <div class="small">
+                                        <strong>환불 정책 안내</strong><br>
+                                        결제일 기준 <span class="fw-bold text-primary">7일 이내</span> 주문취소를 하시면 <span class="fw-bold text-success">자동 결제 취소 및 환불</span>이 진행됩니다.<br>
+                                        <span class="fw-bold text-danger">7일 이후</span>로는 주문 취소를 하여도 <span class="fw-bold text-danger">환불이 진행되지 않는</span> 점 유의해주시길 바랍니다.
+                                    </div>
+                                </div>
+                            </div>
                             <form method="post" action="{% url 'passorder:cancel_order' order_with_payment.order.id %}" id="cancelForm{{ order_with_payment.order.id }}">
                                 {% csrf_token %}
                                 <button type="button" class="btn btn-danger btn-lg btn-same-width" onclick="confirmCancel({{ order_with_payment.order.id }})">주문 취소</button>
                             </form>
                             {% endif %}
-                        {% else %}
+                        {% elif order_with_payment.order.status == 'requested' or order_with_payment.order.status == 'failed_payment' %}
                             {% if not order_with_payment.is_archived %}
-                            <form method="post" action="{% url 'passorder:retry_payment' %}">
-                                {% csrf_token %}
-                                <input type="hidden" name="order_id" value="{{ order_with_payment.order.id }}">
-                                <input type="hidden" name="payment_id" value="{{ order_with_payment.payment.id }}">
-                                <button type="submit" class="btn btn-primary btn-lg btn-same-width">결제하기</button>
-                            </form>
-                            {% endif %}
-                            {% if order_with_payment.payment and not order_with_payment.payment.is_paid_ok %}
-                                <form method="post" action="{% url 'passorder:delete_order' order_with_payment.order.id %}">
+                                {% if order_with_payment.payment %}
+                                    <form method="post" action="{% url 'passorder:retry_payment' %}" class="d-inline-block">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="order_id" value="{{ order_with_payment.order.id }}">
+                                        <input type="hidden" name="payment_id" value="{{ order_with_payment.payment.id }}">
+                                        <button type="submit" class="btn btn-primary btn-lg btn-same-width">결제하기</button>
+                                    </form>
+                                {% else %}
+                                    <form method="post" action="{% url 'passorder:retry_payment' %}" class="d-inline-block">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="order_id" value="{{ order_with_payment.order.id }}">
+                                        <button type="submit" class="btn btn-primary btn-lg btn-same-width">결제하기</button>
+                                    </form>
+                                {% endif %}
+                                <form method="post" action="{% url 'passorder:delete_order' order_with_payment.order.id %}" class="d-inline-block ms-2">
                                     {% csrf_token %}
                                     <button type="submit" class="btn btn-danger btn-lg btn-same-width">주문 삭제</button>
                                 </form>

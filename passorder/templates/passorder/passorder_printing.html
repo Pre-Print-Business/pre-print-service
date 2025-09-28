@@ -31,32 +31,62 @@
                     <h4 class="fw-bold text-danger mb-0">⚠️ 출력 전 반드시 확인하십시오!</h4>
                 </div>
                 <div class="card-body">
-                    <div class="alert alert-danger border-0 mb-3">
-                        <ul class="mb-0 ps-3">
-                            <li><strong>출력 버튼을 누르시면 되돌릴 수 없습니다.</strong></li>
-                            <li>복합기에 오류가 있는 경우, 인쇄물이 즉시 출력되지 않고 일정 시간이 지난 후 한꺼번에 출력될 수 있습니다.</li>
-                            <li><strong>이러한 상황에서는 출력 취소 및 환불이 불가능합니다.</strong></li>
-                        </ul>
+                    <!-- 첫 번째 확인 사항 -->
+                    <div class="card mb-3 border-warning">
+                        <div class="card-body">
+                            <p class="mb-3">
+                                <strong>출력 버튼을 누르시면 되돌릴 수 없습니다.</strong><br>
+                                복합기에 오류가 있는 경우, 인쇄물이 즉시 출력되지 않고 일정 시간이 지난 후 한꺼번에 출력될 수 있습니다.<br>
+                                이러한 상황에서는 <strong>출력 취소 및 환불이 불가능합니다.</strong>
+                            </p>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="agreement1" name="agreement1">
+                                <label class="form-check-label fw-bold text-primary" for="agreement1">
+                                    <i class="fas fa-check-circle me-1"></i> 내용을 확인했습니다.
+                                </label>
+                            </div>
+                        </div>
                     </div>
-                    
-                    <div class="alert alert-warning border-0 mb-0">
-                        <h6 class="fw-bold text-warning mb-2">
-                            <i class="fas fa-hand-point-right me-2"></i>반드시 복합기 화면(터치스크린)에서 오류 표시가 없는지 확인해 주십시오.
-                        </h6>
-                        <ul class="mb-0 ps-3 small">
-                            <li>오류는 전체 화면 메시지로 표시되기도 하며, 화면 하단 잉크 아이콘 옆에 <span class="text-warning fw-bold">⚠️ 아이콘</span>으로만 표시되는 경우도 있습니다.</li>
-                            <li>두 경우 모두 출력이 정상적으로 진행되지 않을 수 있으니, <strong>아이콘과 메시지를 모두 확인한 후 출력해 주십시오.</strong></li>
-                        </ul>
+
+                    <!-- 두 번째 확인 사항 -->
+                    <div class="card mb-3 border-warning">
+                        <div class="card-body">
+                            <p class="mb-3">
+                                <strong>오류는 전체 화면 메시지로 표시되기도 하며, 화면 하단 잉크 아이콘 옆에 ⚠️ 아이콘으로만 표시되는 경우도 있습니다.</strong><br>
+                                두 경우 모두 출력이 정상적으로 진행되지 않을 수 있으니, <strong>아이콘과 메시지를 모두 확인한 후 출력해 주십시오.</strong>
+                            </p>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="agreement2" name="agreement2">
+                                <label class="form-check-label fw-bold text-primary" for="agreement2">
+                                    <i class="fas fa-check-circle me-1"></i> 내용을 확인했습니다.
+                                </label>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
 
             <div class="text-center">
+                <!-- 체크박스 미완료 시 안내 메시지 -->
+                <div id="checkboxGuide" class="alert alert-info mb-3">
+                    <i class="fas fa-info-circle me-2"></i>
+                    <strong>위의 두 확인 사항을 모두 읽고 체크박스를 선택해 주세요.</strong>
+                    <br><small class="text-muted">모든 확인 사항에 동의하셔야 출력이 가능합니다.</small>
+                </div>
+
                 <form method="post" action="{% url 'passorder:passorder_printing' %}" id="printForm">
                     {% csrf_token %}
                     <input type="hidden" name="order_id" value="{{ order.id }}">
-                    <button type="button" class="btn btn-primary btn-lg px-5" onclick="confirmPrint()">출력하기</button>
+                    <button type="submit" id="printButton" class="btn btn-secondary btn-lg px-5" disabled>
+                        <i class="fas fa-lock me-2"></i>출력하기
+                    </button>
                 </form>
+
+                <!-- 버튼 활성화 시 표시될 안내 -->
+                <div id="readyToprint" class="alert alert-success mt-3" style="display: none;">
+                    <i class="fas fa-check-circle me-2"></i>
+                    <strong>모든 확인사항을 읽어주셨습니다!</strong> 이제 출력하기 버튼을 클릭하여 인쇄를 시작할 수 있습니다.
+                </div>
             </div>
         </div>
     </div>
@@ -65,55 +95,93 @@
 
 {% block extra-script %}
 <script>
-function confirmPrint() {
-    // 기존 모달 내용을 새로운 내용으로 교체
-    const modalTitle = document.getElementById('confirmModalLabel');
-    const modalText = document.getElementById('confirmModalText');
-    const modalBody = document.querySelector('#confirmModal .modal-body');
-    
-    modalTitle.innerText = '중요 확인';
-    
-    // 모달 바디를 완전히 새로운 내용으로 교체
-    modalBody.innerHTML = `
-        <div class="text-center py-3">
-            <div class="mb-3">
-                <i class="fas fa-exclamation-triangle text-warning fs-1 mb-3"></i>
-            </div>
-            <div class="text-start">
-                <h6 class="fw-bold text-dark mb-3">출력 버튼을 누르시면:</h6>
-                <ul class="text-start mb-3 ps-3">
-                    <li><strong>인쇄가 즉시 진행되며 되돌릴 수 없습니다.</strong></li>
-                    <li>복합기에 오류가 있는 경우, 인쇄물이 나중에 순차적으로 출력되어 <strong>취소 및 환불이 어렵습니다.</strong></li>
-                </ul>
-                <div class="alert alert-warning py-2 mb-0">
-                    <i class="fas fa-desktop me-2"></i>
-                    <strong>📌 복합기에 전체 오류 메시지 또는 하단 아이콘(⚠️)이 없는 것을 확인하셨습니까?</strong>
-                </div>
-            </div>
-        </div>
-    `;
-    
-    // 버튼 텍스트 변경
-    const confirmBtn = document.getElementById('confirmModalBtn');
-    const cancelBtn = document.querySelector('#confirmModal .btn-secondary');
-    
-    confirmBtn.innerText = '출력 진행';
-    confirmBtn.className = 'btn btn-danger px-4';
-    cancelBtn.innerText = '취소';
-    
-    // 확인 버튼 이벤트 리스너 교체
-    const newConfirmBtn = confirmBtn.cloneNode(true);
-    confirmBtn.parentNode.replaceChild(newConfirmBtn, confirmBtn);
-    
-    newConfirmBtn.addEventListener('click', function() {
-        const modal = bootstrap.Modal.getInstance(document.getElementById('confirmModal'));
-        modal.hide();
-        document.getElementById('printForm').submit();
+document.addEventListener('DOMContentLoaded', function() {
+    const agreement1 = document.getElementById('agreement1');
+    const agreement2 = document.getElementById('agreement2');
+    const printButton = document.getElementById('printButton');
+    const printForm = document.getElementById('printForm');
+
+    function checkAgreements() {
+        const checkboxGuide = document.getElementById('checkboxGuide');
+        const readyToPrint = document.getElementById('readyToprint');
+
+        if (agreement1.checked && agreement2.checked) {
+            // 모든 체크박스가 체크됨
+            printButton.disabled = false;
+            printButton.classList.remove('btn-secondary');
+            printButton.classList.add('btn-primary');
+            printButton.innerHTML = '<i class="fas fa-print me-2"></i>출력하기';
+
+            // 안내 메시지 교체
+            checkboxGuide.style.display = 'none';
+            readyToPrint.style.display = 'block';
+        } else {
+            // 체크박스가 미완료
+            printButton.disabled = true;
+            printButton.classList.remove('btn-primary');
+            printButton.classList.add('btn-secondary');
+            printButton.innerHTML = '<i class="fas fa-lock me-2"></i>출력하기';
+
+            // 안내 메시지 교체
+            checkboxGuide.style.display = 'block';
+            readyToPrint.style.display = 'none';
+        }
+    }
+
+    agreement1.addEventListener('change', checkAgreements);
+    agreement2.addEventListener('change', checkAgreements);
+
+    // 폼 제출시 체크박스 확인
+    printForm.addEventListener('submit', function(e) {
+        if (!agreement1.checked || !agreement2.checked) {
+            e.preventDefault();
+
+            // 체크되지 않은 항목들을 강조 표시
+            if (!agreement1.checked) {
+                const card1 = agreement1.closest('.card');
+                card1.classList.add('border-danger');
+                card1.classList.remove('border-warning');
+                setTimeout(() => {
+                    card1.classList.remove('border-danger');
+                    card1.classList.add('border-warning');
+                }, 3000);
+            }
+            if (!agreement2.checked) {
+                const card2 = agreement2.closest('.card');
+                card2.classList.add('border-danger');
+                card2.classList.remove('border-warning');
+                setTimeout(() => {
+                    card2.classList.remove('border-danger');
+                    card2.classList.add('border-warning');
+                }, 3000);
+            }
+
+            // 알림 메시지 표시
+            showAlert('모든 확인 사항을 읽고 체크박스를 선택해 주세요.', 'warning');
+        }
     });
-    
-    // 모달 표시
-    const modal = new bootstrap.Modal(document.getElementById('confirmModal'));
-    modal.show();
-}
+
+    function showAlert(message, type) {
+        const alertDiv = document.createElement('div');
+        alertDiv.className = `alert alert-${type} alert-dismissible fade show`;
+        alertDiv.innerHTML = `
+            <i class="fas fa-exclamation-triangle me-2"></i>${message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        `;
+
+        const container = document.querySelector('.container');
+        container.insertBefore(alertDiv, container.firstChild);
+
+        // 3초 후 자동으로 사라지게 하기
+        setTimeout(() => {
+            if (alertDiv.parentNode) {
+                alertDiv.remove();
+            }
+        }, 3000);
+    }
+
+    // 초기 상태 설정
+    checkAgreements();
+});
 </script>
 {% endblock %}

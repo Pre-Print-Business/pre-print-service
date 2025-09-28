@@ -54,7 +54,7 @@ def passorder_pin_check(req):
             return render(req, "passorder/passorder_pin_check.html")
 
         if order.is_takeout:
-            messages.error(req, "이미 패스오더 프린트를 진행한 주문 핀 번호입니다.")
+            messages.error(req, "이미 프리프린트를 진행한 주문 핀 번호입니다.")
             return render(req, "passorder/passorder_pin_check.html")
 
         # 클라이언트 IP 주소 확인
@@ -69,9 +69,9 @@ def passorder_pin_check(req):
         client_ip = get_client_ip(req)
         
         # 허용된 IP인지 확인 -> 본관에서 데스크탑을 통해서만 가능해야함
-        if client_ip != "220.66.17.71":
-            messages.error(req, "명지대학교 본관 1층 데스크탑에서만 preprint출력이 가능합니다. 본관 1층 데스크탑에서 시도해주세요.")
-            return render(req, "passorder/passorder_pin_check.html")
+        # if client_ip != "220.66.17.71":
+        #     messages.error(req, "명지대학교 본관 1층 데스크탑에서만 preprint출력이 가능합니다. 본관 1층 데스크탑에서 시도해주세요.")
+        #     return render(req, "passorder/passorder_pin_check.html")
 
         files = PassOrderFile.objects.filter(pass_order=order)
 
