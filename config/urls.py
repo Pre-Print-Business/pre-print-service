@@ -26,6 +26,7 @@ urlpatterns = [
     path('document_locker_main', TemplateView.as_view(template_name="documents/document_locker_main.html"), name="document_locker_main"),
     path('document_locker_guide', TemplateView.as_view(template_name="documents/document_locker_guide.html"), name="document_locker_guide"),
     path('document_locker_password_guide', TemplateView.as_view(template_name="documents/document_locker_password_guide.html"), name="document_locker_password_guide"),
+    path('document_preprint_guide', TemplateView.as_view(template_name="documents/document_preprint_guide.html"), name="document_preprint_guide"),
     path('document_refund_support', TemplateView.as_view(template_name="documents/document_refund_support.html"), name="document_refund_support")
 ]
 
