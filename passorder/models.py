@@ -32,6 +32,7 @@ class PassOrder(models.Model):
         db_index=True,
     )
     total_pages = models.IntegerField(verbose_name="총 페이지 수", default=0)
+    pass_order_quantity = models.IntegerField(verbose_name="출력 수량", default=1, null=True, blank=True)
     is_takeout = models.BooleanField(verbose_name="테이크아웃 여부", default=False)
 
     @property
@@ -51,10 +52,11 @@ class PrintQueue(models.Model):
     pass_order = models.ForeignKey(PassOrder, verbose_name='패스 주문', on_delete=models.CASCADE)
     is_print = models.BooleanField(verbose_name='인쇄 여부', default=False)
     log = models.CharField(verbose_name='로그', max_length=300, null=True, blank=True)
-    
+    pass_order_ip = models.CharField(verbose_name='요청 IP', max_length=50, null=True, blank=True)
+
     def __str__(self):
         return f"Print Queue #{self.id} - Order: {self.pass_order.id} - Printed: {self.is_print}"
-    
+
     class Meta:
         verbose_name = '인쇄 대기열'
         verbose_name_plural = '인쇄 대기열'

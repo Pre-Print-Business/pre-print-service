@@ -56,7 +56,15 @@
                             <div class="form-control bg-light text-dark">{{ order_with_payment.order.pass_order_date }}</div>
                         </div>
                         <div>
-                            <label class="fw-bold">총 매수</label>
+                            <label class="fw-bold">파일 페이지 수</label>
+                            <div class="form-control bg-light text-dark">{{ order_with_payment.base_pages }} 장</div>
+                        </div>
+                        <div>
+                            <label class="fw-bold">출력 수량</label>
+                            <div class="form-control bg-light text-dark">{{ order_with_payment.quantity }}회 반복 출력</div>
+                        </div>
+                        <div>
+                            <label class="fw-bold">총 출력 매수</label>
                             <div class="form-control bg-light text-dark">{{ order_with_payment.order.total_pages }} 장</div>
                         </div>
                         <div>
