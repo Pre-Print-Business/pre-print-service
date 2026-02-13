@@ -31,7 +31,9 @@
             <div class="card p-3 mb-3">
                 <h3 class="fw-bold mb-3">출력되는 파일 정보</h3>
                 <p><strong>주문 번호:</strong> {{ pass_order.id }}</p>
-                <p><strong>총 매수:</strong> {{ pass_order.total_pages }}</p>
+                <p><strong>파일 페이지 수:</strong> {{ base_pages }}장</p>
+                <p><strong>출력 수량:</strong> {{ quantity }}회 반복 출력</p>
+                <p><strong>총 출력 매수:</strong> {{ pass_order.total_pages }}장</p>
                 <p><strong>색상:</strong> {% if pass_order.pass_order_color == "BW" %}흑백 (black){% else %}컬러 (color){% endif %}</p>
                 <h4 class="fw-bold mt-3">파일 목록:</h4>
                 <ul class="list-group">

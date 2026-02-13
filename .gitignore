@@ -9,6 +9,8 @@ db.sqlite3-journal
 media
 secrets.json
 .DS_Store
+.vscode
+.claude
 test
 pp_scripts
 

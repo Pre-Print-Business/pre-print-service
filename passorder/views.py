@@ -35,6 +35,22 @@ def passorder_main(req):
 MAX_SERVICE_PAGES = 500
 MAX_PAGES_PER_REQUEST = 300
 
+# 허용된 IP 목록 (본관, 학생회관, 국제관)
+ALLOWED_IPS = {
+    "220.66.17.71": "본관",
+    "192.42.15.13": "학생회관",
+    "182.213.12.12": "국제관",
+}
+
+# 클라이언트 IP 주소 확인 함수
+def get_client_ip(request):
+    x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+    if x_forwarded_for:
+        ip = x_forwarded_for.split(',')[0]
+    else:
+        ip = request.META.get('REMOTE_ADDR')
+    return ip
+
 # 핀 번호 확인 및 프린트 페이지로 이동
 def passorder_pin_check(req):
     if req.method == "GET":
@@ -57,25 +73,28 @@ def passorder_pin_check(req):
             messages.error(req, "이미 프리프린트를 진행한 주문 핀 번호입니다.")
             return render(req, "passorder/passorder_pin_check.html")
 
-        # 클라이언트 IP 주소 확인
-        def get_client_ip(request):
-            x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
-            if x_forwarded_for:
-                ip = x_forwarded_for.split(',')[0]
-            else:
-                ip = request.META.get('REMOTE_ADDR')
-            return ip
-        
         client_ip = get_client_ip(req)
-        
-        # 허용된 IP인지 확인 -> 본관에서 데스크탑을 통해서만 가능해야함
-        if client_ip != "220.66.17.71":
-            messages.error(req, "명지대학교 본관 1층 데스크탑에서만 preprint출력이 가능합니다. 본관 1층 데스크탑에서 시도해주세요.")
+
+        # 허용된 IP인지 확인 -> 본관, 학생회관, 국제관 데스크탑에서만 가능
+        if client_ip not in ALLOWED_IPS:
+            messages.error(req, "명지대학교 본관, 학생회관, 국제관 1층 프리프린트 컴퓨터에서만 출력이 가능합니다. 해당 위치의 프리프린트 컴퓨터에서 시도해주세요.")
             return render(req, "passorder/passorder_pin_check.html")
 
         files = PassOrderFile.objects.filter(pass_order=order)
 
-        return render(req, "passorder/passorder_printing.html", {"order": order, "files": files})
+        # 클라이언트 IP를 세션에 저장하여 passorder_printing에서 사용
+        req.session['print_client_ip'] = client_ip
+
+        # 기본 페이지 수 계산 (수량으로 나눔)
+        quantity = order.pass_order_quantity or 1
+        base_pages = order.total_pages // quantity if quantity > 0 else order.total_pages
+
+        return render(req, "passorder/passorder_printing.html", {
+            "order": order,
+            "files": files,
+            "base_pages": base_pages,
+            "quantity": quantity,
+        })
 
 
 @csrf_exempt
@@ -89,17 +108,27 @@ def passorder_printing(req):
         # is_takeout을 True로 변경 후 저장
         pass_order.is_takeout = True
         pass_order.save()
-        
-        # PrintQueue 생성
+
+        # 클라이언트 IP 가져오기 (세션에서 또는 직접)
+        client_ip = req.session.get('print_client_ip') or get_client_ip(req)
+
+        # PrintQueue 생성 (IP 포함)
         PrintQueue.objects.create(
             pass_order=pass_order,
+            pass_order_ip=client_ip,
         )
 
         messages.success(req, f"오더 {order_id}가 성공적으로 출력되었습니다.")
 
+        # 기본 페이지 수 계산 (수량으로 나눔)
+        quantity = pass_order.pass_order_quantity or 1
+        base_pages = pass_order.total_pages // quantity if quantity > 0 else pass_order.total_pages
+
         context = {
             'pass_order': pass_order,
             'files': pass_order_files,
+            'base_pages': base_pages,
+            'quantity': quantity,
         }
         return render(req, 'passorder/printing_info.html', context)
 
@@ -134,12 +163,22 @@ def print_detail(req):
     if req.method == "GET":
         if not req.user.is_authenticated:
             return redirect('login')
-        
+
         return render(req, "passorder/print_detail.html")
     elif req.method == "POST":
         files = req.FILES.getlist('files')
         color = req.POST['color']
-        # pw = req.POST['pw']
+        # 수량 입력값 가져오기 (기본값 1)
+        try:
+            quantity = int(req.POST.get('quantity', 1))
+            if quantity < 1:
+                quantity = 1
+            if quantity > 100:
+                messages.error(req, "수량은 최대 100까지 입력 가능합니다.")
+                return render(req, "passorder/print_detail.html")
+        except (ValueError, TypeError):
+            quantity = 1
+
         if not files:
             messages.error(req, "파일을 선택해주세요.")
             return render(req, "passorder/print_detail.html")
@@ -153,25 +192,25 @@ def print_detail(req):
             messages.error(req, "모든 파일의 크기 합이 200MB를 초과할 수 없습니다.")
             return render(req, "passorder/print_detail.html")
 
-        # if not pw or not pw.isdigit() or len(pw) != 16:
-        #     messages.error(req, "비밀번호는 숫자 16자리를 입력해야 합니다.")
-        #     return render(req, "passorder/print_detail.html")
-
         pw = generate_unique_pin()
 
-        total_pages = 0
+        # 파일들의 기본 페이지 수 합계 (수량 적용 전)
+        base_pages = 0
         for file in files:
             with tempfile.NamedTemporaryFile(delete=False, suffix=".pdf") as tmpfile:
                 for chunk in file.chunks():
                     tmpfile.write(chunk)
-                total_pages += get_pdf_page_count(tmpfile.name)
-        
-        if total_pages == 0:
+                base_pages += get_pdf_page_count(tmpfile.name)
+
+        if base_pages == 0:
             messages.error(req, "업로드된 PDF 파일의 페이지 수를 확인할 수 없습니다. 파일이 손상되었거나 잘못된 파일일 수 있습니다. 다시 시도해 주세요.")
             return render(req, "passorder/print_detail.html")
 
+        # 총 페이지 수 = 기본 페이지 수 * 수량
+        total_pages = base_pages * quantity
+
         if total_pages > MAX_PAGES_PER_REQUEST:
-            messages.error(req, f"총합 {MAX_PAGES_PER_REQUEST}장 이상의 파일은 신청이 불가합니다.")
+            messages.error(req, f"총합 {MAX_PAGES_PER_REQUEST}장 이상의 파일은 신청이 불가합니다. (현재: {base_pages}장 x {quantity}회 = {total_pages}장)")
             return render(req, "passorder/print_detail.html")
 
         if color == "C":
@@ -179,22 +218,18 @@ def print_detail(req):
         else:
             page_price = 50
 
-        order_price = total_pages * page_price
-
-        if order_price < 100:
-            order_price = 100
-
         pass_order_price = total_pages * page_price
 
         if pass_order_price < 100:
             pass_order_price = 100
 
         pass_order = PassOrder.objects.create(
-            pass_order_user=req.user, 
-            pass_order_price=pass_order_price, 
-            pass_order_pin_number=pw, 
+            pass_order_user=req.user,
+            pass_order_price=pass_order_price,
+            pass_order_pin_number=pw,
             pass_order_color=color,
-            total_pages=total_pages
+            total_pages=total_pages,
+            pass_order_quantity=quantity
         )
 
         for file in files:
@@ -204,9 +239,16 @@ def print_detail(req):
 def print_payment_ready(req, order_id):
     pass_order = get_object_or_404(PassOrder, id=order_id, pass_order_user=req.user)
     pass_order_files = PassOrderFile.objects.filter(pass_order=pass_order)
+
+    # 기본 페이지 수 계산 (수량으로 나눔)
+    quantity = pass_order.pass_order_quantity or 1
+    base_pages = pass_order.total_pages // quantity if quantity > 0 else pass_order.total_pages
+
     context = {
         'pass_order': pass_order,
         'files': pass_order_files,
+        'base_pages': base_pages,
+        'quantity': quantity,
     }
     return render(req, 'passorder/print_payment_ready.html', context)
 
@@ -323,10 +365,17 @@ def print_payment_detail(req, order_pk):
     order = get_object_or_404(PassOrder, pk=order_pk, pass_order_user=req.user)
     order_files = PassOrderFile.objects.filter(pass_order=order)
     payment = PassOrderPayment.objects.filter(pass_order=order).first()
+
+    # 기본 페이지 수 계산 (수량으로 나눔)
+    quantity = order.pass_order_quantity or 1
+    base_pages = order.total_pages // quantity if quantity > 0 else order.total_pages
+
     context = {
         'order': order,
         'files': order_files,
         'payment': payment,
+        'base_pages': base_pages,
+        'quantity': quantity,
     }
     return render(req, 'passorder/print_payment_detail.html', context)
 
@@ -396,10 +445,17 @@ def print_payment_list(req):
     for order in active_orders:
         order_files = PassOrderFile.objects.filter(pass_order=order)
         payment = PassOrderPayment.objects.filter(pass_order=order).first()
+
+        # 기본 페이지 수 계산 (수량으로 나눔)
+        quantity = order.pass_order_quantity or 1
+        base_pages = order.total_pages // quantity if quantity > 0 else order.total_pages
+
         orders_with_files.append({
             'order': order,
             'files': order_files,
-            'payment': payment
+            'payment': payment,
+            'base_pages': base_pages,
+            'quantity': quantity,
         })
     
     # 날짜별로 그룹핑

@@ -32,6 +32,21 @@
                 </div>
 
                 <div>
+                    <label class="fw-bold">파일 페이지 수</label>
+                    <div class="form-control bg-light text-dark">{{ base_pages }}장</div>
+                </div>
+
+                <div>
+                    <label class="fw-bold">출력 수량</label>
+                    <div class="form-control bg-light text-dark">{{ quantity }}회 반복 출력</div>
+                </div>
+
+                <div>
+                    <label class="fw-bold">총 출력 매수</label>
+                    <div class="form-control bg-light text-dark">{{ order.total_pages }}장</div>
+                </div>
+
+                <div>
                     <label class="fw-bold">가격</label>
                     <div class="form-control bg-light text-dark">{{ order.pass_order_price|floatformat:"0" }} 원</div>
                 </div>
