@@ -48,10 +48,10 @@ class PassOrderFile(models.Model):
     pass_order_file = models.FileField(upload_to='pass_order_files/')
 
 class PrintQueue(models.Model):
-    created_at = models.DateTimeField(verbose_name='생성 시각', auto_now_add=True)
+    created_at = models.DateTimeField(verbose_name='생성 시각', auto_now_add=True, db_index=True)
     pass_order = models.ForeignKey(PassOrder, verbose_name='패스 주문', on_delete=models.CASCADE)
-    is_print = models.BooleanField(verbose_name='인쇄 여부', default=False)
-    log = models.CharField(verbose_name='로그', max_length=300, null=True, blank=True)
+    is_print = models.BooleanField(verbose_name='인쇄 여부', default=False, db_index=True)
+    log = models.CharField(verbose_name='로그', max_length=300, null=True, blank=True, db_index=True)
     pass_order_ip = models.CharField(verbose_name='요청 IP', max_length=50, null=True, blank=True)
 
     def __str__(self):
