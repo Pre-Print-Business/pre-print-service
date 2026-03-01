@@ -71,16 +71,16 @@ def print_detail(req):
             lockers = Locker.objects.all().order_by('locker_number')
             return render(req, "locker/print_detail.html", {"lockers": lockers})
 
-        # 고정 서비스 시작일 (09.01) 설정
-        fixed_start_date = datetime(2025, 9, 1)
+        # 고정 서비스 시작일 (03.01) 설정
+        fixed_start_date = datetime(2026, 3, 1)
         if plan == "semester":
-            # 2학기권(방학포함): 2025.09.01~2026.2.25 (약 6개월)
-            fixed_end_date = datetime(2026, 2, 25)
-            rental_period = 177  # 약 6개월
+            # 2학기권(방학포함): 2026.03.01~2026.8.25 (약 6개월)
+            fixed_end_date = datetime(2026, 8, 25)
+            rental_period = 178  # 약 6개월
             base_price = 30000
         elif plan == "long":
-            # 1년권: 2025.09.01~2026.08.28 (약 1년)
-            fixed_end_date = datetime(2026, 8, 28)
+            # 1년권: 2026.03.01~2027.02.24 (약 1년)
+            fixed_end_date = datetime(2027, 2, 24)
             rental_period = 361  # 약 1년
             base_price = 55000
         else:
