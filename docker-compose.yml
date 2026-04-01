@@ -34,7 +34,7 @@ services:
       - "443:443"
     volumes:
       - ./nginx/conf.d:/etc/nginx/conf.d
-      - /etc/letsencrypt:/etc/letsencrypt
+      - /etc/letsencrypt:/etc/letsencrypt:ro
       - ./static:/app/static  # 3. 수정: 서버 호스트의 파일을 Nginx가 읽음
       - ./media:/app/media    # 4. 수정: 서버 호스트의 미디어를 Nginx가 읽음
     depends_on:
