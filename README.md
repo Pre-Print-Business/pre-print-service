@@ -1,21 +1,4 @@
-<!--
-─────────────────────────────────────────────────────────────────────────────
-  📌 이미지 추가 가이드 (이 주석은 GitHub에서 렌더링되지 않습니다)
-─────────────────────────────────────────────────────────────────────────────
-  아래 경로에 이미지를 넣고 파일명을 맞추면 그대로 표시됩니다.
 
-  docs/images/
-   ├─ logo.png              ← 로고 (투명 PNG 권장, 가로 220px 내외)
-   ├─ banner.png            ← (선택) 상단 배너 이미지
-   ├─ screen-reserve.png    ← 선결제·간편출력 메인 화면
-   ├─ screen-locker.png     ← 사물함 대여/결제 화면
-   ├─ screen-cloud.png      ← 클라우드 서비스 화면
-   ├─ screen-payment.png    ← 결제 화면
-   ├─ ops-1.png ~ ops-3.png ← 매장 운영 현장 사진 (본관/학관/국제관)
-   ├─ team.png              ← 팀 사진 (없으면 대표자/개발 중 사진)
-   └─ analytics.png         ← Google Analytics 대시보드 캡처
-─────────────────────────────────────────────────────────────────────────────
--->
 
 <div align="center">
   
@@ -34,8 +17,9 @@
 [![MySQL](https://img.shields.io/badge/MySQL-4479A1?style=for-the-badge&logo=mysql&logoColor=white)](https://www.mysql.com/)
 [![Nginx](https://img.shields.io/badge/Nginx-009639?style=for-the-badge&logo=nginx&logoColor=white)](https://nginx.org/)
 [![Gunicorn](https://img.shields.io/badge/Gunicorn-499848?style=for-the-badge&logo=gunicorn&logoColor=white)](https://gunicorn.org/)
+[![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)](https://www.docker.com/)
 [![AWS](https://img.shields.io/badge/AWS-232F3E?style=for-the-badge&logo=amazonaws&logoColor=white)](https://aws.amazon.com/)
-
+ 
 <br/>
 
 [**🌐 선결제·사물함 바로가기**](https://preprintreserve.com) &nbsp;·&nbsp;
@@ -46,11 +30,6 @@
 
 <br/>
 
-<!-- docs/images/banner.png 가 있다면 아래 주석을 해제하세요
-<div align="center">
-  <img src="docs/images/banner.png" alt="preprint banner" width="100%" />
-</div>
--->
 
 ---
 
@@ -238,28 +217,29 @@ sequenceDiagram
 
 ## 🏗 시스템 아키텍처
 
-웹 요청은 **Route 53 → Lightsail(Django) → RDS(MySQL)** 로 흐르며, 결제는 PG사와 연동되며 포트원, 스마트로사와 계약진행했습니다. 핵심은 **현장 출력 서버**로, 임대 매장의 기존 결제 시스템과 충돌하던 출력 환경을 우회하기 위해 캠퍼스 현장에 별도 서버를 구축하여 **원격 출력**을 가능하게 했습니다.
+웹 요청은 **Route 53 → Lightsail(Django) → RDS(MySQL)** 로 흐르며, 결제는 PG사와 연동되며 포트원, 스마트로사와 계약진행했습니다.
+애플리케이션은 **Docker 컨테이너로 패키징하여 배포**진행합니다. 핵심은 **현장 출력 서버**로, 임대 매장의 기존 결제 시스템과 충돌하던 출력 환경을 우회하기 위해 캠퍼스 현장에 별도 서버를 구축하여 **원격 출력**을 가능하게 했습니다.
 
 ```mermaid
 flowchart LR
     User["👤 사용자<br/>웹 브라우저"]
     DNS["🌐 Amazon Route 53<br/>preprintreserve.com"]
-
+ 
     subgraph AWS["☁️ AWS Cloud"]
         direction TB
-        App["🖥️ Lightsail Instance<br/>Nginx · Gunicorn · Django"]
+        App["🐳 Lightsail · Docker<br/>Nginx · Gunicorn · Django"]
         DB[("🗄️ Amazon RDS<br/>MySQL")]
     end
-
+ 
     PG["💳 PG 결제<br/>PortOne · Smartro"]
-
+ 
     subgraph Campus["🏫 명지대 캠퍼스 · 본관/학관/국제관 1F"]
         direction TB
         PS["🖨️ 현장 출력 서버"]
         MFP["복합기 (MFP)"]
         Locker["🔐 무인 사물함"]
     end
-
+ 
     User --> DNS --> App
     App <--> DB
     App <-->|결제 연동| PG
@@ -272,19 +252,20 @@ flowchart LR
 ## 🛠 기술 스택
 
 <div align="center">
-
+  
 | 분류 | 기술 |
 |:---:|:---|
 | **Backend** | ![Python](https://img.shields.io/badge/Python-3776AB?style=flat-square&logo=python&logoColor=white) ![Django](https://img.shields.io/badge/Django-092E20?style=flat-square&logo=django&logoColor=white) |
 | **Database** | ![MySQL](https://img.shields.io/badge/MySQL-4479A1?style=flat-square&logo=mysql&logoColor=white) ![Amazon RDS](https://img.shields.io/badge/Amazon%20RDS-527FFF?style=flat-square&logo=amazonrds&logoColor=white) |
-| **Infra / DevOps** | ![AWS Lightsail](https://img.shields.io/badge/AWS%20Lightsail-FF9900?style=flat-square&logo=amazonaws&logoColor=white) ![Route 53](https://img.shields.io/badge/Route%2053-8C4FFF?style=flat-square&logo=amazonroute53&logoColor=white) ![Nginx](https://img.shields.io/badge/Nginx-009639?style=flat-square&logo=nginx&logoColor=white) ![Gunicorn](https://img.shields.io/badge/Gunicorn-499848?style=flat-square&logo=gunicorn&logoColor=white) |
+| **Infra / DevOps** | ![AWS Lightsail](https://img.shields.io/badge/AWS%20Lightsail-FF9900?style=flat-square&logo=amazonaws&logoColor=white) ![Route 53](https://img.shields.io/badge/Route%2053-8C4FFF?style=flat-square&logo=amazonroute53&logoColor=white) ![Docker](https://img.shields.io/badge/Docker-2496ED?style=flat-square&logo=docker&logoColor=white) ![Nginx](https://img.shields.io/badge/Nginx-009639?style=flat-square&logo=nginx&logoColor=white) ![Gunicorn](https://img.shields.io/badge/Gunicorn-499848?style=flat-square&logo=gunicorn&logoColor=white) |
 | **Payment** | ![PortOne](https://img.shields.io/badge/PortOne-1C6EFF?style=flat-square&logoColor=white) ![Smartro](https://img.shields.io/badge/Smartro%20PG-0A3D91?style=flat-square&logoColor=white) |
-
+ 
 </div>
 
 ```
 🌐  Route 53            도메인 / DNS 관리
-☁️  AWS Lightsail       애플리케이션 서버 (Nginx + Gunicorn + Django)
+☁️  AWS Lightsail       애플리케이션 서버 호스팅
+🐳  Docker              컨테이너 기반 배포 (Nginx + Gunicorn + Django)
 🗄️  Amazon RDS (MySQL)  관계형 데이터베이스
 💳  PortOne · Smartro   실 결제 연동 및 결제 검증
 🖨️  현장 출력 서버       원격 출력 명령 처리 (드라이버 충돌 우회 설계)
@@ -328,6 +309,22 @@ flowchart LR
 
 <br/>
 
+## 📰 언론 보도
+ 
+프리프린트는 여러 매체를 통해 **교내 출력 인프라의 불편을 학생들이 직접 창업으로 해결한 사례**이자, *교내 스마트 무인 출력 서비스의 성공적인 안착 사례*로 소개되었습니다.
+ 
+| 매체 | 기사 |
+|:---|:---|
+| 🗞️ **중앙일보** | [명지대 학생 창업팀 '프리프린트', 교내 스마트 무인 출력 서비스로 안착](https://www.joongang.co.kr/article/25432389) |
+| 🗞️ **한겨레** | [명지대 학생 창업팀 '프리프린트', 교내 스마트 무인 출력 서비스로 안착](https://www.hani.co.kr/arti/economy/biznews/1261070.html) |
+| 🗞️ **네이트 뉴스** | [명지대 학생 창업팀 '프리프린트', 교내 스마트 무인 출력 서비스로 안착](https://news.nate.com/view/20260529n26089) |
+| 🎓 **명지대학교** | [명지대 학생 창업팀 '프리프린트', 교내 스마트 무인 출력 서비스로 안착](https://www.mju.ac.kr/mjukr/303/subview.do?enc=Zm5jdDF8QEB8JTJGYmJzJTJGbWp1a3IlMkYxNjclMkYyMzE4NTUlMkZhcnRjbFZpZXcuZG8lM0Y%3D) |
+ 
+> 🗓️ *2026년 5월 보도 · 본관·학생회관·국제관 1층에서 24시간 운영되며 약 900명의 이용자와 2만 1천여 건의 누적 이용 데이터를 기록한 점이 함께 소개되었습니다.*
+ 
+
+<br/>
+
 ## 📅 연혁
 
 <div align="center">
@@ -352,18 +349,15 @@ flowchart LR
 
 ## 👥 팀
 
-<!-- docs/images/team.png (팀 사진 또는 개발 중 모습) 가 있다면 아래 주석을 해제하세요
 <div align="center">
-  <img src="docs/images/team.png" alt="preprint team" width="70%" />
+<img width="805" height="599" src="https://github.com/user-attachments/assets/f48d66d9-6f49-4ef9-a9ec-1e34fc39d878"  alt="preprint team" width="70%" />
 </div>
 <br/>
--->
 
 | 이름 | 역할 | 담당 |
 |:---:|:---|:---|
 | **이윤서** | 대표 · 서비스 기획 총괄 | 초기 아이디어 제안, 서비스 구조·UX·운영 프로세스 기획, 공간 확보 및 파트너사 협업 |
 | **최은택** | 기술개발 총괄 팀장 | 전 서비스 프론트·백엔드 개발, AWS 클라우드 설계·구축, 서버 유지보수, PG 결제 연동 |
-| **김의향** | UI/UX 디자인 *(~2025.11)* | Figma 기반 웹 UI/UX 설계, 사용자 인사이트 기반 홍보 기획 |
 
 <br/>
 
