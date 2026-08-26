@@ -13,6 +13,7 @@ secrets.json
 .claude
 test
 pp_scripts
+.DS_Store
 
 ### Django.Python Stack ###
 # Byte-compiled / optimized / DLL files
